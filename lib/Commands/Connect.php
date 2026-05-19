@@ -45,13 +45,13 @@ You can run this command in two connection modes:
     php occ davc:connect <user>
 
   Automation with auto-discovery:
-	php occ davc:connect <user> <accountid> <accountsecret> --auto-discovery
+	php occ davc:connect <user> <accountid> <accountsecret> --discover
 
   Automation with manual server settings:
 	php occ davc:connect <user> <accountid> <accountsecret> --provider=<host> --port=<port> --path=<path> --secure-transport=<true|false>
 
 Examples:
-	php occ davc:connect alice alice@example.com secret --auto-discovery
+	php occ davc:connect alice alice@example.com secret --discover
 	php occ davc:connect alice alice@example.com secret --provider=dav.example.com --port=443 --path=/.well-known/caldav --secure-transport=true
 
 When account credentials are omitted, the command prompts for the missing values.
@@ -66,7 +66,7 @@ HELP)
 			->addArgument('accountsecret',
 				InputArgument::OPTIONAL,
 				'The password of the account to connect to on the DAV server')
-			->addOption('auto-discovery', null, InputOption::VALUE_NONE, 'Use automatic DAV discovery based on the account ID domain')
+			->addOption('discover', null, InputOption::VALUE_NONE, 'Use automatic DAV discovery based on the account ID domain')
 			->addOption('provider', null, InputOption::VALUE_REQUIRED, 'Manual DAV server host name or IP address')
 			->addOption('port', null, InputOption::VALUE_REQUIRED, 'Manual DAV server port')
 			->addOption('path', null, InputOption::VALUE_REQUIRED, 'Manual DAV server path')
@@ -106,13 +106,13 @@ HELP)
 		}
 
 		$manualConfigurationProvided = $this->hasManualConfiguration($input);
-		$autoDiscovery = (bool)$input->getOption('auto-discovery');
+		$autoDiscovery = (bool)$input->getOption('discover');
 
 		if (!$autoDiscovery && !$manualConfigurationProvided) {
 			$autoDiscoveryQuestion = new ConfirmationQuestion('Use DAV auto-discovery? [Y/n] ', true);
 			$autoDiscovery = $helper->ask($input, $output, $autoDiscoveryQuestion);
 			if ($autoDiscovery) {
-				$input->setOption('auto-discovery', true);
+				$input->setOption('discover', true);
 			}
 		}
 
@@ -180,7 +180,7 @@ HELP)
 		$uid = (string)$input->getArgument('user');
 		$accountBauthId = (string)$input->getArgument('accountid');
 		$accountBauthSecret = (string)$input->getArgument('accountsecret');
-		$autoDiscovery = (bool)$input->getOption('auto-discovery');
+		$autoDiscovery = (bool)$input->getOption('discover');
 		$accountProvider = trim((string)$input->getOption('provider'));
 		$path = $input->getOption('path');
 		$port = $input->getOption('port');

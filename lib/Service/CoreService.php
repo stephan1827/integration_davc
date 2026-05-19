@@ -67,7 +67,10 @@ class CoreService {
 		}
 		// find dns service records
 		if (empty($configuration['location_host'])) {
-			$dns = dns_get_record('_caldav._tcp.' . $identityDomain, DNS_SRV);
+			$dns = dns_get_record('_caldavs._tcp.' . $identityDomain, DNS_SRV);
+			if ($dns === false) {
+				$dns = dns_get_record('_caldav._tcp.' . $identityDomain, DNS_SRV);
+			}
 			if ($dns[0]['type'] === 'SRV') {
 				$dnsTarget = $dns[0]['target'];
 				$dnsPort = $dns[0]['port'];
@@ -88,7 +91,10 @@ class CoreService {
 
 		if (empty($configuration['location_host'])) {
 			$configuration['location_host'] = $identityDomain;
-			$configuration['location_path'] = '/.well-known/caldav';
+		}
+
+		if (empty($configuration['location_path'])) {
+			$configuration['location_path'] = '.well-known/caldav';
 		}
 
 		return $configuration;
