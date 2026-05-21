@@ -10,14 +10,18 @@ declare(strict_types=1);
 namespace OCA\DAVC\Service\Remote;
 
 use OCA\DAVC\Constants;
+use OCA\DAVC\Logging\FileLogger;
 use OCA\DAVC\Store\Local\ServiceEntity;
 use OCP\Http\Client\IClientService;
+use OCP\IConfig;
+use Psr\Log\LoggerInterface;
 
 class RemoteFactory {
 	public static string $clientTransportAgent = 'NextcloudDAVC/1.0 (1.0; x64)';
 
 	public function __construct(
 		private IClientService $clientService,
+		private IConfig $config,
 	) {
 	}
 
@@ -28,7 +32,7 @@ class RemoteFactory {
 	 */
 	public function freshClient(ServiceEntity $service): RemoteClient {
 		$client = new RemoteClient($this->clientService);
-		$client->setTransportAgent(self::$clientTransportAgent);
+		$client->configureTransportAgent(self::$clientTransportAgent);
 		$client->configureLocation(
 			$service->getLocationProtocol(),
 			$service->getLocationHost(),
@@ -54,8 +58,17 @@ class RemoteFactory {
 		$client->setPrincipalUrl($service->getPrincipalUrl());
 		$client->setCalendarHome($service->getCalendarsUrl());
 		$client->setAddressbookHome($service->getAddressbooksUrl());
+		$client->configureLogging((bool)$service->getDebug() ? $this->logger($service) : null);
 
 		return $client;
+	}
+
+	private function logger(ServiceEntity $service): LoggerInterface {
+		/** @var int $serviceId */
+		$serviceId = $service->getId();
+		$path = $this->config->getSystemValue('datadirectory', \OC::$SERVERROOT . '/data') . '/davc-' . $serviceId . '.log';
+
+		return new FileLogger($path);
 	}
 
 	/**

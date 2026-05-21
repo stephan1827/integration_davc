@@ -15,12 +15,14 @@ use OCA\DAVC\AppInfo\Application;
 use OCA\DAVC\Service\Remote\RemoteFactory;
 use OCA\DAVC\Store\Local\CollectionEntity;
 use OCA\DAVC\Store\Local\EventStore;
+use OCA\DAVC\Store\Local\ServicesStore;
 use OCP\Calendar\ICalendarProvider as ICalendarProvider1;
 
 class Provider implements ICalendarProvider1, ICalendarProvider2 {
 	protected array $_CollectionCache = [];
 
 	public function __construct(
+		private readonly ServicesStore $servicesStore,
 		private readonly EventStore $localStore,
 		private readonly RemoteFactory $remoteFactory,
 	) {}
@@ -129,7 +131,7 @@ class Provider implements ICalendarProvider1, ICalendarProvider2 {
 
 	protected function collectionFromDataEntity(CollectionEntity $entity): EventCollection|null {
 		if ($entity->getType() == 'EC') {
-			return new EventCollection($this->remoteFactory, $this->localStore, $entity);
+			return new EventCollection($this->servicesStore, $this->remoteFactory, $this->localStore, $entity);
 		}
 		return null;
 	}

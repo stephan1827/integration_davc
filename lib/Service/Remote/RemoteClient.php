@@ -9,10 +9,12 @@ declare(strict_types=1);
 
 namespace OCA\DAVC\Service\Remote;
 
+use OCA\DAVC\AppInfo\Application;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IResponse;
 use OCP\Http\Client\IClientService;
 use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Log\LoggerInterface;
 use Sabre\DAV\Xml\Response\MultiStatus;
 use Sabre\DAV\Xml\Service as SabreXmlService;
 use Sabre\Xml\ParseException;
@@ -73,6 +75,8 @@ class RemoteClient {
 
 	private ?string $bearerToken = null;
 
+	private ?LoggerInterface $logger = null;
+
     private array $capabilities = [
         'discovery' => false,
         'endpoint' => null,
@@ -85,11 +89,17 @@ class RemoteClient {
 
 	public function __construct(
 		private IClientService $clientService,
+		?LoggerInterface $logger = null,
 	) {
+		$this->logger = $logger;
 	}
 
-	public function setTransportAgent(string $transportAgent): void {
+	public function configureTransportAgent(string $transportAgent): void {
 		$this->transportAgent = $transportAgent;
+	}
+
+	public function configureTransportVerification(bool $verify): void {
+		$this->locationSecurity = $verify;
 	}
 
 	public function configureLocation(string|null $protocol, string $host, int|null $port, string|null $path): void {
@@ -105,8 +115,8 @@ class RemoteClient {
         }
 	}
 
-	public function configureTransportVerification(bool $verify): void {
-		$this->locationSecurity = $verify;
+	public function configureLogging(LoggerInterface|null $logger): void {
+		$this->logger = $logger instanceof LoggerInterface ? $logger : null;
 	}
 
 	public function setBasicAuthentication(string $username, string $password): void {
@@ -151,6 +161,22 @@ class RemoteClient {
 	}
 
 	/**
+	 * Perform an OPTIONS request.
+	 *
+	 * @param string|null $path The path to perform the OPTIONS request on.
+	 * @return IResponse The response from the OPTIONS request.
+	 */
+	public function options(?string $path = null): IResponse {
+		$url = $this->constructUrl($path ?? $this->locationPath ?? '/');
+
+		$response = $this->transceive('OPTIONS', $url, $this->buildOptionsRequestOptions());
+		$this->capabilities['dav'] = $this->parseHeaderList($response->getHeader('DAV'));
+		$this->capabilities['allow'] = $this->parseHeaderList($response->getHeader('Allow'));
+
+		return $response;
+	}
+
+	/**
 	 * Perform a PROPFIND request.
 	 *
 	 * @param string $uri The URI to perform the PROPFIND request on.
@@ -180,7 +206,7 @@ class RemoteClient {
 
 		$url = $this->constructUrl($path);
 		
-		$response = $this->getClient()->request('PROPFIND', $url, $options);
+		$response = $this->transceive('PROPFIND', $url, $options);
 
 		return $this->parseMultistatusProperties($response);
 	}
@@ -204,7 +230,7 @@ class RemoteClient {
 
 		$url = $this->constructUrl($path);
 
-		$response = $this->getClient()->request('REPORT', $url, $options);
+		$response = $this->transceive('REPORT', $url, $options);
 
 		return $this->parseMultistatusProperties($response);
 	}
@@ -252,29 +278,27 @@ class RemoteClient {
 		return $result;
 	}
 
-	public function options(?string $path = null): IResponse {
-		$url = $this->constructUrl($path ?? $this->locationPath ?? '/');
-
-		$response = $this->getClient()->request('OPTIONS', $url, $this->buildOptionsRequestOptions());
-		$this->capabilities['dav'] = $this->parseHeaderList($response->getHeader('DAV'));
-		$this->capabilities['allow'] = $this->parseHeaderList($response->getHeader('Allow'));
-
-		return $response;
-	}
-
-	public function create(string $path, string $payload, string $contentType): IResponse {
+	/**
+	 * @return array{etag: string|null, statusCode: int, location: string|null, lastModified: string|null, response: IResponse}
+	 */
+	public function create(string $path, string $payload, string $contentType): array {
 		$url = $this->constructUrl($path);
 
-		return $this->getClient()->request('PUT', $url, $this->buildOptionsRequestOptions(
+		$response = $this->transceive('PUT', $url, $this->buildOptionsRequestOptions(
 			[
 				'Content-Type' => $contentType,
 				'If-None-Match' => '*',
 			],
 			['body' => $payload],
 		));
+
+		return $this->parsePutResponse($response);
 	}
 
-	public function update(string $path, string $payload, string $contentType, ?string $etag = null): IResponse {
+	/**
+	 * @return array{etag: string|null, statusCode: int, location: string|null, lastModified: string|null, response: IResponse}
+	 */
+	public function update(string $path, string $payload, string $contentType, ?string $etag = null): array {
 		$url = $this->constructUrl($path);
 
 		$headers = [
@@ -285,16 +309,18 @@ class RemoteClient {
 			$headers['If-Match'] = $etag;
 		}
 
-		return $this->getClient()->request('PUT', $url, $this->buildOptionsRequestOptions(
+		$response = $this->transceive('PUT', $url, $this->buildOptionsRequestOptions(
 			$headers,
 			['body' => $payload],
 		));
+
+		return $this->parsePutResponse($response);
 	}
 
 	public function delete(string $path): IResponse {
 		$url = $this->constructUrl($path);
 
-		return $this->getClient()->request('DELETE', $url, $this->buildOptionsRequestOptions());
+		return $this->transceive('DELETE', $url, $this->buildOptionsRequestOptions());
 	}
 
 	public function discover(): array {
@@ -351,12 +377,26 @@ class RemoteClient {
 		return $this->capabilities;
 	}
 
-	private function getClient(): IClient {
+	private function transceive(string $method, string $url, array $options): IResponse {
+		$this->logRequest($method, $url, $options);
+
 		if ($this->client === null) {
 			$this->client = $this->clientService->newClient();
 		}
 
-		return $this->client;
+		try {
+			$response = $this->client->request($method, $url, $options);
+		} catch (ClientExceptionInterface $e) {
+			$this->logRequestFailure($method, $url, $options, $e);
+			throw $e;
+		}
+
+		if ($this->logger !== null) {
+			[$response, $body] = $this->bufferResponse($response);
+			$this->logResponseSuccess($method, $url, $options, $response, $body);
+		}
+
+		return $response;
 	}
 
 	private function constructUrl(string $path = '/'): string {
@@ -407,12 +447,104 @@ class RemoteClient {
 		return $options;
 	}
 
+	/**
+	 * @return array{0: IResponse, 1: string}
+	 */
+	private function bufferResponse(IResponse $response): array {
+		$body = $response->getBody();
+
+		if (is_resource($body)) {
+			$body = stream_get_contents($body) ?: '';
+		} elseif ($body === null) {
+			$body = '';
+		} else {
+			$body = (string)$body;
+		}
+
+		return [
+			new BufferedResponse($response->getStatusCode(), $response->getHeaders(), $body),
+			$body,
+		];
+	}
+
+	/**
+	 * @param array<string, mixed> $options
+	 * @return array<string, mixed>
+	 */
+	private function extractRequestHeaders(array $options): array {
+		$headers = $options['headers'] ?? [];
+
+		if (isset($options['auth']) && !isset($headers['Authorization'])) {
+			$headers['Authorization'] = '[redacted]';
+		}
+
+		if (isset($headers['Authorization'])) {
+			$headers['Authorization'] = '[redacted]';
+		}
+
+		return $headers;
+	}
+
+	/**
+	 * @param array<string, mixed> $headers
+	 */
+	private function formatHeaders(array $headers): string {
+		if ($headers === []) {
+			return '{}';
+		}
+
+		$lines = ['{'];
+
+		foreach ($headers as $name => $value) {
+			if (is_array($value)) {
+				$value = implode(', ', array_map(static fn (mixed $headerValue): string => (string)$headerValue, $value));
+			}
+
+			$lines[] = sprintf('  %s: %s', (string)$name, (string)$value);
+		}
+
+		$lines[] = '}';
+
+		return implode("\n", $lines);
+	}
+
+	private function formatBody(mixed $body): string {
+		if (is_resource($body)) {
+			$body = stream_get_contents($body) ?: '';
+		}
+
+		if ($body === null) {
+			return '<null>';
+		}
+
+		$body = (string)$body;
+
+		return $body !== '' ? $body : '<empty>';
+	}
+
 	private function parseHeaderList(string $header): array {
 		if ($header === '') {
 			return [];
 		}
 
 		return array_values(array_filter(array_map('trim', explode(',', $header)), static fn (string $value): bool => $value !== ''));
+	}
+
+	/**
+	 * @return array{etag: string|null, status: int, location: string|null, lastModified: string|null}
+	 */
+	private function parsePutResponse(IResponse $response): array {
+		$status = $response->getStatusCode();
+		$etag = trim($response->getHeader('ETag'));
+		$location = trim($response->getHeader('Location'));
+		$lastModified = trim($response->getHeader('Last-Modified'));
+
+		return [
+			'status' => $status,
+			'etag' => $etag !== '' ? $etag : null,
+			'location' => $location !== '' ? $location : null,
+			'lastModified' => $lastModified !== '' ? $lastModified : null
+		];
 	}
 
 	private function parseMultistatusProperties(IResponse $response): array {
@@ -485,4 +617,98 @@ class RemoteClient {
 		return null;
 	}
 
+	private function logRequest(string $method, string $url, array $options): void {
+		if ($this->logger === null) {
+			return;
+		}
+
+		$lines = [
+			Application::APP_TAG . ' Request:',
+			sprintf('Method: %s', $method),
+			sprintf('RequestUri: %s', $url),
+			'Headers:',
+			$this->formatHeaders($this->extractRequestHeaders($options)),
+			'Body:',
+			$this->formatBody($options['body'] ?? null),
+			''
+		];
+
+		$this->logger->debug(implode("\n", $lines));
+	}
+
+	private function logResponseSuccess(string $method, string $url, array $options, IResponse $response, string $body): void {
+		if ($this->logger === null) {
+			return;
+		}
+
+		$lines = [
+			Application::APP_TAG . ' Response:',
+			sprintf('Method: %s', $method),
+			sprintf('RequestUri: %s', $url),
+			sprintf('StatusCode: %d', $response->getStatusCode()),
+			'Headers:',
+			$this->formatHeaders($response->getHeaders()),
+			'Body:',
+			$this->formatBody($body),
+			''
+		];
+
+		$this->logger->debug(implode("\n", $lines));
+	}
+
+	private function logRequestFailure(string $method, string $url, array $options, ClientExceptionInterface $e): void {
+		if ($this->logger === null) {
+			return;
+		}
+
+		$lines = [
+			Application::APP_TAG . ' Request failed:',
+			sprintf('Method: %s', $method),
+			sprintf('RequestUri: %s', $url),
+			'Headers:',
+			$this->formatHeaders($this->extractRequestHeaders($options)),
+			'Body:',
+			$this->formatBody($options['body'] ?? null),
+			sprintf('Error: %s', $e::class),
+			sprintf('Message: %s', $e->getMessage()),
+			''
+		];
+
+		$this->logger->debug(implode("\n", $lines));
+	}
+
+}
+
+final class BufferedResponse implements IResponse {
+	/**
+	 * @param array<string, mixed> $headers
+	 */
+	public function __construct(
+		private int $statusCode,
+		private array $headers,
+		private string $body,
+	) {
+	}
+
+	public function getBody() {
+		return $this->body;
+	}
+
+	public function getStatusCode(): int {
+		return $this->statusCode;
+	}
+
+	public function getHeader(string $key): string {
+		$headers = $this->headers[$key] ?? [];
+
+		if (!is_array($headers) || $headers === []) {
+			return '';
+		}
+
+		return (string)$headers[0];
+	}
+
+	public function getHeaders(): array {
+		return $this->headers;
+	}
 }

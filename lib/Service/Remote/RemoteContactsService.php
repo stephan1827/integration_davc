@@ -278,12 +278,12 @@ class RemoteContactsService {
 		} else {
 			$path = $so->CCID . $so->CEID;
 		}
-
 		$data = $so->data ? $so->data->serialize() : '';
-		$signature = $this->dataStore->create($path, $data, "application/vcard");
+		
+		$result = $this->dataStore->create($path, $data, "application/vcard");
 
 		$ro = clone $so;
-		//$ro->Signature = $signature;
+		$ro->Signature = $result['etag'] ?? null;
 
 		return $ro;
 	}
@@ -298,12 +298,12 @@ class RemoteContactsService {
 		} else {
 			$path = $so->CCID . $so->CEID;
 		}
-
 		$data = $so->data ? $so->data->serialize() : '';
-		$signature = $this->dataStore->update($path, $data, "application/vcard");
+		
+		$result = $this->dataStore->update($path, $data, "application/vcard");
 
 		$ro = clone $so;
-		//$ro->Signature = $signature;
+		$ro->Signature = $result['etag'] ?? null;
 		
 		return $ro;
 	}

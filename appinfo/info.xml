@@ -26,6 +26,7 @@
     </dependencies>
     <commands>
 		<command>OCA\DAVC\Commands\Connect</command>
+        <command>OCA\DAVC\Commands\Debug</command>
 		<command>OCA\DAVC\Commands\Disconnect</command>
 		<command>OCA\DAVC\Commands\Harmonize</command>
         <command>OCA\DAVC\Commands\Show</command>

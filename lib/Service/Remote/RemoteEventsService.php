@@ -279,12 +279,12 @@ class RemoteEventsService {
 		} else {
 			$path = $so->CCID . $so->CEID;
 		}
-
 		$data = $so->data ? $so->data->serialize() : '';
-		$signature = $this->dataStore->create($path, $data, "application/vcalendar");
+
+		$result = $this->dataStore->create($path, $data, "application/vcalendar");
 
 		$ro = clone $so;
-		//$ro->Signature = $signature;
+		$ro->Signature = $result['etag'] ?? null;
 
 		return $ro;
 	}
@@ -299,12 +299,12 @@ class RemoteEventsService {
 		} else {
 			$path = $so->CCID . $so->CEID;
 		}
-
 		$data = $so->data ? $so->data->serialize() : '';
-		$signature = $this->dataStore->update($path, $data, "application/vcalendar");
+
+		$result = $this->dataStore->update($path, $data, "application/vcalendar");
 
 		$ro = clone $so;
-		//$ro->Signature = $signature;
+		$ro->Signature = $result['etag'] ?? null;
 		
 		return $ro;
 	}

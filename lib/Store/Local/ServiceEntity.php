@@ -28,14 +28,14 @@ use OCP\AppFramework\Db\Entity;
  * @method setLocationPort(int $value): void
  * @method getLocationPath(): ?string
  * @method setLocationPath(string $value): void
+ * @method getLocationSecurity(): bool
+ * @method setLocationSecurity(bool $value): void
  * @method getPrincipalUrl(): ?string
  * @method setPrincipalUrl(string $value): void
  * @method getCalendarsUrl(): ?string
  * @method setCalendarsUrl(string $value): void
  * @method getAddressbooksUrl(): ?string
  * @method setAddressbooksUrl(string $value): void
- * @method getLocationSecurity(): bool
- * @method setLocationSecurity(bool $value): void
  * @method getAuth(): ?string
  * @method setAuth(string $value): void
  * @method getBauthId(): ?string
