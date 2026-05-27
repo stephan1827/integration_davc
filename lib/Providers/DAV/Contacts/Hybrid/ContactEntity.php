@@ -105,7 +105,7 @@ class ContactEntity implements \Sabre\CardDAV\ICard, \Sabre\DAVACL\IACL {
 	 * @inheritDoc
 	 */
 	public function getName() {
-		return ($this->entity->uuid ?? $this->entity->remoteEntityId) . '.vcf';
+		return ($this->entity->uuid ?? $this->entity->remoteEntityId);
 	}
 
 	/**
