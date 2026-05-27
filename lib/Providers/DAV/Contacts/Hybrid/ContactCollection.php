@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\DAVC\Providers\DAV\Contacts\Hybrid;
 
+use OCA\DAVC\Providers\DAV\Constants;
 use OCA\DAVC\Models\Contacts\Collection;
 use OCA\DAVC\Models\Contacts\Entity;
 use OCA\DAVC\Service\Local\LocalContactsService;
@@ -169,8 +170,9 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 	public function getProperties($properties): array {
 		// return collection properties
 		return [
-			'{DAV:}displayname' => $this->collection->label,
-			'{http://owncloud.org/ns}enabled' => (string)$this->collection->visible,
+			Constants::DAV_PROPERTY_OWNER => $this->getOwner(),
+			Constants::DAV_PROPERTY_DISPLAYNAME => $this->collection->label,
+			Constants::DAV_PROPERTY_ADDRESSBOOK_ENABLED => (string)$this->collection->visible,
 		];
 	}
 
@@ -188,13 +190,13 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 		if (count($mutations) > 0) {
 			$mutation = new Collection();
 			// evaluate if name was changed
-			if (isset($mutations['{DAV:}displayname'])) {
-				$mutation->label = $mutations['{DAV:}displayname'];
-				$propPatch->setResultCode('{DAV:}displayname', 200);
+			if (isset($mutations[Constants::DAV_PROPERTY_DISPLAYNAME])) {
+				$mutation->label = $mutations[Constants::DAV_PROPERTY_DISPLAYNAME];
+				$propPatch->setResultCode(Constants::DAV_PROPERTY_DISPLAYNAME, 200);
 			}
-			if (isset($mutations['{http://owncloud.org/ns}enabled'])) {
-				$mutation->visible = (bool)$mutations['{http://owncloud.org/ns}enabled'];
-				$propPatch->setResultCode('{http://owncloud.org/ns}enabled', 200);
+			if (isset($mutations[Constants::DAV_PROPERTY_ADDRESSBOOK_ENABLED])) {
+				$mutation->visible = (bool)$mutations[Constants::DAV_PROPERTY_ADDRESSBOOK_ENABLED];
+				$propPatch->setResultCode(Constants::DAV_PROPERTY_ADDRESSBOOK_ENABLED, 200);
 			}
 			// update collection
 			$this->collection = $this->localService->collectionModify($this->collection->localId, $mutation);

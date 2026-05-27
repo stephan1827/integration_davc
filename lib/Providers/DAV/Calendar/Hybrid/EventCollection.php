@@ -11,8 +11,8 @@ namespace OCA\DAVC\Providers\DAV\Calendar\Hybrid;
 
 use DateTimeInterface;
 use OCA\DAV\CalDAV\Integration\ExternalCalendar;
-use OCA\DAV\CalDAV\Plugin;
 use OCA\DAVC\AppInfo\Application;
+use OCA\DAVC\Providers\DAV\Constants;
 use OCA\DAVC\Models\Calendars\Collection;
 use OCA\DAVC\Models\Calendars\Entity;
 use OCA\DAVC\Service\Local\LocalEventsService;
@@ -27,7 +27,6 @@ use Sabre\DAV\IMultiGet;
 use Sabre\DAV\IProperties;
 use Sabre\DAV\PropPatch;
 use Sabre\DAV\Sync\ISyncCollection;
-use Sabre\VObject\Reader;
 
 class EventCollection extends ExternalCalendar implements ICalendar, IProperties, IMultiGet, ISyncCollection {
 	
@@ -190,10 +189,11 @@ class EventCollection extends ExternalCalendar implements ICalendar, IProperties
 	public function getProperties($properties): array {
 		// return collection properties
 		return [
-			'{DAV:}displayname' => $this->collection->label,
-			'{http://apple.com/ns/ical/}calendar-color' => $this->collection->color,
-			'{http://owncloud.org/ns}calendar-enabled' => (string)$this->collection->visible,
-			'{' . Plugin::NS_CALDAV . '}supported-calendar-component-set' => new SupportedCalendarComponentSet(['VEVENT']),
+			Constants::DAV_PROPERTY_OWNER => $this->getOwner(),
+			Constants::DAV_PROPERTY_DISPLAYNAME => $this->collection->label,
+			Constants::DAV_PROPERTY_CALENDAR_ENABLED => (string)$this->collection->visible,
+			Constants::DAV_PROPERTY_CALENDAR_COMPONENT_SET => new SupportedCalendarComponentSet(['VEVENT']),
+			Constants::DAV_PROPERTY_COLOR => $this->collection->color,
 		];
 	}
 
@@ -211,19 +211,19 @@ class EventCollection extends ExternalCalendar implements ICalendar, IProperties
 		if (count($mutations) > 0) {
 			$mutation = new Collection();
 			// evaluate if name was changed
-			if (isset($mutations['{DAV:}displayname'])) {
-				$mutation->label = $mutations['{DAV:}displayname'];
-				$propPatch->setResultCode('{DAV:}displayname', 200);
+			if (isset($mutations[Constants::DAV_PROPERTY_DISPLAYNAME])) {
+				$mutation->label = $mutations[Constants::DAV_PROPERTY_DISPLAYNAME];
+				$propPatch->setResultCode(Constants::DAV_PROPERTY_DISPLAYNAME, 200);
 			}
 			// evaluate if color was changed
-			if (isset($mutations['{http://apple.com/ns/ical/}calendar-color'])) {
-				$mutation->color = $mutations['{http://apple.com/ns/ical/}calendar-color'];
-				$propPatch->setResultCode('{http://apple.com/ns/ical/}calendar-color', 200);
+			if (isset($mutations[Constants::DAV_PROPERTY_COLOR])) {
+				$mutation->color = $mutations[Constants::DAV_PROPERTY_COLOR];
+				$propPatch->setResultCode(Constants::DAV_PROPERTY_COLOR, 200);
 			}
 			// evaluate if enabled was changed
-			if (isset($mutations['{http://owncloud.org/ns}calendar-enabled'])) {
-				$mutation->visible = $mutations['{http://owncloud.org/ns}calendar-enabled'];
-				$propPatch->setResultCode('{http://owncloud.org/ns}calendar-enabled', 200);
+			if (isset($mutations[Constants::DAV_PROPERTY_CALENDAR_ENABLED])) {
+				$mutation->visible = $mutations[Constants::DAV_PROPERTY_CALENDAR_ENABLED];
+				$propPatch->setResultCode(Constants::DAV_PROPERTY_CALENDAR_ENABLED, 200);
 			}
 			// update collection
 			$this->collection = $this->localService->collectionModify($this->collection->localId, $mutation);
