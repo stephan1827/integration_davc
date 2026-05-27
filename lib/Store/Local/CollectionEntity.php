@@ -11,6 +11,7 @@ namespace OCA\DAVC\Store\Local;
 
 use JsonSerializable;
 use OCP\AppFramework\Db\Entity;
+use OCP\DB\Types;
 
 /**
  * @method getId(): int
@@ -24,6 +25,8 @@ use OCP\AppFramework\Db\Entity;
  * @method setCcid(string $ccid): void
  * @method getUuid(): ?string
  * @method setUuid(string $uuid): void
+ * @method getPermissions(): ?array
+ * @method setPermissions(?array $permissions): void
  * @method getLabel(): ?string
  * @method setLabel(string $label): void
  * @method getColor(): ?string
@@ -47,6 +50,7 @@ class CollectionEntity extends Entity implements JsonSerializable {
 	protected ?string $type = null;
 	protected ?string $ccid = null;
 	protected ?string $uuid = null;
+	protected ?array $permissions = null;
 	protected ?string $label = null;
 	protected ?string $color = null;
 	protected ?int $visible = 1;
@@ -56,6 +60,10 @@ class CollectionEntity extends Entity implements JsonSerializable {
 	protected ?int $hlockhd = 0;
 	protected ?int $hlockhb = 0;
 
+	public function __construct() {
+		$this->addType('permissions', Types::JSON);
+	}
+
 	public function jsonSerialize(): array {
 		return [
 			'id' => $this->id,
@@ -64,6 +72,7 @@ class CollectionEntity extends Entity implements JsonSerializable {
 			'type' => $this->type,
 			'ccid' => $this->ccid,
 			'uuid' => $this->uuid,
+			'permissions' => $this->permissions,
 			'label' => $this->label,
 			'color' => $this->color,
 			'visible' => $this->visible,

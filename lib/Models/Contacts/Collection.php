@@ -17,6 +17,7 @@ class Collection {
 	public ?string $localSignature = null;
 	public ?string $remoteId = null;
 	public ?string $remoteSignature = null;
+	public ?array $permissions = null;
 	public ?string $uuid = null;
 	public ?string $label = null;
 	public ?string $description = null;

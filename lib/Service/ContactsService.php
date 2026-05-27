@@ -168,6 +168,7 @@ class ContactsService {
 		}
 
 		// update and deposit remote harmonization signature
+		$collection->setPermissions($remoteCollection->permissions);
 		if (!empty($remoteEntityDelta->signature)) {
 			$collection->setHesn($remoteEntityDelta->signature);
 		} else {
