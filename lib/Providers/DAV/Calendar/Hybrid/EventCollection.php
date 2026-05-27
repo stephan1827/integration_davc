@@ -37,7 +37,7 @@ class EventCollection extends ExternalCalendar implements ICalendar, IProperties
 		private readonly ServicesStore $servicesStore,
 		private readonly LocalEventsService $localService,
 		private readonly RemoteFactory $remoteFactory,
-		private readonly Collection $collection
+		private Collection $collection
 	) {
 		parent::__construct(Application::APP_ID, $collection->uuid);
 	}

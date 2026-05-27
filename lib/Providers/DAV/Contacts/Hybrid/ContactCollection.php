@@ -33,7 +33,7 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 		private readonly ServicesStore $servicesStore,
 		private readonly LocalContactsService $localService,
 		private readonly RemoteFactory $remoteFactory,
-		private readonly Collection $collection
+		private Collection $collection
 	) {}
 
 	/** 
