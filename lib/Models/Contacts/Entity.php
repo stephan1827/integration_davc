@@ -9,18 +9,16 @@ declare(strict_types=1);
 
 namespace OCA\DAVC\Models\Contacts;
 
-use OCA\DAVC\Models\OriginTypes;
-use Sabre\VObject\Component\VCard;
-
 class Entity {
 
-	public OriginTypes|null $Origin = null;		// System
-	public string|null $ID = null;              // System Entity Id
-	public string|null $CID = null;             // System Collection Id
-	public string|null $Signature = null;       // System Entity Signature
-	public string|null $CCID = null;            // Correlation Collection Id
-	public string|null $CEID = null;            // Correlation Entity Id
-	public string|null $CESN = null;            // Correlation Signature
-	public VCard|null $data = null;             // Contact Data
+	public int|null $localCollectionId = null;
+	public int|null $localEntityId = null;
+	public string|null $localSignature = null;
+	public string|null $remoteCollectionId = null;
+	public string|null $remoteEntityId = null;
+	public string|null $remoteSignature = null;
+	public string|null $correlationSignature = null;
+	public string|null $uuid = null;
+	public string|null $data = null;
 
 }

@@ -9,19 +9,11 @@ declare(strict_types=1);
 
 namespace OCA\DAVC\Service\Remote;
 
-use Exception;
 use RuntimeException;
 
 use OCA\DAVC\Models\Contacts\Collection;
 use OCA\DAVC\Models\Contacts\Entity;
 use OCA\DAVC\Models\DeltaObject;
-use OCA\DAVC\Models\OriginTypes;
-use OCA\DAVC\Store\Common\Filters\IFilter;
-use OCA\DAVC\Store\Common\Sort\ISort;
-use OCA\DAVC\Store\Remote\Filters\ContactFilter;
-use OCA\DAVC\Store\Remote\Sort\ContactSort;
-use Sabre\VObject\Component\VCard;
-use Sabre\VObject\Reader;
 
 class RemoteContactsService {
 	protected RemoteClient $dataStore;
@@ -92,7 +84,7 @@ class RemoteContactsService {
 				continue;
 			}
 
-			$list[] = $this->toCollection($id, $properties);
+			$list[] = $this->toCollectionModel($id, $properties);
 			
 		}
 		// return collection of collections
@@ -116,7 +108,7 @@ class RemoteContactsService {
 				continue;
 			}
 
-			return $this->toCollection($id, $properties);
+			return $this->toCollectionModel($id, $properties);
 		}
 
 		return null;
@@ -127,10 +119,8 @@ class RemoteContactsService {
 	 *
 	 * @param string|null $location Id of parent collection
 	 * @param string|null $granularity Amount of detail to return
-	 * @param IFilter|null $filter Properties to filter by
-	 * @param ISort|null $sort Properties to sort by
 	 */
-	public function entityList(?string $location = null, ?string $granularity = null, ?IFilter $filter = null, ?ISort $sort = null): array {
+	public function entityList(?string $location = null, ?string $granularity = null): array {
 
 		$properties = $granularity === 'basic' ? $this->entityPropertiesBasic : $this->entityPropertiesDefault;
 
@@ -147,18 +137,10 @@ class RemoteContactsService {
 				continue;
 			}
 
-			$entity = $this->toContactEntity($resource[200], ['ID' => $identifier, 'CID' => $location]);
+			$entity = $this->toEntityModel($resource[200], ['remoteEntityId' => $identifier, 'remoteCollectionId' => $location]);
 			$list[$identifier] = $entity;
 		}
 		return $list;
-	}
-
-	public function entityListFilter(): ContactFilter {
-		return new ContactFilter();
-	}
-
-	public function entityListSort(): ContactSort {
-		return new ContactSort();
 	}
 
 	/**
@@ -250,7 +232,7 @@ class RemoteContactsService {
 		if (isset($responses[$identifier])) {
 			$response = $responses[$identifier];
 			if ($response['status'] === 200) {
-				return $this->toContactEntity($response);
+				return $this->toEntityModel($response, ['remoteEntityId' => $identifier, 'remoteCollectionId' => $location]);
 			}
 		}
 
@@ -273,17 +255,17 @@ class RemoteContactsService {
 	 */
 	public function entityCreate(Entity $so): ?Entity {
 
-		if (str_starts_with($so->CEID, $so->CCID)) {
-			$path = $so->CEID;
+		if (str_starts_with($so->remoteEntityId, $so->remoteCollectionId)) {
+			$path = $so->remoteEntityId;
 		} else {
-			$path = $so->CCID . $so->CEID;
+			$path = $so->remoteCollectionId . $so->remoteEntityId;
 		}
-		$data = $so->data ? $so->data->serialize() : '';
+		$data = $so->data;
 		
 		$result = $this->dataStore->create($path, $data, "application/vcard");
 
 		$ro = clone $so;
-		$ro->Signature = $result['etag'] ?? null;
+		$ro->remoteSignature = $result['etag'] ?? null;
 
 		return $ro;
 	}
@@ -293,17 +275,17 @@ class RemoteContactsService {
 	 */
 	public function entityModify(Entity $so): ?Entity {
 
-		if (str_starts_with($so->CEID, $so->CCID)) {
-			$path = $so->CEID;
+		if (str_starts_with($so->remoteEntityId, $so->remoteCollectionId)) {
+			$path = $so->remoteEntityId;
 		} else {
-			$path = $so->CCID . $so->CEID;
+			$path = $so->remoteCollectionId . $so->remoteEntityId;
 		}
-		$data = $so->data ? $so->data->serialize() : '';
+		$data = $so->data;
 		
 		$result = $this->dataStore->update($path, $data, "application/vcard");
 
 		$ro = clone $so;
-		$ro->Signature = $result['etag'] ?? null;
+		$ro->remoteSignature = $result['etag'] ?? null;
 		
 		return $ro;
 	}
@@ -326,14 +308,14 @@ class RemoteContactsService {
 	/**
 	 * convert dav collection to event collection
 	 */
-	private function toCollection(string $id, array $so): Collection {
+	private function toCollectionModel(string $id, array $so): Collection {
 		$to = new Collection();
-		$to->Id = $id;
-		$to->Signature = $so[RemoteClient::DAV_SYNC_TOKEN] ?? $so[RemoteClient::SABREDAV_SYNC_TOKEN] ?? $so[RemoteClient::CALENDARSERVER_GETCTAG] ?? null;
-		$to->Label = $so[RemoteClient::DAV_DISPLAYNAME] ?? null;
-		$to->Description = $so[RemoteClient::CALDAV_CALENDAR_DESCRIPTION] ?? null;
-		$to->Priority = isset($so[RemoteClient::APPLE_ICAL_CALENDAR_ORDER]) ? (int)$so[RemoteClient::APPLE_ICAL_CALENDAR_ORDER] : null;
-		$to->Color = $so[RemoteClient::APPLE_ICAL_CALENDAR_COLOR] ?? null;
+		$to->remoteId = $id;
+		$to->remoteSignature = $so[RemoteClient::DAV_SYNC_TOKEN] ?? $so[RemoteClient::SABREDAV_SYNC_TOKEN] ?? $so[RemoteClient::CALENDARSERVER_GETCTAG] ?? null;
+		$to->label = $so[RemoteClient::DAV_DISPLAYNAME] ?? null;
+		$to->description = $so[RemoteClient::CALDAV_CALENDAR_DESCRIPTION] ?? null;
+		$to->priority = isset($so[RemoteClient::APPLE_ICAL_CALENDAR_ORDER]) ? (int)$so[RemoteClient::APPLE_ICAL_CALENDAR_ORDER] : null;
+		$to->color = $so[RemoteClient::APPLE_ICAL_CALENDAR_COLOR] ?? null;
 		return $to;
 	}
 
@@ -342,18 +324,11 @@ class RemoteContactsService {
 	 *
 	 * @param array<string, mixed> $additional
 	 */
-	public function toContactEntity(array $data, array $additional = []): Entity {
-		// convert payload to vobject
-		if (isset($data['payload']) && is_string($data['payload'])) {
-			/** @var VCard $vo */
-			$vo = Reader::read($data['payload']);
-		}
-		// construct entity
+	public function toEntityModel(array $data, array $additional = []): Entity {
 		$to = new Entity();
-		$to->Origin = OriginTypes::External;
-		$to->ID = $data['href'] ?? null;
-		$to->data = $vo ?? null;
-		$to->Signature = $data['etag'] ?? $data[RemoteClient::DAV_ETAG] ?? null;
+		$to->remoteEntityId = $data['href'] ?? null;
+		$to->remoteSignature = $data['etag'] ?? $data[RemoteClient::DAV_ETAG] ?? md5($data['payload'] ?? '');
+		$to->data = $data['payload'] ?? null;
 
 		foreach ($additional as $label => $value) {
 			if (property_exists($to, $label)) {
@@ -362,32 +337,6 @@ class RemoteContactsService {
 		}
 
 		return $to;
-	}
-
-	/**
-	 * generate entity signature
-	 *
-	 * @param Entity $to - entity object
-	 *
-	 * @return string entity signature
-	 */
-	public function generateSignature(Entity $to): string {
-
-		// clone self
-		$o = clone $to;
-		// remove non needed values
-		unset(
-			$o->Origin,
-			$o->ID,
-			$o->CID,
-			$o->Signature,
-			$o->CCID,
-			$o->CEID,
-			$o->CESN,
-		);
-
-		// generate signature
-		return md5(json_encode($o, JSON_PARTIAL_OUTPUT_ON_ERROR));
 	}
 
 }

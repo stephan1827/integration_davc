@@ -279,7 +279,7 @@ class CoreService {
 				$collections = $remoteContactsService->collectionList();
 				$data['ContactsSupported'] = true;
 				$data['ContactsCollections'] = array_map(function ($collection) {
-					return ['id' => $collection->Id, 'label' => 'Personal - ' . $collection->Label];
+					return ['id' => $collection->remoteId, 'label' => 'Personal - ' . $collection->label];
 				}, $collections);
 			} catch (Throwable $e) {
 				// AddressBook name space is not supported fail silently
@@ -305,7 +305,7 @@ class CoreService {
 				$remoteEventsService = $this->remoteFactory->eventsService($remoteStore);
 				$collections = $remoteEventsService->collectionList();
 				$data['EventsCollections'] = array_map(function ($collection) {
-					return ['id' => $collection->Id, 'label' => 'Personal - ' . $collection->Label];
+					return ['id' => $collection->remoteId, 'label' => 'Personal - ' . $collection->label];
 				}, $collections);
 			} catch (Throwable $e) {
 				$data['EventsSupported'] = false;

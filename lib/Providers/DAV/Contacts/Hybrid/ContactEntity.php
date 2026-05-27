@@ -9,18 +9,13 @@ declare(strict_types=1);
 
 namespace OCA\DAVC\Providers\DAV\Contacts\Hybrid;
 
-use OCA\DAVC\Store\Local\ContactEntity as ContactEntityData;
+use OCA\DAVC\Models\Contacts\Entity;
 
 class ContactEntity implements \Sabre\CardDAV\ICard, \Sabre\DAVACL\IACL {
-	/**
-	 * Entity Constructor
-	 *
-	 * @param ContactCollection $collection
-	 * @param ContactEntityData $entity
-	 */
+
 	public function __construct(
 		private readonly ContactCollection $collection,
-		private readonly ContactEntityData $entity
+		private readonly Entity $entity
 	){}
 
 	/**
@@ -68,7 +63,7 @@ class ContactEntity implements \Sabre\CardDAV\ICard, \Sabre\DAVACL\IACL {
 	 * @inheritDoc
 	 */
 	public function get() {
-		return $this->entity->getData();
+		return $this->entity->data;
 	}
 
 	/**
@@ -96,21 +91,21 @@ class ContactEntity implements \Sabre\CardDAV\ICard, \Sabre\DAVACL\IACL {
 	 * @inheritDoc
 	 */
 	public function getETag() {
-		return $this->entity->getSignature();
+		return $this->entity->localSignature ?? $this->entity->remoteSignature ?? null;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function getSize() {
-		return strlen($this->entity->getData());
+		return strlen($this->entity->data ?? '');
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function getName() {
-		return $this->entity->getUuid() . '.vcf';
+		return ($this->entity->uuid ?? $this->entity->remoteEntityId) . '.vcf';
 	}
 
 	/**

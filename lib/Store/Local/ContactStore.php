@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace OCA\DAVC\Store\Local;
 
+use OCA\DAVC\Store\Local\Filters\CollectionFilter;
+use OCA\DAVC\Store\Local\Filters\ContactFilter;
 use OCP\IDBConnection;
 
 class ContactStore extends BaseStore {
@@ -24,6 +26,14 @@ class ContactStore extends BaseStore {
 		$this->_EntityClass = ContactEntity::class;
 		$this->_ChronicleTable = 'davc_chronicle';
 
+	}
+
+	public function collectionListFilter(): CollectionFilter {
+		return new CollectionFilter();
+	}
+
+	public function entityListFilter(): ContactFilter {
+		return new ContactFilter();
 	}
 
 }

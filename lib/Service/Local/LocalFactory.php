@@ -19,7 +19,7 @@ class LocalFactory {
 	 *
 	 * @since Release 1.0.0
 	 */
-	public function contactsService(string $userId): LocalContactsService {
+	public function contactsService(): LocalContactsService {
 		$service = new LocalContactsService();
 		$service->initialize($this->contactsStore());
 		return $service;
@@ -30,7 +30,7 @@ class LocalFactory {
 	 *
 	 * @since Release 1.0.0
 	 */
-	public function eventsService(string $userId): LocalEventsService {
+	public function eventsService(): LocalEventsService {
 		$service = new LocalEventsService();
 		$service->initialize($this->eventsStore());
 		return $service;

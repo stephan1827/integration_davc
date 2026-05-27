@@ -12,20 +12,28 @@ namespace OCA\DAVC\Providers\DAV\Calendar\Hybrid;
 use OCA\DAV\CalDAV\Integration\ExternalCalendar;
 use OCA\DAV\CalDAV\Integration\ICalendarProvider as ICalendarProvider2;
 use OCA\DAVC\AppInfo\Application;
+use OCA\DAVC\Models\Calendars\Collection;
+use OCA\DAVC\Service\Local\LocalEventsService;
+use OCA\DAVC\Service\Local\LocalFactory;
 use OCA\DAVC\Service\Remote\RemoteFactory;
-use OCA\DAVC\Store\Local\CollectionEntity;
-use OCA\DAVC\Store\Local\EventStore;
 use OCA\DAVC\Store\Local\ServicesStore;
 use OCP\Calendar\ICalendarProvider as ICalendarProvider1;
 
 class Provider implements ICalendarProvider1, ICalendarProvider2 {
 	protected array $_CollectionCache = [];
+	protected LocalEventsService $localService;
 
 	public function __construct(
 		private readonly ServicesStore $servicesStore,
-		private readonly EventStore $localStore,
+		private readonly LocalFactory $localFactory,
 		private readonly RemoteFactory $remoteFactory,
-	) {}
+	) {
+		$this->localService = $this->localFactory->eventsService();
+	}
+
+	protected function extractUserId(string $principalUri): string {
+		return substr($principalUri, 17);
+	}
 
 	/**
 	 * @inheritDoc
@@ -46,17 +54,16 @@ class Provider implements ICalendarProvider1, ICalendarProvider2 {
 	 */
 	public function fetchAllForCalendarHome(string $principalUri): array {
 		$userId = $this->extractUserId($principalUri);
+		// construct filter
+		$listFilter = $this->localService->collectionListFilter();
+		$listFilter->condition('uid', $userId);
+		// retrieve collection(s)
+		$collections = $this->localService->collectionList($listFilter);
 		// construct collection objects list
 		$list = [];
-		// construct filter
-		$storeFilter = $this->localStore->collectionListFilter();
-		$storeFilter->condition('uid', $userId);
-		// retrieve collection(s)
-		$collections = $this->localStore->collectionList($storeFilter);
-		// add collections to list
 		foreach ($collections as $entry) {
-			$collection = $this->collectionFromDataEntity($entry);
-			$this->cacheStoreCollection($userId, $entry->getUuid(), $collection);
+			$collection = $this->collectionFromModel($entry);
+			$this->cacheStoreCollection($entry->userId, $entry->uuid, $collection);
 			$list[] = $collection;
 		}
 		return $list;
@@ -73,16 +80,17 @@ class Provider implements ICalendarProvider1, ICalendarProvider2 {
 			return true;
 		}
 		// construct filter
-		$storeFilter = $this->localStore->collectionListFilter();
-		$storeFilter->condition('uid', $userId);
-		$storeFilter->condition('uuid', $calendarUri);
-		// check if collection exists in events store
-		$collections = $this->localStore->collectionList($storeFilter);
-		if (count($collections) > 0) {
-			$collection = $this->collectionFromDataEntity($collections[0]);
+		$listFilter = $this->localService->collectionListFilter();
+		$listFilter->condition('uid', $userId);
+		$listFilter->condition('uuid', $calendarUri);
+		// check if collection exists in store
+		$collections = $this->localService->collectionList($listFilter);
+		if ($collections !== []) {
+			$collection = $this->collectionFromModel(reset($collections));
 			$this->cacheStoreCollection($userId, $calendarUri, $collection);
 			return true;
 		}
+		// collection not found
 		return false;
 	}
 
@@ -97,22 +105,18 @@ class Provider implements ICalendarProvider1, ICalendarProvider2 {
 			return $collection;
 		}
 		// construct filter
-		$storeFilter = $this->localStore->collectionListFilter();
-		$storeFilter->condition('uid', $userId);
-		$storeFilter->condition('uuid', $calendarUri);
-		// check if collection exists in events store
-		$collections = $this->localStore->collectionList($storeFilter);
+		$listFilter = $this->localService->collectionListFilter();
+		$listFilter->condition('uid', $userId);
+		$listFilter->condition('uuid', $calendarUri);
+		// check if collection exists in store
+		$collections = $this->localService->collectionList($listFilter);
 		if (count($collections) > 0) {
-			$collection = $this->collectionFromDataEntity($collections[0]);
+			$collection = $this->collectionFromModel(reset($collections));
 			$this->cacheStoreCollection($userId, $calendarUri, $collection);
 			return $collection;
 		}
 		// collection not found
 		return null;
-	}
-	
-	protected function extractUserId(string $principalUri): string {
-		return substr($principalUri, 17);
 	}
 
 	protected function cacheRetrieveCollection(string $uid, string $cid): EventCollection|null {
@@ -129,11 +133,8 @@ class Provider implements ICalendarProvider1, ICalendarProvider2 {
 		$this->_CollectionCache[$uid][$cid] = $collection;
 	}
 
-	protected function collectionFromDataEntity(CollectionEntity $entity): EventCollection|null {
-		if ($entity->getType() == 'EC') {
-			return new EventCollection($this->servicesStore, $this->remoteFactory, $this->localStore, $entity);
-		}
-		return null;
+	protected function collectionFromModel(Collection $entity): EventCollection {
+		return new EventCollection($this->servicesStore, $this->localService, $this->remoteFactory, $entity);
 	}
 
 }

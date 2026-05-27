@@ -11,10 +11,12 @@ namespace OCA\DAVC\Service\Local;
 
 use OCA\DAVC\Models\Contacts\Collection;
 use OCA\DAVC\Models\Contacts\Entity;
-use OCA\DAVC\Models\OriginTypes;
+use OCA\DAVC\Store\Common\Filters\IFilter;
 use OCA\DAVC\Store\Local\CollectionEntity;
 use OCA\DAVC\Store\Local\ContactEntity;
 use OCA\DAVC\Store\Local\ContactStore;
+use OCA\DAVC\Store\Local\Filters\CollectionFilter;
+use OCA\DAVC\Store\Local\Filters\ContactFilter;
 use Sabre\VObject\Reader;
 
 class LocalContactsService {
@@ -25,44 +27,71 @@ class LocalContactsService {
 	}
 
 	/**
+	 * list collections from local storage
+	 *
+	 * @param IFilter $filter Filter for collections
+	 *
+	 * @return array<Collection>
+	 */
+	public function collectionList(IFilter $filter): array {
+		$co = $this->_Store->collectionList($filter);
+		
+		$list = [];
+		foreach ($co as $entry) {
+			$list[] = $this->toCollectionModel($entry);
+		}
+		return $list;
+	}
+
+	public function collectionListFilter(): CollectionFilter {
+		return $this->_Store->collectionListFilter();
+	}
+
+	/**
 	 * retrieve collection from local storage
 	 *
 	 * @param int $cid Collection ID
 	 *
 	 * @return Collection|null
 	 */
-	public function collectionFetch(int $cid): ?Collection {
-
-		// retrieve collection properties
-		$co = $this->_Store->collectionFetch($cid);
-		// evaluate if properties where retrieve
-		if ($co instanceof CollectionEntity) {
-			// construct object and return
-			return new Collection(
-				(string)$co->getId(),
-				$co->getLabel(),
-				null,
-				null
-			);
-		} else {
-			// return nothing
-			return null;
-		}
-
+	public function collectionFetch(int $id): ?Collection {
+		$co = $this->_Store->collectionFetch($id);
+		return $co instanceof CollectionEntity ? $this->toCollectionModel($co) : null;
 	}
 
-	/**
-	 * delete collection from local storage
-	 *
-	 * @param int $cid collection id
-	 *
-	 * @return void
-	 */
-	public function collectionDeleteById(int $cid): void {
+	public function collectionDelta(int $id): string {
+		return $this->_Store->chronicleApex($id, true);
+	}
 
-		$this->_Store->entityDeleteByCollection($cid);
-		$this->_Store->collectionDeleteById($cid);
+	public function collectionModify(int $id, Collection $mutation): Collection|null {
+		// retrieve existing entry from data store
+		$entry = $this->_Store->collectionFetch($id);
+		
+		if ($entry instanceof CollectionEntity) {
+			// modify collection properties
+			if (isset($mutation->label)) {
+				$entry->setLabel($mutation->label);
+			}
+			if (isset($mutation->visible)) {
+				$entry->setVisible($mutation->visible);
+			}
+			if (isset($mutation->color)) {
+				$entry->setColor($mutation->color);
+			}
+			// update entry in data store
+			if (count($entry->getUpdatedFields()) > 0) {
+				$entry = $this->_Store->collectionModify($entry);
+			}
+		}
 
+		// return modified collection
+		return $this->toCollectionModel($entry);
+	}
+
+	public function collectionDelete(int $id): bool {
+		$this->_Store->entityDeleteByCollection($id);
+		$this->_Store->collectionDeleteById($id);
+		return true;
 	}
 
 	/**
@@ -72,10 +101,30 @@ class LocalContactsService {
 	 *
 	 * @return array collection of entities
 	 */
-	public function entityList(int $cid, string $particulars): array {
+	public function entityList(IFilter $filter): array {
+		$entities = $this->_Store->entityList($filter);
 
-		return $this->_Store->entityListByCollection($cid);
+		$list = [];
+		foreach ($entities as $entry) {
+			$list[] = $this->toEntityModel($entry);
+		}
+		return $list;
+	}
 
+	public function entityListFilter(): ContactFilter {
+		return $this->_Store->entityListFilter();
+	}
+
+	/**
+	 * retrieve entity object from local storage
+	 *
+	 * @param int $id entity id
+	 *
+	 * @return Entity|null
+	 */
+	public function entityFetch(int $id): ?Entity {
+		$eo = $this->_Store->entityFetch($id);
+		return $eo instanceof ContactEntity ? $this->toEntityModel($eo) : null;
 	}
 
 	/**
@@ -88,32 +137,8 @@ class LocalContactsService {
 	 * @return array collection of differences
 	 */
 	public function entityDelta(int $cid, string $signature): array {
-
-		// retrieve collection differences
 		$lcc = $this->_Store->chronicleReminisce($cid, $signature);
-		// return collection differences
 		return $lcc;
-
-	}
-
-	/**
-	 * retrieve entity object from local storage
-	 *
-	 * @param int $id entity id
-	 *
-	 * @return Entity|null
-	 */
-	public function entityFetch(int $id): ?Entity {
-
-		// retrieve entity object
-		$eo = $this->_Store->entityFetch($id);
-		// evaluate if entity was retrieved
-		if ($eo instanceof ContactEntity) {
-			return $this->fromStoreEntity($eo);
-		} else {
-			return null;
-		}
-
 	}
 
 	/**
@@ -126,16 +151,8 @@ class LocalContactsService {
 	 * @return Entity|null
 	 */
 	public function entityFetchByCorrelation(int $cid, string $ccid, string $ceid): ?Entity {
-
-		// retrieve entity object
 		$eo = $this->_Store->entityFetchByCorrelation($cid, $ccid, $ceid);
-		// evaluate if entity was retrieved
-		if ($eo instanceof ContactEntity) {
-			return $this->fromStoreEntity($eo);
-		} else {
-			return null;
-		}
-
+		return $eo instanceof ContactEntity ? $this->toEntityModel($eo) : null;
 	}
 
 	/**
@@ -146,12 +163,11 @@ class LocalContactsService {
 	 * @param int $cid collection id
 	 * @param Entity $so source object
 	 *
-	 * @return Entity Status Object - item id, item uuid, item state token / Null - failed to create
+	 * @return Entity
 	 */
 	public function entityCreate(string $uid, int $sid, int $cid, Entity $so): ?Entity {
-
 		// convert event object to data store entity
-		$eo = $this->toStoreEntity(
+		$eo = $this->fromEntityModel(
 			$so,
 			[
 				'Uid' => $uid,
@@ -161,17 +177,7 @@ class LocalContactsService {
 		);
 		// create entry in data store
 		$eo = $this->_Store->entityCreate($eo);
-		// return result
-		if ($eo) {
-			$ro = clone $so;
-			$ro->ID = (string)$eo->getId();
-			$ro->CID = (string)$eo->getCid();
-			$ro->Signature = $eo->getSignature();
-			return $ro;
-		} else {
-			return null;
-		}
-
+		return $eo instanceof ContactEntity ? $this->toEntityModel($eo) : null;
 	}
 
 	/**
@@ -183,12 +189,11 @@ class LocalContactsService {
 	 * @param int $eid entity id
 	 * @param Entity $so source object
 	 *
-	 * @return Entity Status Object - item id, item uuid, item state token / Null - failed to create
+	 * @return Entity
 	 */
 	public function entityModify(string $uid, int $sid, int $cid, int $eid, Entity $so): ?Entity {
-
 		// convert event object to data store entity
-		$eo = $this->toStoreEntity(
+		$eo = $this->fromEntityModel(
 			$so,
 			[
 				'Id' => $eid,
@@ -199,17 +204,7 @@ class LocalContactsService {
 		);
 		// modify entry in data store
 		$eo = $this->_Store->entityModify($eo);
-		// return result
-		if ($eo) {
-			$ro = clone $so;
-			$ro->ID = (string)$eo->getId();
-			$ro->CID = (string)$eo->getCid();
-			$ro->Signature = $eo->getSignature();
-			return $ro;
-		} else {
-			return null;
-		}
-
+		return $eo instanceof ContactEntity ? $this->toEntityModel($eo) : null;
 	}
 
 	/**
@@ -219,17 +214,9 @@ class LocalContactsService {
 	 *
 	 * @return bool
 	 */
-	public function entityDeleteById(int $eid): bool {
-
-		// delete entry from data store
-		$rs = $this->_Store->entityDeleteById($eid);
-		// return result
-		if ($rs) {
-			return true;
-		} else {
-			return false;
-		}
-
+	public function entityDelete(int $id): bool {
+		$rs = $this->_Store->entityDeleteById($id);
+		return $rs ? true : false;
 	}
 
 	/**
@@ -256,27 +243,35 @@ class LocalContactsService {
 	}
 
 	/**
-	 * convert store entity to contact object
-	 *
-	 * @param ContactEntity $so
-	 * @param array<string,mixed>
-	 *
-	 * @return Entity
+	 * convert store entity to collection object
 	 */
-	public function fromStoreEntity(ContactEntity $so): Entity {
+	public function toCollectionModel(CollectionEntity $so): Collection {
+		$collection = new Collection();
+		$collection->userId = $so->getUid();
+		$collection->serviceId = $so->getSid();
+		$collection->localId = $so->getId();
+		$collection->remoteId = $so->getCcid();
+		$collection->uuid = $so->getUuid();
+		$collection->label = $so->getLabel();
+		$collection->visible = (bool)$so->getVisible();
+		$collection->color = $so->getColor();
 
-		/** VCard $vo */
-		$vo = Reader::read($so->getData());
+		return $collection;
+	}
 
+	/**
+	 * convert store entity to contact object
+	 */
+	public function toEntityModel(ContactEntity $so): Entity {
 		$to = new Entity();
-		$to->Origin = OriginTypes::Internal;
-		$to->ID = (string)$so->getId();
-		$to->CID = (string)$so->getCid();
-		$to->Signature = $so->getSignature();
-		$to->CCID = $so->getCcid();
-		$to->CEID = $so->getCeid();
-		$to->CESN = $so->getCesn();
-		$to->data = $vo;
+		$to->localCollectionId = $so->getCid();
+		$to->localEntityId = $so->getId();
+		$to->localSignature = $so->getSignature();
+		$to->remoteCollectionId = $so->getCcid();
+		$to->remoteEntityId = $so->getCeid();
+		$to->correlationSignature = $so->getCesn();
+		$to->uuid = $so->getUuid();
+		$to->data = $so->getData();
 
 		return $to;
 	}
@@ -284,27 +279,30 @@ class LocalContactsService {
 	/**
 	 * convert contact object to store entity
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param Entity $so
 	 * @param array<string,mixed> $additional
 	 *
 	 * @return ContactEntity
 	 */
-	public function toStoreEntity(Entity $so, array $additional = []): ContactEntity {
+	public function fromEntityModel(Entity $so, array $additional = []): ContactEntity {
 		// construct entity
 		$to = new ContactEntity();
 		// convert source object to entity
-		$to->setData($so->data->serialize());
-		$to->setSignature($so->Signature);
-		$to->setCcid($so->CCID);
-		$to->setCeid($so->CEID);
-		$to->setCesn($so->CESN);
-
-		$vc = $so->data;
-
-		$to->setUuid($vc->UID->getValue());
-
+		$to->setCid($so->localCollectionId);
+		$to->setCcid($so->remoteCollectionId);
+		$to->setCeid($so->remoteEntityId);
+		$to->setCesn($so->correlationSignature);
+		$to->setData($so->data);
+		// calculate signature
+		$signature = md5($so->data ?? '');
+		$to->setSignature($signature);
+		// construct correlation signature
+		$to->setCesn($signature . $so->remoteSignature);
+		// extract additional values from object
+		/** @var \Sabre\VObject\VCard $vo */
+		$vo = Reader::read($so->data);
+		$to->setUuid($vo->UID->getValue());
+		
 		// override / assign additional values
 		foreach ($additional as $key => $value) {
 			$method = 'set' . ucfirst($key);

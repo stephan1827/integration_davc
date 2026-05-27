@@ -13,14 +13,13 @@ use DateTimeInterface;
 use OCA\DAV\CalDAV\Integration\ExternalCalendar;
 use OCA\DAV\CalDAV\Plugin;
 use OCA\DAVC\AppInfo\Application;
+use OCA\DAVC\Models\Calendars\Collection;
 use OCA\DAVC\Models\Calendars\Entity;
+use OCA\DAVC\Service\Local\LocalEventsService;
 use OCA\DAVC\Service\Remote\RemoteEventsService;
 use OCA\DAVC\Service\Remote\RemoteFactory;
 use OCA\DAVC\Store\Common\Filters\FilterComparisonOperator;
 use OCA\DAVC\Store\Common\Range\RangeDate;
-use OCA\DAVC\Store\Local\CollectionEntity as CollectionEntityData;
-use OCA\DAVC\Store\Local\EventEntity as EventEntityData;
-use OCA\DAVC\Store\Local\EventStore;
 use OCA\DAVC\Store\Local\ServicesStore;
 use Sabre\CalDAV\ICalendar;
 use Sabre\CalDAV\Xml\Property\SupportedCalendarComponentSet;
@@ -37,11 +36,11 @@ class EventCollection extends ExternalCalendar implements ICalendar, IProperties
 
 	public function __construct(
 		private readonly ServicesStore $servicesStore,
+		private readonly LocalEventsService $localService,
 		private readonly RemoteFactory $remoteFactory,
-		private readonly EventStore $localStore,
-		private readonly CollectionEntityData $collection
+		private readonly Collection $collection
 	) {
-		parent::__construct(Application::APP_ID, $collection->getUuid());
+		parent::__construct(Application::APP_ID, $collection->uuid);
 	}
 
 	/** 
@@ -53,7 +52,7 @@ class EventCollection extends ExternalCalendar implements ICalendar, IProperties
 			return $this->remoteService;
 		}
 
-		$service = $this->servicesStore->fetch($this->collection->getSid());
+		$service = $this->servicesStore->fetch($this->collection->serviceId);
 		if ($service === null) {
 			throw new \Exception('Service not found');
 		}
@@ -69,7 +68,7 @@ class EventCollection extends ExternalCalendar implements ICalendar, IProperties
 	 * @return string|null
 	 */
 	public function getOwner(): ?string {
-		return self::DAV_USER_PREFIX . $this->collection->getUid();
+		return self::DAV_USER_PREFIX . $this->collection->userId;
 	}
 
 	/**
@@ -86,7 +85,7 @@ class EventCollection extends ExternalCalendar implements ICalendar, IProperties
 	 */
 	/*
 	public function getName(): string {
-		return $this->_collection->getUuid();
+		return $this->collection->uuid;
 	}
 	*/
 
@@ -149,7 +148,7 @@ class EventCollection extends ExternalCalendar implements ICalendar, IProperties
 	 * @return string|null
 	 */
 	public function getSyncToken(): ?string {
-		return $this->localStore->chronicleApex($this->collection->getId(), true);
+		return $this->localService->collectionDelta($this->collection->localId);
 	}
 
 	/**
@@ -163,7 +162,7 @@ class EventCollection extends ExternalCalendar implements ICalendar, IProperties
 	 */
 	public function getChanges($token, $level, $limit = null): array {
 		// retrieve delta
-		$delta = $this->localStore->chronicleReminisce($this->collection->getId(), (string)$token, $limit);
+		$delta = $this->localService->entityDelta($this->collection->localId, (string)$token, $limit);
 		// convert results
 		$changes['added'] = array_column($delta['additions'], 'uuid');
 		$changes['modified'] = array_column($delta['modifications'], 'uuid');
@@ -191,9 +190,9 @@ class EventCollection extends ExternalCalendar implements ICalendar, IProperties
 	public function getProperties($properties): array {
 		// return collection properties
 		return [
-			'{DAV:}displayname' => $this->collection->getLabel(),
-			'{http://apple.com/ns/ical/}calendar-color' => $this->collection->getColor(),
-			'{http://owncloud.org/ns}calendar-enabled' => (string)$this->collection->getVisible(),
+			'{DAV:}displayname' => $this->collection->label,
+			'{http://apple.com/ns/ical/}calendar-color' => $this->collection->color,
+			'{http://owncloud.org/ns}calendar-enabled' => (string)$this->collection->visible,
 			'{' . Plugin::NS_CALDAV . '}supported-calendar-component-set' => new SupportedCalendarComponentSet(['VEVENT']),
 		];
 	}
@@ -210,25 +209,24 @@ class EventCollection extends ExternalCalendar implements ICalendar, IProperties
 		$mutations = $propPatch->getMutations();
 		// evaluate if any mutations apply
 		if (count($mutations) > 0) {
+			$mutation = new Collection();
 			// evaluate if name was changed
 			if (isset($mutations['{DAV:}displayname'])) {
-				$this->collection->setLabel($mutations['{DAV:}displayname']);
+				$mutation->label = $mutations['{DAV:}displayname'];
 				$propPatch->setResultCode('{DAV:}displayname', 200);
 			}
 			// evaluate if color was changed
 			if (isset($mutations['{http://apple.com/ns/ical/}calendar-color'])) {
-				$this->collection->setColor($mutations['{http://apple.com/ns/ical/}calendar-color']);
+				$mutation->color = $mutations['{http://apple.com/ns/ical/}calendar-color'];
 				$propPatch->setResultCode('{http://apple.com/ns/ical/}calendar-color', 200);
 			}
 			// evaluate if enabled was changed
 			if (isset($mutations['{http://owncloud.org/ns}calendar-enabled'])) {
-				$this->collection->setVisible((int)$mutations['{http://owncloud.org/ns}calendar-enabled']);
+				$mutation->visible = $mutations['{http://owncloud.org/ns}calendar-enabled'];
 				$propPatch->setResultCode('{http://owncloud.org/ns}calendar-enabled', 200);
 			}
 			// update collection
-			if (count($this->collection->getUpdatedFields()) > 0) {
-				$this->localStore->collectionModify($this->collection);
-			}
+			$this->collection = $this->localService->collectionModify($this->collection->localId, $mutation);
 		}
 	}
 
@@ -249,11 +247,9 @@ class EventCollection extends ExternalCalendar implements ICalendar, IProperties
 	 * @return void
 	 */
 	public function delete(): void {
-		// delete local entities
-		$this->localStore->entityDeleteByCollection($this->collection->getId());
-		// delete local collection
-		$this->localStore->collectionDelete($this->collection);
+		$this->localService->collectionDelete($this->collection->localId);
 	}
+
 
 	/**
 	 * find entities in this collection
@@ -262,27 +258,27 @@ class EventCollection extends ExternalCalendar implements ICalendar, IProperties
 	 */
 	public function calendarQuery(array $filters): array {
 		// define defaults
-		$storeFilter = $this->localStore->entityListFilter();
-		$storeSort = null;
-		$storeRange = null;
+		$listFilter = $this->localService->entityListFilter();
+		$listSort = null;
+		$listRange = null;
 		// define default filter
-		$storeFilter->condition('cid', $this->collection->getId());
+		$listFilter->condition('cid', $this->collection->localId);
 		// translate other filters
 		if (is_array($filters) && is_array($filters['comp-filters'])) {
 			foreach ($filters['comp-filters'] as $filter) {
 				if (is_array($filter['time-range']) && isset($filter['time-range']['start']) && isset($filter['time-range']['end'])) {
 					if ($filter['time-range']['start'] instanceof DateTimeInterface && $filter['time-range']['end'] instanceof DateTimeInterface) {
-						$storeRange = new RangeDate($filter['time-range']['start'], $filter['time-range']['end']);
+						$listRange = new RangeDate($filter['time-range']['start'], $filter['time-range']['end']);
 					}
 				}
 			}
 		}
 		// retrieve entries
-		$entries = $this->localStore->entityList($storeFilter, $storeSort, $storeRange, ['uuid']);
+		$entries = $this->localService->entityList($listFilter, $listSort, $listRange, ['uuid']);
 		// list entries
 		$list = [];
 		foreach ($entries as $entry) {
-			$list[] = $entry->getUuid();
+			$list[] = $entry->uuid;
 		}
 		// return list
 		return $list;
@@ -295,10 +291,10 @@ class EventCollection extends ExternalCalendar implements ICalendar, IProperties
 	 */
 	public function getChildren(): array {
 		// construct collection filter
-		$storeFilter = $this->localStore->entityListFilter();
-		$storeFilter->condition('cid', $this->collection->getId());
+		$listFilter = $this->localService->entityListFilter();
+		$listFilter->condition('cid', $this->collection->localId);
 		// retrieve entries
-		$entries = $this->localStore->entityList($storeFilter);
+		$entries = $this->localService->entityList($listFilter);
 		// transform entries
 		$list = [];
 		foreach ($entries as $entry) {
@@ -315,10 +311,13 @@ class EventCollection extends ExternalCalendar implements ICalendar, IProperties
 	 * @return bool
 	 */
 	public function childExists($id): bool {
-		// remove extension
-		$id = str_replace('.ics', '', $id);
-		// confirm object exists
-		return (bool)$this->localStore->entityConfirmByUUID($this->collection->getId(), $id);
+		// construct filter
+		$listFilter = $this->localService->entityListFilter();
+		$listFilter->condition('cid', $this->collection->localId);
+		$listFilter->condition('uuid', $id, FilterComparisonOperator::EQ);
+		// retrieve object properties
+		$entities = $this->localService->entityList($listFilter);
+		return count($entities) > 0;
 	}
 
 	/**
@@ -330,11 +329,11 @@ class EventCollection extends ExternalCalendar implements ICalendar, IProperties
 	 */
 	public function getMultipleChildren(array $ids): array {
 		// construct filter
-		$filter = $this->localStore->entityListFilter();
-		$filter->condition('cid', $this->collection->getId());
-		$filter->condition('uuid', $ids, FilterComparisonOperator::IN);
+		$listFilter = $this->localService->entityListFilter();
+		$listFilter->condition('cid', $this->collection->localId);
+		$listFilter->condition('uuid', $ids, FilterComparisonOperator::IN);
 		// retrieve object properties
-		$entities = $this->localStore->entityList($filter);
+		$entities = $this->localService->entityList($listFilter);
 		// construct place holder
 		$list = [];
 		// convert entities
@@ -355,11 +354,11 @@ class EventCollection extends ExternalCalendar implements ICalendar, IProperties
 		// remove extension
 		$id = str_replace('.ics', '', $id);
 		// construct filter
-		$filter = $this->localStore->entityListFilter();
-		$filter->condition('cid', $this->collection->getId());
-		$filter->condition('uuid', $id);
+		$listFilter = $this->localService->entityListFilter();
+		$listFilter->condition('cid', $this->collection->localId);
+		$listFilter->condition('uuid', $id);
 		// retrieve object properties
-		$entities = $this->localStore->entityList($filter);
+		$entities = $this->localService->entityList($listFilter);
 		// evaluate if object properties where retrieved
 		if (count($entities) > 0) {
 			return new EventEntity($this, $entities[0]);
@@ -377,58 +376,66 @@ class EventCollection extends ExternalCalendar implements ICalendar, IProperties
 	 * @return string entity signature
 	 */
 	public function createFile($id, $data = null): string {
-
-		$vo = Reader::read($data);
 	
 		$eo = new Entity();
-		$eo->CCID = $this->collection->getCcid();
-		$eo->CEID = $id;
-		$eo->data = $vo;
+		$eo->localCollectionId = $this->collection->localId;
+		$eo->remoteCollectionId = $this->collection->remoteId;
+		$eo->remoteEntityId = $id;
+		$eo->data = $data;
 
-		$service = $this->remoteService();
+		$remoteService = $this->remoteService();
 
-		$entity = $service->entityCreate($eo);
+		$entity = $remoteService->entityCreate($eo);
+		$entity = $this->localService->entityCreate(
+			$this->collection->userId,
+			$this->collection->serviceId,
+			$this->collection->localId,
+			$entity
+		);
 		
 		// return state
-		return $entity->Signature ?? '';
+		return $entity->localSignature ?? '';
 	}
 
 	/**
 	 * modify a entity in this collection
 	 *
-	 * @param EventEntityData $entity existing entity object
+	 * @param Entity $entity existing entity object
 	 * @param string $data modified entity contents
 	 *
 	 * @return string entity signature
 	 */
-	public function modifyFile(EventEntityData $entity, string $data): string {
+	public function modifyFile(Entity $entity, string $data): string {
 
-		$vo = Reader::read($data);
-	
-		$eo = new Entity();
-		$eo->CCID = $entity->getCcid();
-		$eo->CEID = $entity->getCeid();
-		$eo->data = $vo;
+		$entity->data = $data;
 
-		$service = $this->remoteService();
+		$remoteService = $this->remoteService();
 
-		$entity = $service->entityModify($eo);
+		$entity = $remoteService->entityModify($entity);
+		$entity = $this->localService->entityModify(
+			$this->collection->userId,
+			$this->collection->serviceId,
+			$entity->localCollectionId,
+			$entity->localEntityId,
+			$entity
+		);
 
 		// return state
-		return $entity->Signature ?? '';
+		return $entity->localSignature ?? '';
 
 	}
 
 	/**
 	 * delete a entity in this collection
 	 *
-	 * @param EventEntityData $entity existing entity object
+	 * @param Entity $entity existing entity object
 	 *
 	 * @return void
 	 */
-	public function deleteFile(EventEntityData $entity): void {
-		$service = $this->remoteService();
-		$service->entityDelete($this->collection->getCcid(), $entity->getCeid());
+	public function deleteFile(Entity $entity): void {
+		$remoteService = $this->remoteService();
+		$remoteService->entityDelete($entity->remoteCollectionId, $entity->remoteEntityId);
+		$this->localService->entityDelete($entity->localEntityId);
 	}
 
 }

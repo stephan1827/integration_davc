@@ -9,13 +9,12 @@ declare(strict_types=1);
 
 namespace OCA\DAVC\Providers\DAV\Contacts\Hybrid;
 
+use OCA\DAVC\Models\Contacts\Collection;
 use OCA\DAVC\Models\Contacts\Entity;
+use OCA\DAVC\Service\Local\LocalContactsService;
 use OCA\DAVC\Service\Remote\RemoteContactsService;
 use OCA\DAVC\Service\Remote\RemoteFactory;
 use OCA\DAVC\Store\Common\Filters\FilterComparisonOperator;
-use OCA\DAVC\Store\Local\CollectionEntity as CollectionEntityData;
-use OCA\DAVC\Store\Local\ContactEntity as ContactEntityData;
-use OCA\DAVC\Store\Local\ContactStore;
 use OCA\DAVC\Store\Local\ServicesStore;
 use Sabre\CardDAV\IAddressBook;
 use Sabre\DAV\IMultiGet;
@@ -31,13 +30,13 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 
 	public function __construct(
 		private readonly ServicesStore $servicesStore,
+		private readonly LocalContactsService $localService,
 		private readonly RemoteFactory $remoteFactory,
-		private readonly ContactStore $localStore,
-		private readonly CollectionEntityData $collection
+		private readonly Collection $collection
 	) {}
 
 	/** 
-	 * lazy load remote service
+	 * Lazy load remote service
 	 */
 	protected function remoteService(): RemoteContactsService {
 
@@ -45,7 +44,7 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 			return $this->remoteService;
 		}
 
-		$service = $this->servicesStore->fetch($this->collection->getSid());
+		$service = $this->servicesStore->fetch($this->collection->serviceId);
 		if ($service === null) {
 			throw new \Exception('Service not found');
 		}
@@ -56,16 +55,16 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 	}
 
 	/**
-	 * collection principal owner
+	 * Collection principal owner
 	 *
 	 * @return string|null
 	 */
 	public function getOwner(): ?string {
-		return self::DAV_USER_PREFIX . $this->collection->getUid();
+		return self::DAV_USER_PREFIX . $this->collection->userId;
 	}
 
 	/**
-	 * collection principal group
+	 * Collection principal group
 	 *
 	 * @return string|null
 	 */
@@ -74,14 +73,14 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 	}
 
 	/**
-	 * collection id
+	 * Collection id
 	 */
 	public function getName(): string {
-		return (string)$this->collection->getUuid();
+		return (string)$this->collection->uuid;
 	}
 
 	/**
-	 * collection id
+	 * Collection id
 	 *
 	 * @param string $id
 	 */
@@ -90,7 +89,7 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 	}
 
 	/**
-	 * collection permissions
+	 * Collection permissions
 	 *
 	 * @return array
 	 */
@@ -105,7 +104,7 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 	}
 
 	/**
-	 * collection permissions
+	 * Collection permissions
 	 *
 	 * @return void
 	 */
@@ -114,7 +113,7 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 	}
 
 	/**
-	 * supported permissions
+	 * Supported permissions
 	 *
 	 * @return array|null
 	 */
@@ -123,7 +122,7 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 	}
 
 	/**
-	 * collection modification timestamp
+	 * Collection modification timestamp
 	 *
 	 * @return int|null
 	 */
@@ -132,16 +131,16 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 	}
 
 	/**
-	 * collection mutation signature
+	 * Collection mutation signature
 	 *
 	 * @return string|null
 	 */
 	public function getSyncToken(): ?string {
-		return $this->localStore->chronicleApex($this->collection->getId(), true);
+		return $this->localService->collectionDelta($this->collection->localId);
 	}
 
 	/**
-	 * collection delta
+	 * Collection delta
 	 *
 	 * @param string $token
 	 * @param int $level
@@ -151,7 +150,7 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 	 */
 	public function getChanges($token, $level, $limit = null): array {
 		// retrieve delta
-		$delta = $this->localStore->chronicleReminisce($this->collection->getId(), (string)$token, $limit);
+		$delta = $this->localService->entityDelta($this->collection->localId, (string)$token, $limit);
 		// convert results
 		$changes['added'] = array_column($delta['additions'], 'uuid');
 		$changes['modified'] = array_column($delta['modifications'], 'uuid');
@@ -161,7 +160,7 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 	}
 
 	/**
-	 * retrieves properties for this collection
+	 * Retrieves properties for this collection
 	 *
 	 * @param array $properties requested properties
 	 *
@@ -170,13 +169,13 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 	public function getProperties($properties): array {
 		// return collection properties
 		return [
-			'{DAV:}displayname' => $this->collection->getLabel(),
-			'{http://owncloud.org/ns}enabled' => (string)$this->collection->getVisible(),
+			'{DAV:}displayname' => $this->collection->label,
+			'{http://owncloud.org/ns}enabled' => (string)$this->collection->visible,
 		];
 	}
 
 	/**
-	 * modifies properties of this collection
+	 * Modifies properties of this collection
 	 *
 	 * @param PropPatch $data
 	 *
@@ -187,24 +186,23 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 		$mutations = $propPatch->getMutations();
 		// evaluate if any mutations apply
 		if (count($mutations) > 0) {
+			$mutation = new Collection();
 			// evaluate if name was changed
 			if (isset($mutations['{DAV:}displayname'])) {
-				$this->collection->setLabel($mutations['{DAV:}displayname']);
+				$mutation->label = $mutations['{DAV:}displayname'];
 				$propPatch->setResultCode('{DAV:}displayname', 200);
 			}
 			if (isset($mutations['{http://owncloud.org/ns}enabled'])) {
-				$this->collection->setVisible((bool)$mutations['{http://owncloud.org/ns}enabled']);
+				$mutation->visible = (bool)$mutations['{http://owncloud.org/ns}enabled'];
 				$propPatch->setResultCode('{http://owncloud.org/ns}enabled', 200);
 			}
 			// update collection
-			if (count($this->collection->getUpdatedFields()) > 0) {
-				$this->localStore->collectionModify($this->collection);
-			}
+			$this->collection = $this->localService->collectionModify($this->collection->localId, $mutation);
 		}
 	}
 
 	/**
-	 * creates sub collection
+	 * Creates sub collection
 	 *
 	 * @param string $name
 	 */
@@ -218,23 +216,20 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 	 * @return void
 	 */
 	public function delete(): void {
-		// delete local entities
-		$this->localStore->entityDeleteByCollection($this->collection->getId());
-		// delete local collection
-		$this->localStore->collectionDelete($this->collection);
+		$this->localService->collectionDelete($this->collection->localId);
 	}
 
 	/**
-	 * list all entities in this collection
+	 * List all entities in this collection
 	 *
 	 * @return array<int,ContactEntity>
 	 */
 	public function getChildren(): array {
 		// construct collection filter
-		$storeFilter = $this->localStore->entityListFilter();
-		$storeFilter->condition('cid', $this->collection->getId());
+		$listFilter = $this->localService->entityListFilter();
+		$listFilter->condition('cid', $this->collection->localId);
 		// retrieve entries
-		$entries = $this->localStore->entityList($storeFilter);
+		$entries = $this->localService->entityList($listFilter);
 		// transform entries
 		$list = [];
 		foreach ($entries as $entry) {
@@ -251,10 +246,13 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 	 * @return bool
 	 */
 	public function childExists($id): bool {
-		// remove extension
-		$id = str_replace('.vcf', '', $id);
-		// confirm object exists
-		return (bool)$this->localStore->entityConfirmByUUID($this->collection->getId(), $id);
+		// construct filter
+		$listFilter = $this->localService->entityListFilter();
+		$listFilter->condition('cid', $this->collection->localId);
+		$listFilter->condition('uuid', $id, FilterComparisonOperator::EQ);
+		// retrieve object properties
+		$entities = $this->localService->entityList($listFilter);
+		return count($entities) > 0;
 	}
 
 	/**
@@ -266,11 +264,11 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 	 */
 	public function getMultipleChildren(array $ids): array {
 		// construct filter
-		$filter = $this->localStore->entityListFilter();
-		$filter->condition('cid', $this->collection->getId());
-		$filter->condition('uuid', $ids, FilterComparisonOperator::IN);
+		$listFilter = $this->localService->entityListFilter();
+		$listFilter->condition('cid', $this->collection->localId);
+		$listFilter->condition('uuid', $ids, FilterComparisonOperator::IN);
 		// retrieve object properties
-		$entities = $this->localStore->entityList($filter);
+		$entities = $this->localService->entityList($listFilter);
 		// construct place holder
 		$list = [];
 		// convert entities
@@ -288,14 +286,12 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 	 * @return ContactEntity|false
 	 */
 	public function getChild($id): ContactEntity|false {
-		// remove extension
-		$id = str_replace('.vcf', '', $id);
 		// construct filter
-		$filter = $this->localStore->entityListFilter();
-		$filter->condition('cid', $this->collection->getId());
-		$filter->condition('uuid', $id);
+		$listFilter = $this->localService->entityListFilter();
+		$listFilter->condition('cid', $this->collection->localId);
+		$listFilter->condition('uuid', $id, FilterComparisonOperator::EQ);
 		// retrieve object properties
-		$entities = $this->localStore->entityList($filter);
+		$entities = $this->localService->entityList($listFilter);
 		// evaluate if object properties where retrieved
 		if (count($entities) > 0) {
 			return new ContactEntity($this, $entities[0]);
@@ -313,58 +309,66 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 	 * @return string entity signature
 	 */
 	public function createFile($id, $data = null): string {
-
-		$vo = Reader::read($data);
 	
 		$eo = new Entity();
-		$eo->CCID = $this->collection->getCcid();
-		$eo->CEID = $id;
-		$eo->data = $vo;
+		$eo->localCollectionId = $this->collection->localId;
+		$eo->remoteCollectionId = $this->collection->remoteId;
+		$eo->remoteEntityId = $id;
+		$eo->data = $data;
 
-		$service = $this->remoteService();
+		$remoteService = $this->remoteService();
 
-		$entity = $service->entityCreate($eo);
+		$entity = $remoteService->entityCreate($eo);
+		$entity = $this->localService->entityCreate(
+			$this->collection->userId,
+			$this->collection->serviceId,
+			$this->collection->localId,
+			$entity
+		);
 		
 		// return state
-		return $entity->Signature ?? '';
+		return $entity->localSignature ?? '';
 	}
 
 	/**
 	 * modify a entity in this collection
 	 *
-	 * @param ContactEntityData $entity existing entity object
+	 * @param Entity $entity existing entity object
 	 * @param string $data modified entity contents
 	 *
 	 * @return string entity signature
 	 */
-	public function modifyFile(ContactEntityData $entity, string $data): string {
+	public function modifyFile(Entity $entity, string $data): string {
 
-		$vo = Reader::read($data);
-	
-		$eo = new Entity();
-		$eo->CCID = $entity->getCcid();
-		$eo->CEID = $entity->getCeid();
-		$eo->data = $vo;
+		$entity->data = $data;
 
-		$service = $this->remoteService();
+		$remoteService = $this->remoteService();
 
-		$entity = $service->entityModify($eo);
+		$entity = $remoteService->entityModify($entity);
+		$entity = $this->localService->entityModify(
+			$this->collection->userId,
+			$this->collection->serviceId,
+			$entity->localCollectionId,
+			$entity->localEntityId,
+			$entity
+		);
 
 		// return state
-		return $entity->Signature ?? '';
+		return $entity->localSignature ?? '';
 
 	}
 
 	/**
 	 * delete a entity in this collection
 	 *
-	 * @param ContactEntityData $entity existing entity object
+	 * @param Entity $entity existing entity object
 	 *
 	 * @return void
 	 */
-	public function deleteFile(ContactEntityData $entity): void {
-		$service = $this->remoteService();
-		$service->entityDelete($this->collection->getCcid(), $entity->getCeid());
+	public function deleteFile(Entity $entity): void {
+		$remoteService = $this->remoteService();
+		$remoteService->entityDelete($entity->remoteCollectionId, $entity->remoteEntityId);
+		$this->localService->entityDelete($entity->localEntityId);
 	}
 
 }

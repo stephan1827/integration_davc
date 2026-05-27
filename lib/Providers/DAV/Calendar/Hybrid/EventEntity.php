@@ -9,35 +9,27 @@ declare(strict_types=1);
 
 namespace OCA\DAVC\Providers\DAV\Calendar\Hybrid;
 
-use OCA\DAVC\Store\Local\EventEntity as EventEntityData;
+use OCA\DAVC\Models\Calendars\Entity;
 
 class EventEntity implements \Sabre\CalDAV\ICalendarObject, \Sabre\DAVACL\IACL {
-	private EventCollection $_collection;
-	private EventEntityData $_entity;
-
-	/**
-	 * Entity Constructor
-	 *
-	 * @param EventCollection $collection
-	 * @param EventEntityData $entity
-	 */
-	public function __construct(EventCollection $collection, EventEntityData $entity) {
-		$this->_collection = $collection;
-		$this->_entity = $entity;
-	}
+	
+	public function __construct(
+		private readonly EventCollection $collection,
+		private readonly Entity $entity
+	){}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function getOwner() {
-		return $this->_collection->getOwner();
+		return $this->collection->getOwner();
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function getGroup() {
-		return $this->_collection->getGroup();
+		return $this->collection->getGroup();
 	}
 
 	/**
@@ -71,21 +63,21 @@ class EventEntity implements \Sabre\CalDAV\ICalendarObject, \Sabre\DAVACL\IACL {
 	 * @inheritDoc
 	 */
 	public function get() {
-		return $this->_entity->getData();
+		return $this->entity->data;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function put($data) {
-		return $this->_collection->modifyFile($this->_entity, $data);
+		return $this->collection->modifyFile($this->entity, $data);
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function delete() {
-		return $this->_collection->deleteFile($this->_entity);
+		return $this->collection->deleteFile($this->entity);
 	}
 
 	/**
@@ -99,21 +91,21 @@ class EventEntity implements \Sabre\CalDAV\ICalendarObject, \Sabre\DAVACL\IACL {
 	 * @inheritDoc
 	 */
 	public function getETag() {
-		return $this->_entity->getSignature();
+		return $this->entity->localSignature ?? $this->entity->remoteSignature ?? null;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function getSize() {
-		return strlen($this->_entity->getData());
+		return strlen($this->entity->data ?? '');
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function getName() {
-		return $this->_entity->getUuid() . '.ics';
+		return ($this->entity->uuid ?? $this->entity->remoteEntityId);
 	}
 
 	/**

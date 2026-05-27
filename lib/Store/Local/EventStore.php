@@ -13,6 +13,8 @@ use OCA\DAVC\Store\Common\Filters\IFilter;
 use OCA\DAVC\Store\Common\Range\IRange;
 use OCA\DAVC\Store\Common\Range\IRangeDate;
 use OCA\DAVC\Store\Common\Sort\ISort;
+use OCA\DAVC\Store\Local\Filters\CollectionFilter;
+use OCA\DAVC\Store\Local\Filters\EventFilter;
 use OCP\IDBConnection;
 
 class EventStore extends BaseStore {
@@ -104,4 +106,11 @@ class EventStore extends BaseStore {
 		}
 	}
 
+	public function collectionListFilter(): CollectionFilter {
+		return new CollectionFilter();
+	}
+
+	public function entityListFilter(): EventFilter {
+		return new EventFilter();
+	}
 }
