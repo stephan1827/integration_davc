@@ -262,11 +262,42 @@ class LocalEventsService {
 		$collection->localId = $so->getId();
 		$collection->remoteId = $so->getCcid();
 		$collection->uuid = $so->getUuid();
+		$collection->permissions = $so->getPermissions();
 		$collection->label = $so->getLabel();
 		$collection->visible = (bool)$so->getVisible();
 		$collection->color = $so->getColor();
 
 		return $collection;
+	}
+
+	/**
+	 * convert collection object to store entity
+	 *
+	 * @param Collection $so
+	 * @param array<string,mixed> $additional
+	 */
+	public function fromCollectionModel(Collection $so, array $additional = []): CollectionEntity {
+		$to = new CollectionEntity();
+		if ($so->localId !== null) {
+			$to->setId($so->localId);
+		}
+		$to->setUid($so->userId);
+		if ($so->serviceId !== null) {
+			$to->setSid($so->serviceId);
+		}
+		$to->setCcid($so->remoteId);
+		$to->setUuid($so->uuid);
+		$to->setPermissions($so->permissions);
+		$to->setLabel($so->label);
+		$to->setVisible((int)(bool)$so->visible);
+		$to->setColor($so->color);
+
+		foreach ($additional as $key => $value) {
+			$method = 'set' . ucfirst($key);
+			$to->$method($value);
+		}
+
+		return $to;
 	}
 
 	/**

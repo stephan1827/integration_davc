@@ -105,13 +105,13 @@ class EventCollection extends ExternalCalendar implements ICalendar, IProperties
 	 * @return array
 	 */
 	public function getACL(): array {
-		return [
-			[
-				'privilege' => '{DAV:}all',
+		return array_map(function ($permission) {
+			return [
+				'privilege' => $permission,
 				'principal' => $this->getOwner(),
-				'protected' => true,
-			],
-		];
+				'protected' => true
+			];
+		}, $this->collection->permissions ?? ['{DAV:}all']);
 	}
 
 	/**

@@ -332,6 +332,18 @@ class RemoteEventsService {
 		$to->description = $so[RemoteClient::CALDAV_CALENDAR_DESCRIPTION] ?? null;
 		$to->priority = isset($so[RemoteClient::APPLE_ICAL_CALENDAR_ORDER]) ? (int)$so[RemoteClient::APPLE_ICAL_CALENDAR_ORDER] : null;
 		$to->color = $so[RemoteClient::APPLE_ICAL_CALENDAR_COLOR] ?? null;
+
+		if (isset($so[RemoteClient::DAV_OWNER])) {
+			$owner = RemoteConvert::extractPrincipal($so[RemoteClient::DAV_OWNER]);
+			$permissions = RemoteConvert::extractPermissions($so[RemoteClient::DAV_ACL] ?? []);
+
+			if (isset($permissions[$owner])) {
+				$to->permissions = $permissions[$owner];
+			} else {
+				$to->permissions = [];
+			}
+		}
+
 		return $to;
 	}
 

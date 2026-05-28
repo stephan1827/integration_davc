@@ -225,7 +225,8 @@ class BaseStore {
 			$column = $entity->propertyToColumn($property);
 			$getter = 'get' . ucfirst($property);
 			$value = $entity->$getter();
-			$cmd->setValue($column, $cmd->createNamedParameter($value));
+			$type = $entity->getFieldTypes()[$property] ?? null;
+			$cmd->setValue($column, $type !== null ? $cmd->createNamedParameter($value, $type) : $cmd->createNamedParameter($value));
 		}
 		// execute command
 		$cmd->executeStatement();
@@ -261,7 +262,8 @@ class BaseStore {
 				$column = $entity->propertyToColumn($property);
 				$getter = 'get' . ucfirst($property);
 				$value = $entity->$getter();
-				$cmd->set($column, $cmd->createNamedParameter($value));
+				$type = $entity->getFieldTypes()[$property] ?? null;
+				$cmd->set($column, $type !== null ? $cmd->createNamedParameter($value, $type) : $cmd->createNamedParameter($value));
 			}
 			// execute command
 			$cmd->executeStatement();

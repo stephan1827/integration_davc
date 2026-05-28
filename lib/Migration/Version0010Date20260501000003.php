@@ -62,6 +62,10 @@ class Version0010Date20260501000003 extends SimpleMigrationStep {
 			'length' => 255,
 			'notnull' => true
 		]);
+		// permissions
+		$table->addColumn('permissions', Types::JSON, [
+			'notnull' => false
+		]);
 		// label
 		$table->addColumn('label', Types::STRING, [
 			'length' => 255,

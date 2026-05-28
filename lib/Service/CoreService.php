@@ -273,6 +273,7 @@ class CoreService {
 		$remoteStore = $this->remoteFactory->freshClient($service);
 		// retrieve collections for contacts module
 		if ($this->ConfigurationService->isContactsAppAvailable() && $remoteStore->getAddressbookHome() !== null) {
+			$remoteContactsService = null;
 			try {
 				$remoteContactsService = $this->remoteFactory->contactsService($remoteStore);
 				$collections = $remoteContactsService->collectionList();
@@ -284,7 +285,7 @@ class CoreService {
 				// AddressBook name space is not supported fail silently
 			}
 			// if AddressBook name space is not supported see if Contacts name space works
-			if (count($data['ContactsCollections']) === 0) {
+			if ($remoteContactsService !== null && count($data['ContactsCollections']) === 0) {
 				try {
 					$list = $remoteContactsService->entityList('', 'B');
 					$data['ContactsSupported'] = true;
@@ -371,10 +372,19 @@ class CoreService {
 		if ($service->getUid() !== $uid) {
 			return;
 		}
+		$remoteStore = $this->remoteFactory->freshClient($service);
 		// deposit contacts correlations
 		if ($this->ConfigurationService->isContactsAppAvailable()) {
 			// initialize data store
 			$localStore = $this->localFactory->contactsStore();
+			$remoteContactsService = null;
+			if ($remoteStore->getAddressbookHome() !== null) {
+				try {
+					$remoteContactsService = $this->remoteFactory->contactsService($remoteStore);
+				} catch (Throwable $e) {
+					$this->logger->warning('Failed to initialize remote contacts service during collection deposit.', ['app' => 'davc', 'exception' => $e]);
+				}
+			}
 			// process entries
 			foreach ($cc as $entry) {
 				if (!isset($entry['enabled']) || !is_bool($entry['enabled'])) {
@@ -391,15 +401,25 @@ class CoreService {
 						break;
 					case true:
 						if (empty($entry['id'])) {
+							$remoteCollection = null;
+							if ($remoteContactsService !== null && !empty($entry['ccid'])) {
+								try {
+									$remoteCollection = $remoteContactsService->collectionFetch((string)$entry['ccid']);
+								} catch (Throwable $e) {
+									$this->logger->warning('Failed to fetch remote contacts collection during deposit.', ['app' => 'davc', 'exception' => $e, 'collectionId' => $entry['ccid']]);
+								}
+							}
 							// create local collection
 							$collection = $localStore->collectionFresh();
 							$collection->setUid($uid);
 							$collection->setSid($sid);
 							$collection->setCcid($entry['ccid']);
 							$collection->setUuid(\OCA\DAVC\Utile\UUID::v4());
-							$collection->setLabel('DavC: ' . ($entry['label'] ?? 'Unknown'));
-							$collection->setColor($entry['color'] ?? '#0055aa');
+							$collection->setPermissions($remoteCollection?->permissions);
+							$collection->setLabel('DavC: ' . ($remoteCollection?->label ?? $entry['label'] ?? 'Unknown'));
+							$collection->setColor($remoteCollection?->color ?? $entry['color'] ?? '#0055aa');
 							$collection->setVisible(true);
+							$collection->setHesn($remoteCollection?->remoteSignature);
 							$id = $localStore->collectionCreate($collection);
 						}
 						break;
@@ -410,6 +430,14 @@ class CoreService {
 		if ($this->ConfigurationService->isCalendarAppAvailable()) {
 			// initialize data store
 			$localStore = $this->localFactory->eventsStore();
+			$remoteEventsService = null;
+			if ($remoteStore->getCalendarHome() !== null) {
+				try {
+					$remoteEventsService = $this->remoteFactory->eventsService($remoteStore);
+				} catch (Throwable $e) {
+					$this->logger->warning('Failed to initialize remote events service during collection deposit.', ['app' => 'davc', 'exception' => $e]);
+				}
+			}
 			// process entries
 			foreach ($ec as $entry) {
 				if (!isset($entry['enabled']) || !is_bool($entry['enabled'])) {
@@ -426,15 +454,25 @@ class CoreService {
 						break;
 					case true:
 						if (empty($entry['id'])) {
+							$remoteCollection = null;
+							if ($remoteEventsService !== null && !empty($entry['ccid'])) {
+								try {
+									$remoteCollection = $remoteEventsService->collectionFetch((string)$entry['ccid']);
+								} catch (Throwable $e) {
+									$this->logger->warning('Failed to fetch remote events collection during deposit.', ['app' => 'davc', 'exception' => $e, 'collectionId' => $entry['ccid']]);
+								}
+							}
 							// create local collection
 							$collection = $localStore->collectionFresh();
 							$collection->setUid($uid);
 							$collection->setSid($sid);
 							$collection->setCcid($entry['ccid']);
 							$collection->setUuid(\OCA\DAVC\Utile\UUID::v4());
-							$collection->setLabel('DavC: ' . ($entry['label'] ?? 'Unknown'));
-							$collection->setColor($entry['color'] ?? '#0055aa');
+							$collection->setPermissions($remoteCollection?->permissions);
+							$collection->setLabel('DavC: ' . ($remoteCollection?->label ?? $entry['label'] ?? 'Unknown'));
+							$collection->setColor($remoteCollection?->color ?? $entry['color'] ?? '#0055aa');
 							$collection->setVisible(true);
+							$collection->setHesn($remoteCollection?->remoteSignature);
 							$id = $localStore->collectionCreate($collection);
 						}
 						break;

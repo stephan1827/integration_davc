@@ -328,9 +328,19 @@ class RemoteContactsService {
 		$to->remoteId = $id;
 		$to->remoteSignature = $so[RemoteClient::DAV_SYNC_TOKEN] ?? $so[RemoteClient::SABREDAV_SYNC_TOKEN] ?? $so[RemoteClient::CALENDARSERVER_GETCTAG] ?? null;
 		$to->label = $so[RemoteClient::DAV_DISPLAYNAME] ?? null;
-		$to->description = $so[RemoteClient::CALDAV_CALENDAR_DESCRIPTION] ?? null;
-		$to->priority = isset($so[RemoteClient::APPLE_ICAL_CALENDAR_ORDER]) ? (int)$so[RemoteClient::APPLE_ICAL_CALENDAR_ORDER] : null;
-		$to->color = $so[RemoteClient::APPLE_ICAL_CALENDAR_COLOR] ?? null;
+		$to->description = $so[RemoteClient::CARDDAV_ADDRESSBOOK_DESCRIPTION] ?? null;
+
+		if (isset($so[RemoteClient::DAV_OWNER])) {
+			$owner = RemoteConvert::extractPrincipal($so[RemoteClient::DAV_OWNER]);
+			$permissions = RemoteConvert::extractPermissions($so[RemoteClient::DAV_ACL] ?? []);
+
+			if (isset($permissions[$owner])) {
+				$to->permissions = $permissions[$owner];
+			} else {
+				$to->permissions = [];
+			}
+		}
+
 		return $to;
 	}
 
