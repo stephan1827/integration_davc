@@ -4,29 +4,27 @@
 -->
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
 import axios from '@nextcloud/axios'
-import { loadState } from '@nextcloud/initial-state'
-import { generateUrl } from '@nextcloud/router'
-import { translate as t } from '@nextcloud/l10n'
 import { showError, showSuccess } from '@nextcloud/dialogs'
-
-import NcTextField from '@nextcloud/vue/components/NcTextField'
-import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
+import { loadState } from '@nextcloud/initial-state'
+import { translate as t } from '@nextcloud/l10n'
+import { generateUrl } from '@nextcloud/router'
+import { computed, onMounted, reactive, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcColorPicker from '@nextcloud/vue/components/NcColorPicker'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
-
-import DavIcon from '../icons/DavIcon.vue'
-import AccountAddIcon from 'vue-material-design-icons/AccountPlus.vue'
+import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
+import NcSelect from '@nextcloud/vue/components/NcSelect'
+import NcTextField from '@nextcloud/vue/components/NcTextField'
 import AccountRemoveIcon from 'vue-material-design-icons/AccountMinus.vue'
+import AccountAddIcon from 'vue-material-design-icons/AccountPlus.vue'
+import CalendarIcon from 'vue-material-design-icons/Calendar.vue'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
 import CloseIcon from 'vue-material-design-icons/Close.vue'
-import CalendarIcon from 'vue-material-design-icons/Calendar.vue'
 import ContactIcon from 'vue-material-design-icons/ContactsOutline.vue'
 import LinkIcon from 'vue-material-design-icons/Link.vue'
+import DavIcon from '../icons/DavIcon.vue'
 
 // Types
 interface SystemConfiguration {
@@ -65,9 +63,7 @@ interface Collection {
 
 // Reactive data
 const readonly = ref<boolean>(true)
-const systemConfiguration = reactive<SystemConfiguration>(
-	loadState('integration_davc', 'system-configuration') as SystemConfiguration
-)
+const systemConfiguration = reactive<SystemConfiguration>(loadState('integration_davc', 'system-configuration') as SystemConfiguration)
 
 // Services
 const configuredServices = ref<Service[]>([])
@@ -115,6 +111,15 @@ function formatDate(dt: number | undefined): string {
 	}
 }
 
+function getErrorResponseText(error: unknown): string {
+	if (typeof error !== 'object' || error === null || !('response' in error)) {
+		return ''
+	}
+
+	const { response } = error as { response?: { request?: { responseText?: string } } }
+	return response?.request?.responseText ?? ''
+}
+
 function freshService(): void {
 	selectedService.value = { label: 'New Connection' } as Service
 }
@@ -134,11 +139,9 @@ async function connectService(): Promise<void> {
 			remoteCollectionsFetch()
 			localCollectionsFetch()
 		}
-	} catch (error: any) {
-		showError(
-			t('integration_davc', 'Failed to authenticate with server')
-			+ ': ' + error.response?.request?.responseText,
-		)
+	} catch (error: unknown) {
+		showError(t('integration_davc', 'Failed to authenticate with server')
+			+ ': ' + getErrorResponseText(error))
 	}
 }
 
@@ -162,11 +165,9 @@ async function disconnectService(): Promise<void> {
 		eventsLocalCollections.value = []
 		// refresh service list
 		serviceList()
-	} catch (error: any) {
-		showError(
-			t('integration_davc', 'Failed to disconnect from account')
-			+ ': ' + error.response?.request?.responseText,
-		)
+	} catch (error: unknown) {
+		showError(t('integration_davc', 'Failed to disconnect from account')
+			+ ': ' + getErrorResponseText(error))
 	}
 }
 
@@ -182,11 +183,9 @@ async function harmonizeService(): Promise<void> {
 	try {
 		await axios.post(uri, data)
 		showSuccess('Synchronization Successful')
-	} catch (error: any) {
-		showError(
-			t('integration_davc', 'Synchronization Failed')
-			+ ': ' + error.response?.request?.responseText,
-		)
+	} catch (error: unknown) {
+		showError(t('integration_davc', 'Synchronization Failed')
+			+ ': ' + getErrorResponseText(error))
 	}
 }
 
@@ -198,11 +197,9 @@ async function serviceList(): Promise<void> {
 			configuredServices.value = Object.values(response.data)
 			showSuccess('Found ' + configuredServices.value.length + ' Configured Services')
 		}
-	} catch (error: any) {
-		showError(
-			t('integration_davc', 'Failed to load service list')
-			+ ': ' + error.response?.request?.responseText,
-		)
+	} catch (error: unknown) {
+		showError(t('integration_davc', 'Failed to load service list')
+			+ ': ' + getErrorResponseText(error))
 	}
 }
 
@@ -232,11 +229,9 @@ async function remoteCollectionsFetch(): Promise<void> {
 			eventsRemoteCollections.value = response.data.EventsCollections
 			showSuccess('Found ' + eventsRemoteCollections.value.length + ' Remote Events Collections')
 		}
-	} catch (error: any) {
-		showError(
-			t('integration_davc', 'Failed to load remote collections')
-			+ ': ' + error.response?.request?.responseText,
-		)
+	} catch (error: unknown) {
+		showError(t('integration_davc', 'Failed to load remote collections')
+			+ ': ' + getErrorResponseText(error))
 	}
 }
 
@@ -255,11 +250,9 @@ async function localCollectionsFetch(): Promise<void> {
 			eventsLocalCollections.value = response.data.EventCollections
 			showSuccess('Found ' + eventsLocalCollections.value.length + ' Local Event Collections')
 		}
-	} catch (error: any) {
-		showError(
-			t('integration_davc', 'Failed to load remote collections')
-			+ ': ' + error.response?.request?.responseText,
-		)
+	} catch (error: unknown) {
+		showError(t('integration_davc', 'Failed to load remote collections')
+			+ ': ' + getErrorResponseText(error))
 	}
 }
 
@@ -274,19 +267,19 @@ async function localCollectionsDeposit(): Promise<void> {
 		await axios.post(uri, data)
 		showSuccess('Saved correlations')
 		localCollectionsFetch()
-	} catch (error: any) {
-		showError(
-			t('integration_davc', 'Failed to save correlations')
-			+ ': ' + error.response?.request?.responseText,
-		)
+	} catch (error: unknown) {
+		showError(t('integration_davc', 'Failed to save correlations')
+			+ ': ' + getErrorResponseText(error))
 	}
 }
 function changeContactCorrelation(rcid: string | null, e: boolean): void {
-	if (!rcid) return
-	const lCollection = contactsLocalCollections.value.find(i => String(i.ccid) === String(rcid))
+	if (!rcid) {
+		return
+	}
+	const lCollection = contactsLocalCollections.value.find((i) => String(i.ccid) === String(rcid))
 
 	if (lCollection === undefined) {
-		const rCollection = contactsRemoteCollections.value.find(i => String(i.id) === String(rcid))
+		const rCollection = contactsRemoteCollections.value.find((i) => String(i.id) === String(rcid))
 		if (rCollection && rCollection.id) {
 			contactsLocalCollections.value.push({
 				id: null,
@@ -301,11 +294,13 @@ function changeContactCorrelation(rcid: string | null, e: boolean): void {
 }
 
 function changeEventCorrelation(rcid: string | null, e: boolean): void {
-	if (!rcid) return
-	const lid = eventsLocalCollections.value.findIndex(i => String(i.ccid) === String(rcid))
+	if (!rcid) {
+		return
+	}
+	const lid = eventsLocalCollections.value.findIndex((i) => String(i.ccid) === String(rcid))
 
 	if (lid === -1) {
-		const rCollection = eventsRemoteCollections.value.find(i => String(i.id) === String(rcid))
+		const rCollection = eventsRemoteCollections.value.find((i) => String(i.id) === String(rcid))
 		if (rCollection && rCollection.id) {
 			eventsLocalCollections.value.push({
 				id: null,
@@ -321,8 +316,10 @@ function changeEventCorrelation(rcid: string | null, e: boolean): void {
 
 const establishedContactCorrelation = computed(() => {
 	return (rcid: string | null): boolean => {
-		if (!rcid) return false
-		const lCollection = contactsLocalCollections.value.find(i => String(i.ccid) === String(rcid))
+		if (!rcid) {
+			return false
+		}
+		const lCollection = contactsLocalCollections.value.find((i) => String(i.ccid) === String(rcid))
 		if (typeof lCollection === 'undefined') {
 			return false
 		}
@@ -335,8 +332,10 @@ const establishedContactCorrelation = computed(() => {
 
 const establishedEventCorrelation = computed(() => {
 	return (rcid: string | null): boolean => {
-		if (!rcid) return false
-		const lCollection = eventsLocalCollections.value.find(i => String(i.ccid) === String(rcid))
+		if (!rcid) {
+			return false
+		}
+		const lCollection = eventsLocalCollections.value.find((i) => String(i.ccid) === String(rcid))
 		if (typeof lCollection === 'undefined') {
 			return false
 		}
@@ -348,8 +347,10 @@ const establishedEventCorrelation = computed(() => {
 })
 
 function establishedContactCorrelationColor(ccid: string | null): string {
-	if (!ccid) return randomColor()
-	const collection = contactsLocalCollections.value.find(i => String(i.ccid) === String(ccid))
+	if (!ccid) {
+		return randomColor()
+	}
+	const collection = contactsLocalCollections.value.find((i) => String(i.ccid) === String(ccid))
 	if (typeof collection !== 'undefined') {
 		return collection.color || randomColor()
 	} else {
@@ -358,8 +359,10 @@ function establishedContactCorrelationColor(ccid: string | null): string {
 }
 
 function establishedEventCorrelationColor(ccid: string | null): string {
-	if (!ccid) return randomColor()
-	const collection = eventsLocalCollections.value.find(i => String(i.ccid) === String(ccid))
+	if (!ccid) {
+		return randomColor()
+	}
+	const collection = eventsLocalCollections.value.find((i) => String(i.ccid) === String(ccid))
 	if (typeof collection !== 'undefined') {
 		return collection.color || randomColor()
 	} else {
@@ -368,8 +371,10 @@ function establishedEventCorrelationColor(ccid: string | null): string {
 }
 
 function establishedContactCorrelationHarmonized(ccid: string | null): number {
-	if (!ccid) return 0
-	const collection = contactsLocalCollections.value.find(i => String(i.ccid) === String(ccid))
+	if (!ccid) {
+		return 0
+	}
+	const collection = contactsLocalCollections.value.find((i) => String(i.ccid) === String(ccid))
 	if (typeof collection !== 'undefined') {
 		return collection.hlockhb || 0
 	} else {
@@ -378,8 +383,10 @@ function establishedContactCorrelationHarmonized(ccid: string | null): number {
 }
 
 function establishedEventCorrelationHarmonized(ccid: string | null): number {
-	if (!ccid) return 0
-	const collection = eventsLocalCollections.value.find(i => String(i.ccid) === String(ccid))
+	if (!ccid) {
+		return 0
+	}
+	const collection = eventsLocalCollections.value.find((i) => String(i.ccid) === String(ccid))
 	if (typeof collection !== 'undefined') {
 		return collection.hlockhb || 0
 	} else {
@@ -400,10 +407,11 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 			<label>
 				{{ t('integration_davc', 'Services') }}
 			</label>
-			<NcSelect :clearable="false"
+			<NcSelect
+				v-model="selectedService"
+				:clearable="false"
 				:searchable="false"
 				:options="configuredServices"
-				v-model="selectedService"
 				@option:selected="serviceSelect" />
 			<NcButton @click="disconnectService()">
 				<template #icon>
@@ -447,13 +455,14 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 				<label for="davc-account-description">
 					{{ t('integration_davc', 'Account Description') }}
 				</label>
-				<NcTextField id="davc-account-description"
+				<NcTextField
+					id="davc-account-description"
+					v-model="selectedService.label"
 					type="text"
 					autocomplete="off"
 					autocorrect="off"
 					autocapitalize="none"
-					v-model="selectedService.label"
-					:label-outside="true"
+					:labelOutside="true"
 					:style="{ width: '48ch' }"
 					:placeholder="t('integration_davc', 'Description for this Account')" />
 			</div>
@@ -461,12 +470,13 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 				<label for="davc-account-bauth-id">
 					{{ t('integration_davc', 'Account ID') }}
 				</label>
-				<NcTextField id="davc-account-bauth-id"
+				<NcTextField
+					id="davc-account-bauth-id"
+					v-model="selectedService.bauth_id"
 					type="text"
 					autocomplete="off"
 					autocorrect="off"
 					autocapitalize="none"
-					v-model="selectedService.bauth_id"
 					:style="{ width: '48ch' }"
 					:placeholder="t('integration_davc', 'Authentication ID for your Account')" />
 			</div>
@@ -474,12 +484,13 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 				<label for="davc-account-bauth-secret">
 					{{ t('integration_davc', 'Account Secret') }}
 				</label>
-				<NcPasswordField id="davc-account-bauth-secret"
+				<NcPasswordField
+					id="davc-account-bauth-secret"
+					v-model="selectedService.bauth_secret"
 					type="password"
 					autocomplete="off"
 					autocorrect="off"
 					autocapitalize="none"
-					v-model="selectedService.bauth_secret"
 					:style="{ width: '48ch' }"
 					:placeholder="t('integration_davc', 'Authentication secret for your Account')" />
 			</div>
@@ -487,12 +498,13 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 				<label for="davc-account-oauth-id">
 					{{ t('integration_davc', 'Account ID') }}
 				</label>
-				<NcTextField id="davc-account-oauth-id"
+				<NcTextField
+					id="davc-account-oauth-id"
+					v-model="selectedService.oauth_id"
 					type="text"
 					autocomplete="off"
 					autocorrect="off"
 					autocapitalize="none"
-					v-model="selectedService.oauth_id"
 					:style="{ width: '48ch' }"
 					:placeholder="t('integration_davc', 'Authentication ID for your Account')" />
 			</div>
@@ -500,12 +512,13 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 				<label for="davc-account-oauth-token">
 					{{ t('integration_davc', 'Account Token') }}
 				</label>
-				<NcPasswordField id="davc-account-oauth-token"
+				<NcPasswordField
+					id="davc-account-oauth-token"
+					v-model="selectedService.oauth_access_token"
 					type="password"
 					autocomplete="off"
 					autocorrect="off"
 					autocapitalize="none"
-					v-model="selectedService.oauth_access_token"
 					:style="{ width: '48ch' }"
 					:placeholder="t('integration_davc', 'Authentication secret for your Account')" />
 			</div>
@@ -514,20 +527,22 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 					{{ t('integration_davc', 'Authentication Type') }}
 				</label>
 				<div class="radio-group">
-					<NcCheckboxRadioSwitch name="service_auth"
+					<NcCheckboxRadioSwitch
+						v-model="selectedService.auth"
+						name="service_auth"
 						type="radio"
 						value="BA"
-						button-variant-grouped="horizontal"
-						:button-variant="true"
-						v-model="selectedService.auth">
+						buttonVariantGrouped="horizontal"
+						:buttonVariant="true">
 						{{ t('integration_davc', 'Basic') }}
 					</NcCheckboxRadioSwitch>
-					<NcCheckboxRadioSwitch name="service_auth"
+					<NcCheckboxRadioSwitch
+						v-model="selectedService.auth"
+						name="service_auth"
 						type="radio"
 						value="OA"
-						button-variant-grouped="horizontal"
-						:button-variant="true"
-						v-model="selectedService.auth">
+						buttonVariantGrouped="horizontal"
+						:buttonVariant="true">
 						{{ t('integration_davc', 'OAuth') }}
 					</NcCheckboxRadioSwitch>
 				</div>
@@ -536,12 +551,13 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 				<label for="davc-service-address">
 					{{ t('integration_davc', 'Service Address') }}
 				</label>
-				<NcTextField id="davc-service-address"
+				<NcTextField
+					id="davc-service-address"
+					v-model="selectedService.location_host"
 					type="text"
 					autocomplete="off"
 					autocorrect="off"
 					autocapitalize="none"
-					v-model="selectedService.location_host"
 					:style="{ width: '48ch' }"
 					:placeholder="t('integration_davc', 'Domain or IP Address')" />
 			</div>
@@ -550,20 +566,22 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 					{{ t('integration_davc', 'Service Protocol') }}
 				</label>
 				<div class="radio-group">
-					<NcCheckboxRadioSwitch name="service_protocol"
+					<NcCheckboxRadioSwitch
+						v-model="selectedService.location_protocol"
+						name="service_protocol"
 						type="radio"
 						value="http"
-						button-variant-grouped="horizontal"
-						:button-variant="true"
-						v-model="selectedService.location_protocol">
+						buttonVariantGrouped="horizontal"
+						:buttonVariant="true">
 						{{ t('integration_davc', 'http') }}
 					</NcCheckboxRadioSwitch>
-					<NcCheckboxRadioSwitch name="service_protocol"
+					<NcCheckboxRadioSwitch
+						v-model="selectedService.location_protocol"
+						name="service_protocol"
 						type="radio"
 						value="https"
-						button-variant-grouped="horizontal"
-						:button-variant="true"
-						v-model="selectedService.location_protocol">
+						buttonVariantGrouped="horizontal"
+						:buttonVariant="true">
 						{{ t('integration_davc', 'https') }}
 					</NcCheckboxRadioSwitch>
 				</div>
@@ -577,12 +595,13 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 				<label for="davc-service-port">
 					{{ t('integration_davc', 'Service Port') }}
 				</label>
-				<NcTextField id="davc-service-port"
+				<NcTextField
+					id="davc-service-port"
+					v-model="selectedService.location_port"
 					type="text"
 					autocomplete="off"
 					autocorrect="off"
 					autocapitalize="none"
-					v-model="selectedService.location_port"
 					:style="{ width: '48ch' }"
 					:placeholder="t('integration_davc', 'Leave empty for default. http (80) https (443)')" />
 			</div>
@@ -590,12 +609,13 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 				<label for="davc-service-path">
 					{{ t('integration_davc', 'Service Path') }}
 				</label>
-				<NcTextField id="davc-service-path"
+				<NcTextField
+					id="davc-service-path"
+					v-model="selectedService.location_path"
 					type="text"
 					autocomplete="off"
 					autocorrect="off"
 					autocapitalize="none"
-					v-model="selectedService.location_path"
 					:style="{ width: '48ch' }"
 					:placeholder="t('integration_davc', 'Leave empty for default path (/.well-known/caldav)')" />
 			</div>
@@ -620,7 +640,7 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 				</h3>
 				<div class="connection-status__overview">
 					<DavIcon />
-					<span>{{ t('integration_davc', 'Connected as {0} to {1}', {0:selectedService.bauth_id || '', 1:selectedService.location_host || ''}) }}</span>
+					<span>{{ t('integration_davc', 'Connected as {0} to {1}', {0: selectedService.bauth_id || '', 1: selectedService.location_host || ''}) }}</span>
 				</div>
 				<div class="connection-status__harmonization">
 					{{ t('integration_davc', 'Synchronization was last started on ') }} {{ formatDate(selectedService.harmonization_start) }}
@@ -641,7 +661,8 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 				<div v-if="systemConfiguration.system_contacts && contactsRemoteSupported" class="collections-list">
 					<ul v-if="contactsRemoteCollections.length > 0">
 						<li v-for="ritem in contactsRemoteCollections" :key="ritem.id" class="collections-list-item">
-							<NcCheckboxRadioSwitch type="switch"
+							<NcCheckboxRadioSwitch
+								type="switch"
 								:modelValue="establishedContactCorrelation(ritem.id)"
 								@update:modelValue="changeContactCorrelation(ritem.id, $event)" />
 							<ContactIcon :inline="true" :style="{ color: establishedContactCorrelationColor(ritem.id) }" />
@@ -681,10 +702,11 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 				<div v-if="systemConfiguration.system_events && eventsRemoteSupported" class="collections-list">
 					<ul v-if="eventsRemoteCollections.length > 0">
 						<li v-for="ritem in eventsRemoteCollections" :key="ritem.id" class="collections-list-item">
-							<NcCheckboxRadioSwitch type="switch"
+							<NcCheckboxRadioSwitch
+								type="switch"
 								:modelValue="establishedEventCorrelation(ritem.id)"
 								@update:modelValue="changeEventCorrelation(ritem.id, $event)" />
-							<NcColorPicker v-model="color" :advanced-fields="true">
+							<NcColorPicker v-model="color" :advancedFields="true">
 								<CalendarIcon :inline="true" :style="{ color: establishedEventCorrelationColor(ritem.id) }" />
 							</NcColorPicker>
 							<label>
@@ -745,14 +767,14 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 	align-items: center;
 	gap: 12px;
 	margin-bottom: 20px;
-	
+
 	.logo {
 		flex-shrink: 0;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 	}
-	
+
 	.label {
 		font-size: 24px;
 		font-weight: bold;
@@ -767,7 +789,7 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 	align-items: center;
 	gap: 12px;
 	margin-bottom: 20px;
-	
+
 	label {
 		font-weight: bold;
 		white-space: nowrap;
@@ -781,7 +803,7 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 	align-items: center;
 	min-height: 400px;
 	width: 100%;
-	
+
 	.empty-content__name {
 		margin: 0;
 		font-size: 20px;
@@ -793,27 +815,27 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 	.title {
 		margin-bottom: 16px;
 	}
-	
+
 	.description {
 		margin-bottom: 20px;
 	}
-	
+
 	.parameter {
 		display: flex;
 		align-items: center;
 		gap: 12px;
 		margin-bottom: 16px;
-		
+
 		label {
 			min-width: 200px;
 			font-weight: 500;
 		}
-		
+
 		.radio-group {
 			display: flex;
 		}
 	}
-	
+
 	.actions {
 		display: flex;
 		gap: 12px;
@@ -827,59 +849,59 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 	margin-top: 20px;
 	border-top: 1px solid var(--color-border);
 	border-bottom: 1px solid var(--color-border);
-	
+
 	.connection-status {
 		margin-bottom: 30px;
-		
+
 		.connection-status__title {
 			margin-bottom: 16px;
 			font-size: 18px;
 			font-weight: bold;
 		}
-		
+
 		.connection-status__overview {
 			display: flex;
 			align-items: center;
 			gap: 8px;
 			margin-bottom: 12px;
 			padding: 12px;
-			
+
 			span {
 				font-weight: 500;
 			}
 		}
-		
+
 		.connection-status__harmonization {
 			font-size: 14px;
 			color: var(--color-text-maxcontrast);
 			margin-left: 12px;
 		}
 	}
-	
+
 	.connection-correlations-contacts,
 	.connection-correlations-events {
 		margin-bottom: 24px;
-		
+
 		h3 {
 			margin-bottom: 12px;
 			font-size: 18px;
 			font-weight: bold;
 		}
-		
+
 		ul {
 			list-style: none;
 			padding: 0;
 			margin: 0;
-			
+
 			.collections-list-item {
 				display: flex;
 				align-items: center;
 				padding: 12px;
-				
+
 				label {
 					flex: 1;
 					font-weight: 500;
-					
+
 					&:last-child {
 						font-size: 12px;
 						font-weight: normal;
@@ -888,7 +910,7 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 			}
 		}
 	}
-	
+
 	.actions {
 		display: flex;
 		gap: 12px;

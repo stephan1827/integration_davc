@@ -4,27 +4,26 @@
 -->
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import axios, { type AxiosResponse, type AxiosError } from '@nextcloud/axios'
+import axios, { type AxiosError, type AxiosResponse } from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
-import { generateUrl } from '@nextcloud/router'
 import { translate as t } from '@nextcloud/l10n'
+import { generateUrl } from '@nextcloud/router'
+import { reactive, ref } from 'vue'
 
 // Temporary replacement for @nextcloud/dialogs until Vue 3 compatibility
-const showSuccess = (message: string) => {
+function showSuccess(message: string) {
 	console.log('Success:', message)
 	// Could use a simple notification or alert
 }
 
-const showError = (message: string) => {
+function showError(message: string) {
 	console.error('Error:', message)
 	// Could use a simple notification or alert
 }
 
 import { NcButton, NcSelect } from '@nextcloud/vue'
-
-import DavIcon from '../icons/DavIcon.vue'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
+import DavIcon from '../icons/DavIcon.vue'
 
 // Types
 interface AdminConfigurationState {
@@ -48,18 +47,16 @@ interface SaveRequest {
 
 // Reactive data
 const readonly = ref<boolean>(true)
-const state = reactive<AdminConfigurationState>(
-	loadState('integration_davc', 'admin-configuration') as AdminConfigurationState
-)
+const state = reactive<AdminConfigurationState>(loadState('integration_davc', 'admin-configuration') as AdminConfigurationState)
 
 // Select options for synchronization mode
 const synchronizationModeOptions: SelectOption[] = [
 	{ label: 'Passive', id: 'P' },
-	{ label: 'Active', id: 'A' }
+	{ label: 'Active', id: 'A' },
 ]
 
 // Methods
-const onSaveClick = async (): Promise<void> => {
+async function onSaveClick(): Promise<void> {
 	const req: SaveRequest = {
 		values: {
 			harmonization_mode: state.harmonization_mode,
@@ -67,22 +64,20 @@ const onSaveClick = async (): Promise<void> => {
 			harmonization_thread_pause: state.harmonization_thread_pause,
 		},
 	}
-	
+
 	const url = generateUrl('/apps/integration_davc/admin-configuration')
-	
+
 	try {
 		const response: AxiosResponse = await axios.put(url, req)
 		showSuccess(t('integration_davc', 'DAV admin configuration saved'))
 	} catch (error) {
 		const axiosError = error as AxiosError
-		const errorMessage = axiosError.response?.data 
+		const errorMessage = axiosError.response?.data
 			? String(axiosError.response.data)
 			: axiosError.message || 'Unknown error occurred'
-		
-		showError(
-			t('integration_davc', 'Failed to save DAV admin configuration') 
-			+ ': ' + errorMessage
-		)
+
+		showError(t('integration_davc', 'Failed to save DAV admin configuration')
+			+ ': ' + errorMessage)
 	}
 }
 </script>
@@ -101,7 +96,8 @@ const onSaveClick = async (): Promise<void> => {
 					<label>
 						{{ t('integration_davc', 'Synchronization Mode') }}
 					</label>
-					<NcSelect v-model="state.harmonization_mode"
+					<NcSelect
+						v-model="state.harmonization_mode"
 						:reduce="item => item.id"
 						:options="synchronizationModeOptions" />
 				</div>
@@ -109,12 +105,13 @@ const onSaveClick = async (): Promise<void> => {
 					<label>
 						{{ t('integration_davc', 'Synchronization Thread Duration') }}
 					</label>
-					<input id="davc-thread-duration"
+					<input
+						id="davc-thread-duration"
 						v-model="state.harmonization_thread_duration"
 						type="number"
-						:autocomplete="'off'"
-						:autocorrect="'off'"
-						:autocapitalize="'none'">
+						autocomplete="off"
+						autocorrect="off"
+						autocapitalize="none">
 					<label>
 						{{ t('integration_davc', 'Seconds') }}
 					</label>
@@ -123,7 +120,8 @@ const onSaveClick = async (): Promise<void> => {
 					<label>
 						{{ t('integration_davc', 'Synchronization Thread Pause') }}
 					</label>
-					<input id="davc-thread-pause"
+					<input
+						id="davc-thread-pause"
 						v-model="state.harmonization_thread_pause"
 						type="number"
 						autocomplete="off"
