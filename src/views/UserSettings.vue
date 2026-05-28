@@ -46,7 +46,6 @@ interface Service {
 	location_security?: boolean
 	location_port?: string
 	location_path?: string
-	address_primary?: string
 	harmonization_start?: number
 	harmonization_end?: number
 }

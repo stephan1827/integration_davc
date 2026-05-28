@@ -50,20 +50,10 @@ class ServicesService {
 		$filter->condition('uid', $uid);
 		$filter->condition('id', $sid);
 		$services = $this->_Store->list($filter);
-		if (count($services) > 0) {
+		if (isset($services[$sid])) {
 			return $services[$sid];
 		}
 		return null;
-	}
-
-	/**
-	 * @return array<int,ServiceEntity>
-	 */
-	public function fetchByUserIdAndAddress(string $uid, string $address): array {
-		$filter = $this->_Store->listFilter();
-		$filter->condition('uid', $uid);
-		$filter->condition('address_primary', $address);
-		return $this->_Store->list($filter);
 	}
 
 	public function fresh(): ServiceEntity {
@@ -75,7 +65,8 @@ class ServicesService {
 	}
 
 	public function deposit(string $uid, ServiceEntity $service): ServiceEntity {
-		if (!is_numeric($service->getId())) {
+		$serviceId = $service->jsonSerialize()['id'] ?? null;
+		if (!is_numeric($serviceId)) {
 			return $this->create($uid, $service);
 		} else {
 			return $this->modify($uid, $service);
@@ -88,11 +79,11 @@ class ServicesService {
 	}
 
 	public function modify(string $uid, ServiceEntity $service): ServiceEntity {
-		return $this->_Store->modify($service);
+		return $this->_Store->modify($uid, $service);
 	}
 
 	public function delete(string $uid, ServiceEntity $service): void {
-		$this->_Store->delete($service);
+		$this->_Store->delete($uid, $service);
 	}
 
 }
