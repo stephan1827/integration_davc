@@ -121,9 +121,9 @@ class CoreService {
 
 		if ($configuration['auth'] === Constants::AUTHENTICATION_TYPE_BASIC) {
 			// validate id
-			if (!\OCA\DAVC\Utile\Validator::username($configuration['bauth_id'])) {
-				return false;
-			}
+			//if (!\OCA\DAVC\Utile\Validator::username($configuration['bauth_id'])) {
+			//	return false;
+			//}
 			// validate secret
 			if (empty($configuration['bauth_secret'])) {
 				return false;

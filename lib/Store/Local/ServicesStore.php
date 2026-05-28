@@ -108,34 +108,6 @@ class ServicesStore {
 	}
 
 	/**
-	 * confirm entity exists in data store
-	 *
-	 * @since Release 1.0.0
-	 *
-	 * @param int $id entity id
-	 *
-	 * @return int|false entry id on success / false on failure
-	 */
-	public function confirm(int $id): int|false {
-
-		// construct data store command
-		$cmd = $this->_Store->getQueryBuilder();
-		$cmd->select('id')
-			->from($this->_EntityTable)
-			->where($cmd->expr()->eq('id', $cmd->createNamedParameter($id)));
-		// execute command
-		$data = $cmd->executeQuery()->fetch();
-		$cmd->executeQuery()->closeCursor();
-		// evaluate if anything was found
-		if (is_array($data) && count($data) > 0) {
-			return (int)$data['id'];
-		} else {
-			return false;
-		}
-
-	}
-
-	/**
 	 * retrieve entity from data store
 	 *
 	 * @since Release 1.0.0
@@ -204,16 +176,18 @@ class ServicesStore {
 	 *
 	 * @since Release 1.0.0
 	 *
+	 * @param string $uid user id
 	 * @param ServiceEntity $entity
 	 *
 	 * @return ServiceEntity
 	 */
-	public function modify(ServiceEntity $entity): ServiceEntity {
+	public function modify(string $uid, ServiceEntity $entity): ServiceEntity {
 
 		// construct data store command
 		$cmd = $this->_Store->getQueryBuilder();
 		$cmd->update($this->_EntityTable)
-			->where($cmd->expr()->eq('id', $cmd->createNamedParameter($entity->getId())));
+			->where($cmd->expr()->eq('uid', $cmd->createNamedParameter($uid)))
+			->andWhere($cmd->expr()->eq('id', $cmd->createNamedParameter($entity->getId())));
 		// assign values
 		if (count($entity->getUpdatedFields())) {
 			foreach (array_keys($entity->getUpdatedFields()) as $property) {
@@ -240,16 +214,18 @@ class ServicesStore {
 	 *
 	 * @since Release 1.0.0
 	 *
+	 * @param string $uid user id
 	 * @param ServiceEntity $entity
 	 *
 	 * @return ServiceEntity
 	 */
-	public function delete(ServiceEntity $entity): ServiceEntity {
+	public function delete(string $uid, ServiceEntity $entity): ServiceEntity {
 
 		// construct data store command
 		$cmd = $this->_Store->getQueryBuilder();
 		$cmd->delete($this->_EntityTable)
-			->where($cmd->expr()->eq('id', $cmd->createNamedParameter($entity->getId())));
+			->where($cmd->expr()->eq('uid', $cmd->createNamedParameter($uid)))
+			->andWhere($cmd->expr()->eq('id', $cmd->createNamedParameter($entity->getId())));
 		// execute command
 		$cmd->executeStatement();
 
