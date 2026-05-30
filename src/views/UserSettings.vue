@@ -151,7 +151,7 @@ async function disconnectService(): Promise<void> {
 	}
 	try {
 		await axios.post(uri, data)
-		showSuccess('Successfully disconnected from account')
+		showSuccess(t('integration_davc', 'Successfully disconnected from account'))
 		// Reset state
 		selectedService.value = null
 		// contacts
@@ -181,7 +181,7 @@ async function harmonizeService(): Promise<void> {
 	}
 	try {
 		await axios.post(uri, data)
-		showSuccess('Synchronization Successful')
+		showSuccess(t('integration_davc', 'Synchronization Successful'))
 	} catch (error: unknown) {
 		showError(t('integration_davc', 'Synchronization Failed')
 			+ ': ' + getErrorResponseText(error))
@@ -194,7 +194,7 @@ async function serviceList(): Promise<void> {
 		const response = await axios.get(uri)
 		if (response.data) {
 			configuredServices.value = Object.values(response.data)
-			showSuccess('Found ' + configuredServices.value.length + ' Configured Services')
+			showSuccess(t('integration_davc', 'Found {count} Configured Services', { count: configuredServices.value.length }))
 		}
 	} catch (error: unknown) {
 		showError(t('integration_davc', 'Failed to load service list')
@@ -217,16 +217,15 @@ async function remoteCollectionsFetch(): Promise<void> {
 	}
 	try {
 		const response = await axios.get(uri, { params })
-		console.log('Remote collections response:', response)
 		if (response.data.ContactsSupported) {
 			contactsRemoteSupported.value = response.data.ContactsSupported
 			contactsRemoteCollections.value = response.data.ContactsCollections
-			showSuccess('Found ' + contactsRemoteCollections.value.length + ' Remote Contacts Collections')
+			showSuccess(t('integration_davc', 'Found {count} Remote Contacts Collections', { count: contactsRemoteCollections.value.length }))
 		}
 		if (response.data.EventsSupported) {
 			eventsRemoteSupported.value = response.data.EventsSupported
 			eventsRemoteCollections.value = response.data.EventsCollections
-			showSuccess('Found ' + eventsRemoteCollections.value.length + ' Remote Events Collections')
+			showSuccess(t('integration_davc', 'Found {count} Remote Events Collections', { count: eventsRemoteCollections.value.length }))
 		}
 	} catch (error: unknown) {
 		showError(t('integration_davc', 'Failed to load remote collections')
@@ -243,11 +242,11 @@ async function localCollectionsFetch(): Promise<void> {
 		const response = await axios.get(uri, { params })
 		if (response.data.ContactCollections) {
 			contactsLocalCollections.value = response.data.ContactCollections
-			showSuccess('Found ' + contactsLocalCollections.value.length + ' Local Contact Collections')
+			showSuccess(t('integration_davc', 'Found {count} Local Contact Collections', { count: contactsLocalCollections.value.length }))
 		}
 		if (response.data.EventCollections) {
 			eventsLocalCollections.value = response.data.EventCollections
-			showSuccess('Found ' + eventsLocalCollections.value.length + ' Local Event Collections')
+			showSuccess(t('integration_davc', 'Found {count} Local Event Collections', { count: eventsLocalCollections.value.length }))
 		}
 	} catch (error: unknown) {
 		showError(t('integration_davc', 'Failed to load remote collections')
@@ -264,7 +263,7 @@ async function localCollectionsDeposit(): Promise<void> {
 	}
 	try {
 		await axios.post(uri, data)
-		showSuccess('Saved correlations')
+		showSuccess(t('integration_davc', 'Saved correlations'))
 		localCollectionsFetch()
 	} catch (error: unknown) {
 		showError(t('integration_davc', 'Failed to save correlations')
@@ -587,7 +586,7 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 			</div>
 			<div v-if="configureManually" class="parameter">
 				<NcCheckboxRadioSwitch v-model="selectedService.location_security" type="switch">
-					{{ t('integration_ews', 'Secure Transport Verification (SSL Certificate Verification). Should always be ON, unless connecting to a service over a secure internal network') }}
+					{{ t('integration_davc', 'Secure Transport Verification (SSL Certificate Verification). Should always be ON, unless connecting to a service over a secure internal network') }}
 				</NcCheckboxRadioSwitch>
 			</div>
 			<div v-if="configureManually" class="parameter">
@@ -664,7 +663,7 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 								type="switch"
 								:modelValue="establishedContactCorrelation(ritem.id)"
 								@update:modelValue="changeContactCorrelation(ritem.id, $event)" />
-							<ContactIcon :inline="true" :style="{ color: establishedContactCorrelationColor(ritem.id) }" />
+								<ContactIcon :inline="true" :style="{ color: establishedContactCorrelationColor(ritem.id) }" />
 							<label>
 								{{ ritem.label }}
 							</label>
@@ -679,8 +678,8 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 							</label>
 						</li>
 					</ul>
-					<div v-else-if="contactsRemoteCollections.length == 0" class="empty-message">
-						{{ t('integration_davc', 'No contacts collections where found in the connected account') }}
+					<div v-else-if="contactsRemoteCollections.length === 0" class="empty-message">
+						{{ t('integration_davc', 'No contacts collections were found in the connected account') }}
 					</div>
 					<div v-else class="loading-message">
 						{{ t('integration_davc', 'Loading contacts collections from the connected account') }}
@@ -722,8 +721,8 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 							</label>
 						</li>
 					</ul>
-					<div v-else-if="eventsRemoteCollections.length == 0" class="empty-message">
-						{{ t('integration_davc', 'No events collections where found in the connected account') }}
+					<div v-else-if="eventsRemoteCollections.length === 0" class="empty-message">
+						{{ t('integration_davc', 'No events collections were found in the connected account') }}
 					</div>
 					<div v-else class="loading-message">
 						{{ t('integration_davc', 'Loading events collections from the connected account') }}
