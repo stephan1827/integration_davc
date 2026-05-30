@@ -14,11 +14,11 @@ class Validator {
 	private const _fqdn = '/(?=^.{1,254}$)(^(?:(?!\d|-)[a-z0-9\-]{1,63}(?<!-)\.)+(?:[a-z]{2,})$)/i';
 	private const _ip4 = '/^(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/';
 	private const _ip6 = '/^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$/';
+	private const _username = '/^[\x20-\x39\x3B-\x7E]+$/';
+	private const _password = '/^[\x21-\x7E]+$/';
 
 	/**
 	 * validate fully quntified domain name
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param string $fqdn - FQDN to validate
 	 *
@@ -32,8 +32,6 @@ class Validator {
 	/**
 	 * validate IPv4 address
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param string $ip - IPv4 address to validate
 	 *
 	 * @return bool
@@ -46,8 +44,6 @@ class Validator {
 	/**
 	 * validate IPv6 address
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param string $ip - IPv6 address to validate
 	 *
 	 * @return bool
@@ -59,8 +55,6 @@ class Validator {
 
 	/**
 	 * validate host
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param string $host - FQDN/IPv4/IPv6 address to validate
 	 *
@@ -90,8 +84,6 @@ class Validator {
 	/**
 	 * validate email address
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param string $address - email address to validate
 	 *
 	 * @return bool
@@ -104,25 +96,35 @@ class Validator {
 	/**
 	 * validate username
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param string $username - username to validate
 	 *
 	 * @return bool
 	 */
 	public static function username(string $username): bool {
-
-		if (self::email($username)) {
-			return true;
+		if (trim($username) === '') {
+			return false;
 		}
 
-		// TODO: Windows Login Validator
-		/*
-		if (self::windows_username($username)) {
-			return true;
+		if (trim($username) !== $username) {
+			return false;
 		}
-		*/
 
-		return false;
+		if (str_contains($username, '@')) {
+			return self::email($username);
+		}
+
+		return preg_match(self::_username, $username) > 0;
+	}
+
+	/**
+	 * validate password
+	 *
+	 * @param string $password - password to validate
+	 *
+	 * @return bool
+	 */
+	public static function password(string $password): bool {
+
+		return (!empty($password) && preg_match(self::_password, $password) > 0);
 	}
 }

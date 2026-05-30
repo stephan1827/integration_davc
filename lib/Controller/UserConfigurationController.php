@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace OCA\DAVC\Controller;
 
-use OCA\DAVC\Service\ConfigurationService;
 use OCA\DAVC\Service\CoreService;
 use OCA\DAVC\Service\HarmonizationService;
 use OCA\DAVC\Service\ServicesService;
@@ -25,11 +24,10 @@ class UserConfigurationController extends Controller {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private ConfigurationService $ConfigurationService,
 		private CoreService $CoreService,
 		private HarmonizationService $HarmonizationService,
 		private ServicesService $ServicesService,
-		private string $userId,
+		private ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -74,8 +72,11 @@ class UserConfigurationController extends Controller {
 		}
 		// execute command
 		try {
-			$rs = $this->CoreService->connectAccount($this->userId, $service);
-			return new DataResponse('success');
+			$entity = $this->CoreService->connectAccount($this->userId, $service);
+			if ($entity === null) {
+				return new DataResponse('Failed to connect account', Http::STATUS_BAD_REQUEST);
+			}
+			return new DataResponse($entity);
 		} catch (\Throwable $th) {
 			return new DataResponse($th->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
@@ -198,7 +199,7 @@ class UserConfigurationController extends Controller {
 		}
 		// execute command
 		try {
-			$rs = $this->CoreService->localCollectionsDeposit($this->userId, $sid, $ContactCorrelations, $EventCorrelations);
+			$this->CoreService->localCollectionsDeposit($this->userId, $sid, $ContactCorrelations, $EventCorrelations);
 			return $this->localCollectionsFetch($sid);
 		} catch (\Throwable $th) {
 			return new DataResponse($th->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);
