@@ -663,7 +663,7 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 								type="switch"
 								:modelValue="establishedContactCorrelation(ritem.id)"
 								@update:modelValue="changeContactCorrelation(ritem.id, $event)" />
-								<ContactIcon :inline="true" :style="{ color: establishedContactCorrelationColor(ritem.id) }" />
+							<ContactIcon :inline="true" :style="{ color: establishedContactCorrelationColor(ritem.id) }" />
 							<label>
 								{{ ritem.label }}
 							</label>
