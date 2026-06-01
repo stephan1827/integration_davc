@@ -7,26 +7,19 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\DAVC\Tests\DAV\Service;
+namespace OCA\DAVC\Tests\Dav;
 
 use OCA\DAVC\AppInfo\Application;
 use OCA\DAVC\Constants;
 use OCA\DAVC\Service\CoreService;
 use OCA\DAVC\Service\ServicesService;
 use OCA\DAVC\Store\Local\ServiceEntity;
-use OCP\BackgroundJob\IJobList;
-use OCP\IDBConnection;
-use OCP\Server;
-use PHPUnit\Framework\Attributes\Group;
 use Test\TestCase;
 
-#[Group('DB')]
-class CoreServiceConnectAccountTest extends TestCase {
+class CoreServiceTests extends TestCase {
 
 	private CoreService $coreService;
 	private ServicesService $servicesService;
-	private IDBConnection $db;
-	private IJobList $jobList;
 	private string $uid = 'tester';
 	private bool $initialized = false;
 	private string $davProtocol;
@@ -49,8 +42,6 @@ class CoreServiceConnectAccountTest extends TestCase {
 		$container = (new Application())->getContainer();
 		$this->coreService = $container->get(CoreService::class);
 		$this->servicesService = $container->get(ServicesService::class);
-		$this->db = Server::get(IDBConnection::class);
-		$this->jobList = Server::get(IJobList::class);
 		$this->initialized = true;
 
 		$this->cleanupServices();

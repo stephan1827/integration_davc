@@ -25,6 +25,8 @@ jobs:
     runs-on: ubuntu-latest-low
     outputs:
       php-version: ${{ steps.versions.outputs.php-available-list }}
+      php-min: ${{ steps.versions.outputs.php-min }}
+      php-max: ${{ steps.versions.outputs.php-max }}
       server-max: ${{ steps.versions.outputs.branches-max-list }}
     steps:
       - name: Checkout app
@@ -71,7 +73,7 @@ jobs:
 
     strategy:
       matrix:
-        php-versions: ${{ fromJson(needs.matrix.outputs.php-version) }}
+        php-versions: ['8.2', '${{ needs.matrix.outputs.php-max }}']
         server-versions: ${{ fromJson(needs.matrix.outputs.server-max) }}
 
     name: Unit PHP ${{ matrix.php-versions }} Nextcloud ${{ matrix.server-versions }}
