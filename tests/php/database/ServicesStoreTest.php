@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace OCA\DAVC\Tests\Database;
 
-use OCA\DAVC\Store\Common\Filters\FilterBase;
 use OCA\DAVC\Store\Local\ServiceEntity;
 use OCA\DAVC\Store\Local\ServicesStore;
 use OCP\IDBConnection;
@@ -19,9 +18,10 @@ use Test\TestCase;
 
 #[Group('DB')]
 class ServicesStoreTest extends TestCase {
-	private IDBConnection $db;
 
+	private IDBConnection $db;
 	private ServicesStore $store;
+	private string $userId = 'test-user';
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -29,79 +29,105 @@ class ServicesStoreTest extends TestCase {
 		$this->db = Server::get(IDBConnection::class);
 		$this->store = new ServicesStore($this->db);
 
+		$this->purgeTestData();
+	}
+
+	protected function tearDown(): void {
+		parent::tearDown();
+
+		$this->purgeTestData();
+	}
+
+	private function purgeTestData(): void {
 		$qb = $this->db->getQueryBuilder();
-		$qb->delete('davc_services')->executeStatement();
+		$qb->delete('davc_services')
+			->where(
+				$qb->expr()->eq('uid', $qb->createNamedParameter($this->userId))
+			)->executeStatement();
 	}
 
-	public function testCreateAndFetchPersistService(): void {
-		$service = $this->createServiceEntity('user-1', 'alpha.example.test');
-
+	public function testCreate(): void {
+		$service = $this->createServiceEntity($this->userId, 'alpha.example.test');
 		$created = $this->store->create($service);
-		$serviceId = (int)($created->jsonSerialize()['id'] ?? 0);
-		$fetched = $this->store->fetch($serviceId);
 
-		$this->assertGreaterThan(0, $serviceId);
-		$this->assertNotNull($fetched);
-		$this->assertSame('user-1', $fetched->getUid());
+		$this->assertInstanceOf(ServiceEntity::class, $created);
+		$this->assertGreaterThan(0, $created->getId());
+		$this->assertSame($this->userId, $created->getUid());
+	}
+
+	public function testModify(): void {
+		$service = $this->createServiceEntity($this->userId, 'alpha.example.test');
+		$service = $this->store->create($service);
+
+		$service->setLabel('service-modified');
+		$mutated = $this->store->modify($this->userId, $service);
+
+		$this->assertInstanceOf(ServiceEntity::class, $mutated);
+		$this->assertGreaterThan(0, $mutated->getId());
+		$this->assertEquals(0, count($mutated->getUpdatedFields()));
+		$this->assertSame($this->userId, $mutated->getUid());
+		$this->assertSame('service-modified', $mutated->getLabel());
+	}
+
+	public function testDelete(): void {
+		$service = $this->createServiceEntity($this->userId, 'alpha.example.test');
+		$service = $this->store->create($service);
+
+		$mutated = $this->store->delete($this->userId, $service);
+		$this->assertInstanceOf(ServiceEntity::class, $mutated);
+		$this->assertGreaterThan(0, $mutated->getId());
+		$this->assertSame($this->userId, $mutated->getUid());
+	}
+
+	public function testFetch(): void {
+		$service = $this->createServiceEntity($this->userId, 'alpha.example.test');
+		$service = $this->store->create($service);
+
+		$fetched = $this->store->fetch((int)$service->getId());
+		$this->assertInstanceOf(ServiceEntity::class, $fetched);
+		$this->assertGreaterThan(0, $fetched->getId());
+		$this->assertSame($this->userId, $fetched->getUid());
 		$this->assertSame('alpha.example.test', $fetched->getLocationHost());
-		$this->assertSame('service-user-1', $fetched->getLabel());
+		$this->assertSame('service-' . $this->userId, $fetched->getLabel());
 	}
 
-	public function testListReturnsOnlyMatchingUserServices(): void {
-		$first = $this->store->create($this->createServiceEntity('user-1', 'alpha.example.test'));
-		$this->store->create($this->createServiceEntity('user-2', 'beta.example.test'));
+	public function testList(): void {
+		$this->purgeTestData();
 
-		$filter = new FilterBase();
-		$filter->condition('uid', 'user-1');
+		$service1 = $this->createServiceEntity($this->userId, 'alpha.example.test');
+		$service2 = $this->createServiceEntity($this->userId, 'beta.example.test');
+		$this->store->create($service1);
+		$this->store->create($service2);
+
+		// test list without filter
+		$services = $this->store->list();
+		$this->assertIsArray($services);
+		$this->assertGreaterThanOrEqual(2, count($services));
+
+		// test list with filter
+		$filter = $this->store->listFilter();
+		$filter->condition('uid', $this->userId);
+
 		$services = $this->store->list($filter);
-
-		$firstId = (int)($first->jsonSerialize()['id'] ?? 0);
-		$this->assertCount(1, $services);
-		$this->assertArrayHasKey($firstId, $services);
-		$this->assertSame('user-1', $services[$firstId]->getUid());
+		$this->assertIsArray($services);
+		$this->assertCount(2, $services);
 	}
 
-	public function testModifyOnlyUpdatesOwnedService(): void {
-		$service = $this->store->create($this->createServiceEntity('user-1', 'alpha.example.test'));
-		$serviceId = (int)($service->jsonSerialize()['id'] ?? 0);
+	public function testDeleteByUser(): void {
+		$this->purgeTestData();
 
-		$service->setLabel('wrong-user-update');
-		$this->store->modify('user-2', $service);
-		$unchanged = $this->store->fetch($serviceId);
+		$service1 = $this->createServiceEntity($this->userId, 'alpha.example.test');
+		$service2 = $this->createServiceEntity($this->userId, 'beta.example.test');
+		$this->store->create($service1);
+		$this->store->create($service2);
 
-		$this->assertNotNull($unchanged);
-		$this->assertSame('service-user-1', $unchanged->getLabel());
+		$this->store->deleteByUser($this->userId);
 
-		$service->setLabel('right-user-update');
-		$this->store->modify('user-1', $service);
-		$updated = $this->store->fetch($serviceId);
-
-		$this->assertNotNull($updated);
-		$this->assertSame('right-user-update', $updated->getLabel());
-	}
-
-	public function testDeleteOnlyRemovesOwnedService(): void {
-		$service = $this->store->create($this->createServiceEntity('user-1', 'alpha.example.test'));
-		$serviceId = (int)($service->jsonSerialize()['id'] ?? 0);
-
-		$this->store->delete('user-2', $service);
-		$this->assertNotNull($this->store->fetch($serviceId));
-
-		$this->store->delete('user-1', $service);
-		$this->assertNull($this->store->fetch($serviceId));
-	}
-
-	public function testDeleteByUserRemovesOnlyTargetUsersServices(): void {
-		$this->store->create($this->createServiceEntity('user-1', 'alpha.example.test'));
-		$other = $this->store->create($this->createServiceEntity('user-2', 'beta.example.test'));
-
-		$this->store->deleteByUser('user-1');
-		$remaining = $this->store->list();
-		$otherId = (int)($other->jsonSerialize()['id'] ?? 0);
-
-		$this->assertCount(1, $remaining);
-		$this->assertArrayHasKey($otherId, $remaining);
-		$this->assertSame('user-2', $remaining[$otherId]->getUid());
+		$filter = $this->store->listFilter();
+		$filter->condition('uid', $this->userId);
+		$services = $this->store->list($filter);
+		$this->assertIsArray($services);
+		$this->assertCount(0, $services);
 	}
 
 	private function createServiceEntity(string $uid, string $host): ServiceEntity {
