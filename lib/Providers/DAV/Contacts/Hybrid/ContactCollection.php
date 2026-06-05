@@ -65,6 +65,15 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 	}
 
 	/**
+	 * Collection resource id
+	 *
+	 * @return int
+	 */
+	public function getResourceId(): int {
+		return $this->collection->localId;
+	}
+
+	/**
 	 * Collection principal group
 	 *
 	 * @return string|null

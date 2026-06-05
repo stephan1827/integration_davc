@@ -71,6 +71,15 @@ class EventCollection extends ExternalCalendar implements ICalendar, IProperties
 	}
 
 	/**
+	 * Collection resource id
+	 *
+	 * @return int
+	 */
+	public function getResourceId(): int {
+		return $this->collection->localId;
+	}
+
+	/**
 	 * collection principal group
 	 *
 	 * @return string|null
