@@ -55,9 +55,9 @@ onMounted(() => {
 // Methods
 function formatDate(dt: number | undefined): string {
 	if (dt) {
-		return (new Date(dt * 1000)).toLocaleString()
+		return window.OC.Util.formatDate(dt * 1000)
 	} else {
-		return 'never'
+		return t('integration_davc', 'never')
 	}
 }
 

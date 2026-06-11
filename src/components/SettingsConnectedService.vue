@@ -142,8 +142,7 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 				<span>{{ t('integration_davc', 'Connected as {0} to {1}', {0: service.bauth_id || '', 1: service.location_host || ''}) }}</span>
 			</div>
 			<div class="connection-status__harmonization">
-				{{ t('integration_davc', 'Synchronization was last started on ') }} {{ formatDate(service.harmonization_start) }}
-				{{ t('integration_davc', 'and finished on ') }} {{ formatDate(service.harmonization_end) }}
+				{{ t('integration_davc', 'Synchronization was last started on {0} and finished on {1}', {0: formatDate(service.harmonization_start), 1: formatDate(service.harmonization_end)}) }}
 			</div>
 		</div>
 		<div class="connection-correlations-contacts">
@@ -172,7 +171,7 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 							({{ ritem.count }} {{ t('integration_davc', 'Contacts') }})
 						</label>
 						<label v-if="establishedContactCorrelationHarmonized(ritem.id) > 0">
-							{{ t('integration_davc', 'Last Harmonized') }} {{ formatDate(establishedContactCorrelationHarmonized(ritem.id)) }}
+							{{ t('integration_davc', 'Last Harmonized {0}', {0: formatDate(establishedContactCorrelationHarmonized(ritem.id))}) }}
 						</label>
 						<label v-else>
 							{{ t('integration_davc', 'Last Harmonized never') }}
@@ -215,7 +214,7 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 							({{ ritem.count }} {{ t('integration_davc', 'Events') }})
 						</label>
 						<label v-if="establishedEventCorrelationHarmonized(ritem.id) > 0">
-							{{ t('integration_davc', 'Last Harmonized') }} {{ formatDate(establishedEventCorrelationHarmonized(ritem.id)) }}
+							{{ t('integration_davc', 'Last Harmonized {0}', {0: formatDate(establishedEventCorrelationHarmonized(ritem.id))}) }}
 						</label>
 						<label v-else>
 							{{ t('integration_davc', 'Last Harmonized never') }}
