@@ -1,0 +1,8 @@
+{ "translations": {
+    "Connected accounts" : "Verbonden accounts",
+    "Events" : "Evenementen",
+    "Disconnect" : "Verbinding verbreken",
+    "Basic" : "Basis",
+    "never" : "nooit"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

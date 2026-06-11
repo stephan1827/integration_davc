@@ -1,0 +1,7 @@
+{ "translations": {
+    "Connected accounts" : "接続済みアカウント",
+    "Events" : "イベント",
+    "Disconnect" : "切断",
+    "never" : "なし"
+},"pluralForm" :"nplurals=1; plural=0;"
+}

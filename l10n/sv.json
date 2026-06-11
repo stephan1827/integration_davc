@@ -1,0 +1,9 @@
+{ "translations": {
+    "Connected accounts" : "Anslutna konton",
+    "Events" : "Händelser",
+    "Save" : "Spara",
+    "Disconnect" : "Koppla från",
+    "Basic" : "Grundläggande",
+    "never" : "aldrig"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

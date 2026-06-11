@@ -1,0 +1,11 @@
+{ "translations": {
+    "Connected accounts" : "Bağlı hesaplar",
+    "Events" : "Etkinlikler",
+    "Save" : "Kaydet",
+    "Disconnect" : "Bağlantıyı kes",
+    "Account ID" : "Hesap kimliği",
+    "Basic" : "Temel",
+    "Connect" : "Bağlan",
+    "never" : "asla"
+},"pluralForm" :"nplurals=2; plural=(n > 1);"
+}

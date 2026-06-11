@@ -1,0 +1,10 @@
+{ "translations": {
+    "Connected accounts" : "ئۇلانغان ھېساباتلار",
+    "Events" : "ھادىسە",
+    "Save" : "ساقلا",
+    "Disconnect" : "ئۈزۈڭ",
+    "Connect" : "ئۇلاڭ",
+    "Seconds" : "سېكۇنت",
+    "never" : "ھەرگىز"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

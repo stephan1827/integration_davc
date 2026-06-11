@@ -1,0 +1,7 @@
+{ "translations": {
+    "Connected accounts" : "Kapcsolt fiókok",
+    "Events" : "Események",
+    "Disconnect" : "Kapcsolat bontása",
+    "never" : "soha"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

@@ -1,0 +1,6 @@
+{ "translations": {
+    "Events" : "Tapahtumat",
+    "Disconnect" : "Katkaise yhteys",
+    "never" : "ei koskaan"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

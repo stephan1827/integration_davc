@@ -1,0 +1,7 @@
+{ "translations": {
+    "Connected accounts" : "Поврзани сметки",
+    "Events" : "Настани",
+    "Disconnect" : "Исклучи",
+    "never" : "никогаш"
+},"pluralForm" :"nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;"
+}

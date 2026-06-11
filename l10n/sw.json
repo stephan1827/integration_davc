@@ -1,0 +1,9 @@
+{ "translations": {
+    "Connected accounts" : "Akaunti zilizounganishwa",
+    "Events" : "Matukio",
+    "Save" : "Hifadhi",
+    "Disconnect" : "Tenganisha",
+    "Connect" : "Unganisha",
+    "never" : "kamwe"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

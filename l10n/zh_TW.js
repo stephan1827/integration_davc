@@ -1,0 +1,16 @@
+OC.L10N.register(
+    "integration_davc",
+    {
+    "Connected accounts" : "已連結的帳號",
+    "Contacts" : "聯絡人",
+    "Calendars" : "行事曆",
+    "Events" : "行程",
+    "Save" : "儲存",
+    "Disconnect" : "中斷連結",
+    "Account ID" : "帳號 ID",
+    "Basic" : "基本",
+    "Connect" : "連線",
+    "Seconds" : "秒",
+    "never" : "永不"
+},
+"nplurals=1; plural=0;");
