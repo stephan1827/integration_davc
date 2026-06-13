@@ -43,8 +43,8 @@ class Version0010Date20260501000002 extends SimpleMigrationStep {
 			'length' => 255,
 			'notnull' => true
 		]);
-		// connection
-		$table->addColumn('connection', Types::BLOB, [
+		// connection (JSON document)
+		$table->addColumn('connection', Types::TEXT, [
 			'length' => 16777215, // 16MB
 			'notnull' => true
 		]);

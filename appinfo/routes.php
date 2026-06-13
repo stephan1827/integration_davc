@@ -7,8 +7,7 @@
 
 declare(strict_types=1);
 
+// Routes are declared via #[FrontpageRoute] attributes on the controllers.
 return [
-	'routes' => [
-		['name' => 'AdminConfiguration#depositConfiguration', 'url' => '/admin-configuration', 'verb' => 'PUT'],
-	]
+	'routes' => [],
 ];
