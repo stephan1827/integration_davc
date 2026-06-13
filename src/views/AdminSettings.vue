@@ -23,6 +23,7 @@ function showError(message: string) {
 
 import { NcButton, NcCheckboxRadioSwitch, NcSelect } from '@nextcloud/vue'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
+import AdminServiceTemplates from '../components/AdminServiceTemplates.vue'
 import DavIcon from '../icons/DavIcon.vue'
 
 // Types
@@ -75,7 +76,7 @@ async function onSaveClick(): Promise<void> {
 	const url = generateUrl('/apps/integration_davc/admin-configuration')
 
 	try {
-		const response: AxiosResponse = await axios.put(url, req)
+		const response: AxiosResponse = await axios.post(url, req)
 		showSuccess(t('integration_davc', 'DAV admin configuration saved'))
 	} catch (error) {
 		const axiosError = error as AxiosError
@@ -129,6 +130,7 @@ async function onSaveClick(): Promise<void> {
 				</NcButton>
 			</div>
 		</div>
+		<AdminServiceTemplates />
 	</div>
 </template>
 

@@ -21,6 +21,25 @@ class ServicesTemplateStore {
 	}
 
 	/**
+	 * normalise blob columns to strings
+	 *
+	 * On PostgreSQL (and Oracle) text/blob columns can be returned as stream
+	 * resources rather than strings, so decode them before returning rows.
+	 *
+	 * @param array $rows
+	 *
+	 * @return array
+	 */
+	private function decodeRows(array $rows): array {
+		foreach ($rows as &$row) {
+			if (isset($row['connection']) && is_resource($row['connection'])) {
+				$row['connection'] = stream_get_contents($row['connection']);
+			}
+		}
+		return $rows;
+	}
+
+	/**
 	 * retrieve service templates
 	 *
 	 * @since Release 1.0.0
@@ -36,10 +55,30 @@ class ServicesTemplateStore {
 		$cmd->executeQuery()->closeCursor();
 		// return result or null
 		if (is_array($rs) && count($rs) > 0) {
-			return $rs;
+			return $this->decodeRows($rs);
 		} else {
 			return [];
 		}
+	}
+
+	/**
+	 * retrieve all service templates from data store
+	 *
+	 * @since Release 1.0.0
+	 *
+	 * @return array
+	 */
+	public function list(): array {
+		// construct data store command
+		$cmd = $this->_Store->getQueryBuilder();
+		$cmd->select('*')
+			->from($this->_EntityTable);
+		// execute command
+		$result = $cmd->executeQuery();
+		$rs = $result->fetchAll();
+		$result->closeCursor();
+		// return result
+		return is_array($rs) ? $this->decodeRows($rs) : [];
 	}
 
 	/**
@@ -62,7 +101,7 @@ class ServicesTemplateStore {
 		$cmd->executeQuery()->closeCursor();
 		// return result or null
 		if (is_array($rs) && count($rs) > 0) {
-			return $rs;
+			return $this->decodeRows($rs);
 		} else {
 			return [];
 		}

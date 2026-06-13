@@ -11,6 +11,7 @@ namespace OCA\DAVC\Controller;
 
 use OCA\DAVC\Service\ConfigurationService;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
 
@@ -33,6 +34,7 @@ class AdminConfigurationController extends Controller {
 	 *
 	 * @return DataResponse
 	 */
+	#[FrontpageRoute(verb: 'POST', url: '/admin-configuration')]
 	public function depositConfiguration(array $values): DataResponse {
 
 		$this->ConfigurationService->depositSystem($values);
