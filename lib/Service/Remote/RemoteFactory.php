@@ -11,6 +11,7 @@ namespace OCA\DAVC\Service\Remote;
 
 use OCA\DAVC\Constants;
 use OCA\DAVC\Logging\FileLogger;
+use OCA\DAVC\Service\ConfigurationService;
 use OCA\DAVC\Store\Local\ServiceEntity;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
@@ -22,6 +23,7 @@ class RemoteFactory {
 	public function __construct(
 		private IClientService $clientService,
 		private IConfig $config,
+		private ConfigurationService $configurationService,
 	) {
 	}
 
@@ -39,7 +41,12 @@ class RemoteFactory {
 			$service->getLocationPort(),
 			$service->getLocationPath(),
 		);
-		$client->configureTransportVerification((bool)$service->getLocationSecurity());
+		// the administrator may enforce certificate verification regardless of the per-service setting
+		$client->configureTransportVerification(
+			$this->configurationService->getForceCertificateVerification()
+				? true
+				: (bool)$service->getLocationSecurity(),
+		);
 
 		if ($service->getAuth() === Constants::AUTHENTICATION_TYPE_BASIC) {
 			$client->setBasicAuthentication(

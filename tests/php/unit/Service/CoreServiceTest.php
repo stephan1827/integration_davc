@@ -187,4 +187,68 @@ class CoreServiceTest extends TestCase {
 
 		$this->service->connectAccount('user-1', $configuration);
 	}
+
+	public function testConnectAccountRejectsInsecureHttpWhenForbidden(): void {
+		$configuration = [
+			'label' => 'Example Server',
+			'auth' => Constants::AUTHENTICATION_TYPE_BASIC,
+			'bauth_id' => 'user@example.com',
+			'bauth_secret' => 'secret123',
+			'location_host' => 'example.com',
+			'location_path' => '/remote.php/dav',
+			'location_protocol' => 'http',
+		];
+
+		$this->configurationService->method('getForbidInsecureHttp')->willReturn(true);
+
+		$this->remoteFactory->expects($this->never())
+			->method('freshClient');
+		$this->servicesService->expects($this->never())
+			->method('deposit');
+
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessage('Insecure (http) connections are not permitted by the administrator.');
+
+		$this->service->connectAccount('user-1', $configuration);
+	}
+
+	public function testConnectAccountForcesCertificateVerificationWhenEnabled(): void {
+		$configuration = [
+			'label' => 'Example Server',
+			'auth' => Constants::AUTHENTICATION_TYPE_BASIC,
+			'bauth_id' => 'user@example.com',
+			'bauth_secret' => 'secret123',
+			'location_host' => 'example.com',
+			'location_path' => '/remote.php/dav',
+			'location_protocol' => 'https',
+			'location_security' => false,
+		];
+		$remoteClient = $this->createMock(RemoteClient::class);
+
+		$this->configurationService->method('getForceCertificateVerification')->willReturn(true);
+
+		$this->remoteFactory->expects($this->once())
+			->method('freshClient')
+			->with($this->callback(function (ServiceEntity $service): bool {
+				return (bool)$service->getLocationSecurity() === true;
+			}))
+			->willReturn($remoteClient);
+
+		$remoteClient->method('discover')->willReturn([
+			'connected' => true,
+			'principalUrl' => null,
+			'calendarHomeSet' => null,
+			'addressbookHomeSet' => null,
+		]);
+
+		$this->servicesService->method('deposit')
+			->willReturnCallback(function (string $uid, ServiceEntity $service): ServiceEntity {
+				$service->setId(7);
+				return $service;
+			});
+
+		$connectedService = $this->service->connectAccount('user-1', $configuration);
+
+		$this->assertTrue((bool)$connectedService->getLocationSecurity());
+	}
 }

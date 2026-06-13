@@ -34,6 +34,9 @@ class UserSettings implements ISettings {
 		// retrieve system configuration
 		$configuration['system_contacts'] = $this->configurationService->isContactsAppAvailable();
 		$configuration['system_events'] = $this->configurationService->isCalendarAppAvailable();
+		// administrator transport security policy
+		$configuration['force_certificate_verification'] = $this->configurationService->getForceCertificateVerification();
+		$configuration['forbid_insecure_http'] = $this->configurationService->getForbidInsecureHttp();
 
 		$this->initialStateService->provideInitialState('system-configuration', $configuration);
 

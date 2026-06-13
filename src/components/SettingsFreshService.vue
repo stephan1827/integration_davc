@@ -16,6 +16,8 @@ import CheckIcon from 'vue-material-design-icons/Check.vue'
 
 const props = defineProps<{
 	service: Service
+	forceCertificateVerification: boolean
+	forbidInsecureHttp: boolean
 }>()
 
 const emit = defineEmits<{
@@ -23,14 +25,22 @@ const emit = defineEmits<{
 }>()
 
 const configureManually = ref(false)
-const editableService = ref<Service>(cloneService(props.service))
+const editableService = ref<Service>(prepareService(props.service))
 
 watch(() => props.service, (service) => {
-	editableService.value = cloneService(service)
+	editableService.value = prepareService(service)
 })
 
-function cloneService(service: Service): Service {
-	return { ...service }
+function prepareService(service: Service): Service {
+	const clone = { ...service }
+	// honour the administrator transport security policy
+	if (props.forceCertificateVerification) {
+		clone.location_security = true
+	}
+	if (props.forbidInsecureHttp && clone.location_protocol === 'http') {
+		clone.location_protocol = 'https'
+	}
+	return clone
 }
 </script>
 
@@ -158,6 +168,7 @@ function cloneService(service: Service): Service {
 			</label>
 			<div class="radio-group">
 				<NcCheckboxRadioSwitch
+					v-if="!forbidInsecureHttp"
 					v-model="editableService.location_protocol"
 					name="service_protocol"
 					type="radio"
@@ -178,9 +189,15 @@ function cloneService(service: Service): Service {
 			</div>
 		</div>
 		<div v-if="configureManually" class="parameter">
-			<NcCheckboxRadioSwitch v-model="editableService.location_security" type="switch">
+			<NcCheckboxRadioSwitch
+				v-model="editableService.location_security"
+				:disabled="forceCertificateVerification"
+				type="switch">
 				{{ t('integration_davc', 'Secure Transport Verification (SSL Certificate Verification). Should always be ON, unless connecting to a service over a secure internal network') }}
 			</NcCheckboxRadioSwitch>
+			<span v-if="forceCertificateVerification" class="policy-hint">
+				{{ t('integration_davc', 'Enforced by administrator') }}
+			</span>
 		</div>
 		<div v-if="configureManually" class="parameter">
 			<label for="davc-service-port">
@@ -249,6 +266,11 @@ function cloneService(service: Service): Service {
 
 		.radio-group {
 			display: flex;
+		}
+
+		.policy-hint {
+			font-size: 12px;
+			color: var(--color-text-maxcontrast);
 		}
 	}
 
