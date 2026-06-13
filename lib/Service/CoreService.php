@@ -149,6 +149,15 @@ class CoreService {
 			}
 		}
 
+		// apply administrator transport security policy
+		if ($this->ConfigurationService->getForbidInsecureHttp()
+			&& ($configuration['location_protocol'] ?? 'https') === 'http') {
+			throw new \InvalidArgumentException('Insecure (http) connections are not permitted by the administrator.');
+		}
+		if ($this->ConfigurationService->getForceCertificateVerification()) {
+			$configuration['location_security'] = true;
+		}
+
 		// construct service entity
 		$service = new ServiceEntity();
 		if (isset($configuration['id'])) {

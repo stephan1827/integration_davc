@@ -70,4 +70,62 @@ class ConfigurationServiceTest extends TestCase {
 
 		$this->service->setHarmonizationInterval(60);
 	}
+
+	public function testGetForceCertificateVerificationDefaultsFalse(): void {
+		$this->config->method('getAppValue')
+			->with(Application::APP_ID, 'force_certificate_verification')
+			->willReturn('');
+
+		$this->assertFalse($this->service->getForceCertificateVerification());
+	}
+
+	public function testGetForceCertificateVerificationReturnsTrueWhenEnabled(): void {
+		$this->config->method('getAppValue')
+			->with(Application::APP_ID, 'force_certificate_verification')
+			->willReturn('1');
+
+		$this->assertTrue($this->service->getForceCertificateVerification());
+	}
+
+	public function testSetForceCertificateVerificationPersistsFlag(): void {
+		$this->config->expects($this->once())
+			->method('setAppValue')
+			->with(Application::APP_ID, 'force_certificate_verification', '1');
+
+		$this->service->setForceCertificateVerification(true);
+	}
+
+	public function testGetForbidInsecureHttpDefaultsFalse(): void {
+		$this->config->method('getAppValue')
+			->with(Application::APP_ID, 'forbid_insecure_http')
+			->willReturn('');
+
+		$this->assertFalse($this->service->getForbidInsecureHttp());
+	}
+
+	public function testSetForbidInsecureHttpPersistsFlag(): void {
+		$this->config->expects($this->once())
+			->method('setAppValue')
+			->with(Application::APP_ID, 'forbid_insecure_http', '0');
+
+		$this->service->setForbidInsecureHttp(false);
+	}
+
+	public function testDepositSystemNormalisesBooleansAndNumbers(): void {
+		$stored = [];
+		$this->config->method('setAppValue')
+			->willReturnCallback(function (string $app, string $key, string $value) use (&$stored): void {
+				$stored[$key] = $value;
+			});
+
+		$this->service->depositSystem([
+			'harmonization_interval' => 1800,
+			'force_certificate_verification' => true,
+			'forbid_insecure_http' => false,
+		]);
+
+		$this->assertSame('1800', $stored['harmonization_interval']);
+		$this->assertSame('1', $stored['force_certificate_verification']);
+		$this->assertSame('0', $stored['forbid_insecure_http']);
+	}
 }

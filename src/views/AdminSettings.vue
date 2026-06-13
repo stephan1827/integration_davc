@@ -21,13 +21,15 @@ function showError(message: string) {
 	// Could use a simple notification or alert
 }
 
-import { NcButton, NcSelect } from '@nextcloud/vue'
+import { NcButton, NcCheckboxRadioSwitch, NcSelect } from '@nextcloud/vue'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
 import DavIcon from '../icons/DavIcon.vue'
 
 // Types
 interface AdminConfigurationState {
 	harmonization_interval: string | number
+	force_certificate_verification: string | number | boolean
+	forbid_insecure_http: string | number | boolean
 }
 
 interface SelectOption {
@@ -38,12 +40,16 @@ interface SelectOption {
 interface SaveRequest {
 	values: {
 		harmonization_interval: number
+		force_certificate_verification: boolean
+		forbid_insecure_http: boolean
 	}
 }
 
 // Reactive data
 const state = reactive<AdminConfigurationState>(loadState('integration_davc', 'admin-configuration') as AdminConfigurationState)
 const harmonizationInterval = ref<number>(Number(state.harmonization_interval) || 900)
+const forceCertificateVerification = ref<boolean>(Boolean(Number(state.force_certificate_verification)))
+const forbidInsecureHttp = ref<boolean>(Boolean(Number(state.forbid_insecure_http)))
 
 // Select options for synchronization interval
 const synchronizationIntervalOptions: SelectOption[] = [
@@ -61,6 +67,8 @@ async function onSaveClick(): Promise<void> {
 	const req: SaveRequest = {
 		values: {
 			harmonization_interval: harmonizationInterval.value,
+			force_certificate_verification: forceCertificateVerification.value,
+			forbid_insecure_http: forbidInsecureHttp.value,
 		},
 	}
 
@@ -99,6 +107,16 @@ async function onSaveClick(): Promise<void> {
 						v-model="harmonizationInterval"
 						:reduce="item => item.id"
 						:options="synchronizationIntervalOptions" />
+				</div>
+				<div class="line">
+					<NcCheckboxRadioSwitch v-model="forceCertificateVerification" type="switch">
+						{{ t('integration_davc', 'Require certificate verification for all connections') }}
+					</NcCheckboxRadioSwitch>
+				</div>
+				<div class="line">
+					<NcCheckboxRadioSwitch v-model="forbidInsecureHttp" type="switch">
+						{{ t('integration_davc', 'Forbid insecure (HTTP) connections') }}
+					</NcCheckboxRadioSwitch>
 				</div>
 			</div>
 			<br>

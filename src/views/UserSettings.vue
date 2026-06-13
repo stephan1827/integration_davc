@@ -28,6 +28,8 @@ import DavIcon from '../icons/DavIcon.vue'
 interface SystemConfiguration {
 	system_contacts: boolean
 	system_events: boolean
+	force_certificate_verification: boolean
+	forbid_insecure_http: boolean
 }
 
 // Reactive data
@@ -301,6 +303,8 @@ function changeEventCorrelation(rcid: string | null, e: boolean): void {
 		<SettingsFreshService
 			v-if="selectedService !== null && !Boolean(selectedService.connected)"
 			:service="selectedService"
+			:forceCertificateVerification="systemConfiguration.force_certificate_verification"
+			:forbidInsecureHttp="systemConfiguration.forbid_insecure_http"
 			@connect="connectService($event)" />
 
 		<SettingsConnectedService

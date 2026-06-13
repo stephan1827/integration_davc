@@ -20,6 +20,8 @@ class ConfigurationService {
 	 * */
 	private const _SYSTEM = [
 		'harmonization_interval' => '900',
+		'force_certificate_verification' => '0',
+		'forbid_insecure_http' => '0',
 	];
 
 	/**
@@ -257,7 +259,11 @@ class ConfigurationService {
 
 		// deposit system configuration parameters
 		foreach ($parameters as $key => $value) {
-			$this->depositSystemValue($key, $value);
+			// normalise booleans and numerics to string for storage
+			if (is_bool($value)) {
+				$value = $value ? '1' : '0';
+			}
+			$this->depositSystemValue($key, (string)$value);
 		}
 
 	}
@@ -383,6 +389,60 @@ class ConfigurationService {
 
 		// set value, never below the allowed minimum
 		$this->depositSystemValue('harmonization_interval', (string)max(self::HARMONIZATION_INTERVAL_MINIMUM, $interval));
+
+	}
+
+	/**
+	 * Gets administrator transport security policy: force certificate verification
+	 *
+	 * @since Release 1.0.0
+	 *
+	 * @return bool true if certificate verification is enforced for all connections
+	 */
+	public function getForceCertificateVerification(): bool {
+
+		return $this->retrieveSystemValue('force_certificate_verification') === '1';
+	}
+
+	/**
+	 * Sets administrator transport security policy: force certificate verification
+	 *
+	 * @since Release 1.0.0
+	 *
+	 * @param bool $enabled
+	 *
+	 * @return void
+	 */
+	public function setForceCertificateVerification(bool $enabled): void {
+
+		$this->depositSystemValue('force_certificate_verification', $enabled ? '1' : '0');
+
+	}
+
+	/**
+	 * Gets administrator transport security policy: forbid insecure (http) connections
+	 *
+	 * @since Release 1.0.0
+	 *
+	 * @return bool true if insecure (http) connections are forbidden
+	 */
+	public function getForbidInsecureHttp(): bool {
+
+		return $this->retrieveSystemValue('forbid_insecure_http') === '1';
+	}
+
+	/**
+	 * Sets administrator transport security policy: forbid insecure (http) connections
+	 *
+	 * @since Release 1.0.0
+	 *
+	 * @param bool $enabled
+	 *
+	 * @return void
+	 */
+	public function setForbidInsecureHttp(bool $enabled): void {
+
+		$this->depositSystemValue('forbid_insecure_http', $enabled ? '1' : '0');
 
 	}
 
