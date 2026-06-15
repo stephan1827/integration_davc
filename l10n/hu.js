@@ -1,9 +1,8 @@
 OC.L10N.register(
     "integration_davc",
     {
-    "Connected accounts" : "Kapcsolt fiókok",
-    "Events" : "Események",
-    "Disconnect" : "Kapcsolat bontása",
-    "never" : "soha"
+    "Edit" : "Szerkesztés",
+    "Cancel" : "Mégse",
+    "Contacts" : "Névjegyek"
 },
 "nplurals=2; plural=(n != 1);");

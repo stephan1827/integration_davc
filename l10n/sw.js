@@ -1,11 +1,11 @@
 OC.L10N.register(
     "integration_davc",
     {
-    "Connected accounts" : "Akaunti zilizounganishwa",
+    "Edit" : "Hariri",
+    "Cancel" : "Ghairi",
+    "Contacts" : "Mawasiliano",
     "Events" : "Matukio",
-    "Save" : "Hifadhi",
     "Disconnect" : "Tenganisha",
-    "Connect" : "Unganisha",
-    "never" : "kamwe"
+    "Connect" : "Unganisha"
 },
 "nplurals=2; plural=(n != 1);");

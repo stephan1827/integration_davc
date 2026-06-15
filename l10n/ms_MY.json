@@ -1,4 +1,5 @@
 { "translations": {
-    "never" : "jangan"
+    "Edit" : "Sunting",
+    "Cancel" : "Cancel"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

@@ -1,7 +1,6 @@
 { "translations": {
-    "Connected accounts" : "接続済みアカウント",
-    "Events" : "イベント",
-    "Disconnect" : "切断",
-    "never" : "なし"
+    "Edit" : "編集",
+    "Cancel" : "キャンセル",
+    "Contacts" : "連絡先"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

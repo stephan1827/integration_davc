@@ -1,6 +1,7 @@
 { "translations": {
-    "Save" : "Ruaje",
-    "Disconnect" : "Shkëputu",
-    "never" : "kurrë"
+    "Edit" : "Përpuno",
+    "Cancel" : "Cancel",
+    "Contacts" : "Kontaktet",
+    "Disconnect" : "Shkëputu"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

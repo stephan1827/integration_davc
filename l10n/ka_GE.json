@@ -1,5 +1,5 @@
 { "translations": {
-    "Disconnect" : "კავშირის გაწყვეტა",
-    "never" : "არასდროს"
+    "Edit" : "შეცვლა",
+    "Cancel" : "Cancel"
 },"pluralForm" :"nplurals=2; plural=(n!=1);"
 }

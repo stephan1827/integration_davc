@@ -1,7 +1,9 @@
 OC.L10N.register(
     "integration_davc",
     {
-    "Save" : "บันทึก",
+    "Edit" : "แก้ไข",
+    "Cancel" : "Cancel",
+    "Contacts" : "รายชื่อผู้ติดต่อ",
     "Connect" : "เชื่อมต่อ",
     "never" : "ไม่เคย"
 },

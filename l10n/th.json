@@ -1,5 +1,7 @@
 { "translations": {
-    "Save" : "บันทึก",
+    "Edit" : "แก้ไข",
+    "Cancel" : "Cancel",
+    "Contacts" : "รายชื่อผู้ติดต่อ",
     "Connect" : "เชื่อมต่อ",
     "never" : "ไม่เคย"
 },"pluralForm" :"nplurals=1; plural=0;"

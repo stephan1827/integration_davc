@@ -1,9 +1,8 @@
 OC.L10N.register(
     "integration_davc",
     {
-    "Connected accounts" : "Contos connètidos",
-    "Events" : "Eventos",
-    "Save" : "Sarva",
-    "never" : "mai"
+    "Edit" : "Modìfica",
+    "Cancel" : "Cancel",
+    "Events" : "Eventos"
 },
 "nplurals=2; plural=(n != 1);");

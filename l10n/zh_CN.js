@@ -1,14 +1,15 @@
 OC.L10N.register(
     "integration_davc",
     {
-    "Connected accounts" : "已关联的账号",
+    "Edit" : "编辑",
+    "Cancel" : "取消",
     "Contacts" : "联系人",
     "Calendars" : "日历",
     "Events" : "事件",
-    "Save" : "保存",
     "Disconnect" : "断开连接",
     "Basic" : "基本",
     "Connect" : "连接",
-    "never" : "从不"
+    "never" : "从不",
+    "Synchronized" : "已同步"
 },
 "nplurals=1; plural=0;");

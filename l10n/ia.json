@@ -1,5 +1,5 @@
 { "translations": {
-    "Disconnect" : "Disconnecter",
-    "never" : "nunquam"
+    "Edit" : "Modificar",
+    "Cancel" : "Cancel"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

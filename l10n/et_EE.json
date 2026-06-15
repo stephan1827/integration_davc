@@ -1,6 +1,5 @@
 { "translations": {
-    "Events" : "Sündmused",
-    "Disconnect" : "Katkesta ühendus",
-    "never" : "mitte kunagi"
+    "Add template" : "Lisa mall",
+    "Edit" : "Muuda"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

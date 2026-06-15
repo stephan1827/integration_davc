@@ -1,4 +1,6 @@
 { "translations": {
-    "never" : "werjin"
+    "Edit" : "Ẓreg",
+    "Cancel" : "Semmet",
+    "Contacts" : "Inermisen"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

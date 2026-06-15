@@ -1,9 +1,10 @@
 { "translations": {
-    "Connected accounts" : "Anslutna konton",
+    "Edit" : "Redigera",
+    "Cancel" : "Avbryt",
+    "Contacts" : "Kontakter",
     "Events" : "Händelser",
-    "Save" : "Spara",
     "Disconnect" : "Koppla från",
     "Basic" : "Grundläggande",
-    "never" : "aldrig"
+    "Connect" : "Anslut"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

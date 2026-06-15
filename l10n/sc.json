@@ -1,7 +1,6 @@
 { "translations": {
-    "Connected accounts" : "Contos connètidos",
-    "Events" : "Eventos",
-    "Save" : "Sarva",
-    "never" : "mai"
+    "Edit" : "Modìfica",
+    "Cancel" : "Cancel",
+    "Events" : "Eventos"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

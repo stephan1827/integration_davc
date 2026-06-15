@@ -1,9 +1,12 @@
 OC.L10N.register(
     "integration_davc",
     {
-    "Connected accounts" : "Bağlı hesaplar",
+    "Edit template" : "Kalıbı düzenle",
+    "Add template" : "Kalıp ekle",
+    "Edit" : "Düzenle",
+    "Cancel" : "İptal",
+    "Contacts" : "Kişiler",
     "Events" : "Etkinlikler",
-    "Save" : "Kaydet",
     "Disconnect" : "Bağlantıyı kes",
     "Account ID" : "Hesap kimliği",
     "Basic" : "Temel",

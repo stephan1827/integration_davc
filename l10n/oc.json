@@ -1,6 +1,6 @@
 { "translations": {
-    "Connected accounts" : "Comptes connectats",
-    "Save" : "Enregistrar",
-    "never" : "pas jamai"
+    "Edit" : "Modificar",
+    "Cancel" : "Cancel",
+    "Contacts" : "Contactes"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

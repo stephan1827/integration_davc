@@ -1,11 +1,12 @@
 OC.L10N.register(
     "integration_davc",
     {
-    "Connected accounts" : "Anslutna konton",
+    "Edit" : "Redigera",
+    "Cancel" : "Avbryt",
+    "Contacts" : "Kontakter",
     "Events" : "Händelser",
-    "Save" : "Spara",
     "Disconnect" : "Koppla från",
     "Basic" : "Grundläggande",
-    "never" : "aldrig"
+    "Connect" : "Anslut"
 },
 "nplurals=2; plural=(n != 1);");

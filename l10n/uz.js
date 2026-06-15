@@ -1,8 +1,10 @@
 OC.L10N.register(
     "integration_davc",
     {
-    "Connected accounts" : "Ulangan akkauntlar",
-    "Save" : "Saqlash",
+    "Edit" : "Tahrirlash",
+    "Cancel" : "Bekor qilish",
+    "Contacts" : "Aloqalar",
+    "Calendars" : "Taqvimlar",
     "Connect" : "Connect",
     "never" : "hech qachon"
 },

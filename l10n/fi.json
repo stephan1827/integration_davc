@@ -1,6 +1,5 @@
 { "translations": {
-    "Events" : "Tapahtumat",
-    "Disconnect" : "Katkaise yhteys",
-    "never" : "ei koskaan"
+    "Edit" : "Muokkaa",
+    "Contacts" : "Yhteystiedot"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

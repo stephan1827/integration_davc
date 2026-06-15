@@ -1,9 +1,10 @@
 OC.L10N.register(
     "integration_davc",
     {
-    "Connected accounts" : "Đã kết nối tài khoản",
+    "Edit" : "Chỉnh sửa",
+    "Cancel" : "Cancel",
     "Contacts" : "Danh Bạ",
-    "Save" : "Lưu",
+    "Calendars" : "Lịch",
     "Disconnect" : "Ngắt kết nối",
     "Connect" : "Kết nối",
     "never" : "không thay đổi"

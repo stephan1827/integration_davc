@@ -1,4 +1,5 @@
 { "translations": {
-    "Connected accounts" : "සම්බන්ධිත ගිණුම්"
+    "Edit" : "සංස්කරණය",
+    "Cancel" : "Cancel"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

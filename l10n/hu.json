@@ -1,7 +1,6 @@
 { "translations": {
-    "Connected accounts" : "Kapcsolt fiókok",
-    "Events" : "Események",
-    "Disconnect" : "Kapcsolat bontása",
-    "never" : "soha"
+    "Edit" : "Szerkesztés",
+    "Cancel" : "Mégse",
+    "Contacts" : "Névjegyek"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

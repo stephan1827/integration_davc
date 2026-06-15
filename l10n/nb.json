@@ -1,7 +1,7 @@
 { "translations": {
-    "Connected accounts" : "Tilknyttede kontoer",
-    "Events" : "Hendelser",
-    "Disconnect" : "Koble fra",
-    "never" : "aldri"
+    "Edit" : "Rediger",
+    "Cancel" : "Cancel",
+    "Contacts" : "Kontakter",
+    "Events" : "Hendelser"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

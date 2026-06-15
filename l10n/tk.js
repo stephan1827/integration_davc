@@ -1,7 +1,8 @@
 OC.L10N.register(
     "integration_davc",
     {
-    "Save" : "Saklamak",
+    "Edit" : "Redaktirläň",
+    "Cancel" : "Cancel",
     "never" : "hiç haçan"
 },
 "nplurals=2; plural=(n != 1);");

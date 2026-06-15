@@ -1,11 +1,12 @@
 OC.L10N.register(
     "integration_davc",
     {
-    "Connected accounts" : "Prijungtos paskyros",
+    "Edit template" : "Taisyti šabloną",
+    "Add template" : "Pridėti šabloną",
+    "Edit" : "Redaguoti",
+    "Cancel" : "Atsisakyti",
+    "Contacts" : "Kontaktai",
     "Events" : "Įvykiai",
-    "Disconnect" : "Atsijungti",
-    "Account ID" : "Paskyros ID",
-    "Basic" : "Pagrindinis",
-    "never" : "niekada"
+    "Account ID" : "Paskyros ID"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");

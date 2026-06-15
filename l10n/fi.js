@@ -1,8 +1,7 @@
 OC.L10N.register(
     "integration_davc",
     {
-    "Events" : "Tapahtumat",
-    "Disconnect" : "Katkaise yhteys",
-    "never" : "ei koskaan"
+    "Edit" : "Muokkaa",
+    "Contacts" : "Yhteystiedot"
 },
 "nplurals=2; plural=(n != 1);");

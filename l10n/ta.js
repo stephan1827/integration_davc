@@ -1,8 +1,9 @@
 OC.L10N.register(
     "integration_davc",
     {
-    "Save" : "சேமிக்க ",
-    "Connect" : "இணைக்க",
-    "never" : "ஒருபோதும்"
+    "Edit" : "தொகுக்க",
+    "Cancel" : "Cancel",
+    "Contacts" : "தொடர்புகள்",
+    "Connect" : "இணைக்க"
 },
 "nplurals=2; plural=(n != 1);");

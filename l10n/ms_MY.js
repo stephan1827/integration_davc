@@ -1,6 +1,7 @@
 OC.L10N.register(
     "integration_davc",
     {
-    "never" : "jangan"
+    "Edit" : "Sunting",
+    "Cancel" : "Cancel"
 },
 "nplurals=1; plural=0;");

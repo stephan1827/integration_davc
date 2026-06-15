@@ -1,5 +1,5 @@
 { "translations": {
-    "Connected accounts" : "Tilkopla kontoar",
-    "never" : "aldri"
+    "Edit" : "Rediger",
+    "Cancel" : "Cancel"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

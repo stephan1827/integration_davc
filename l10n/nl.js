@@ -1,10 +1,10 @@
 OC.L10N.register(
     "integration_davc",
     {
-    "Connected accounts" : "Verbonden accounts",
+    "Edit" : "Bewerken",
+    "Cancel" : "Annuleer",
+    "Contacts" : "Contacten",
     "Events" : "Evenementen",
-    "Disconnect" : "Verbinding verbreken",
-    "Basic" : "Basis",
-    "never" : "nooit"
+    "Basic" : "Basis"
 },
 "nplurals=2; plural=(n != 1);");
