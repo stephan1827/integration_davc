@@ -328,6 +328,13 @@ class EventCollection extends ExternalCalendar implements ICalendar, IProperties
 		$listFilter->condition('uuid', $id, FilterComparisonOperator::EQ);
 		// retrieve object properties
 		$entities = $this->localService->entityList($listFilter);
+		// fall back to a lookup by remote entity id
+		if (count($entities) === 0 && $this->collection->remoteId !== null) {
+			$listFilter = $this->localService->entityListFilter();
+			$listFilter->condition('cid', $this->collection->localId);
+			$listFilter->condition('ceid', $this->collection->remoteId . $id, FilterComparisonOperator::EQ);
+			$entities = $this->localService->entityList($listFilter);
+		}
 		return count($entities) > 0;
 	}
 
@@ -362,14 +369,19 @@ class EventCollection extends ExternalCalendar implements ICalendar, IProperties
 	 * @return EventEntity|false
 	 */
 	public function getChild($id): EventEntity|false {
-		// remove extension
-		$id = str_replace('.ics', '', $id);
 		// construct filter
 		$listFilter = $this->localService->entityListFilter();
 		$listFilter->condition('cid', $this->collection->localId);
 		$listFilter->condition('uuid', $id);
 		// retrieve object properties
 		$entities = $this->localService->entityList($listFilter);
+		// fall back to a lookup by remote entity id
+		if (count($entities) === 0 && $this->collection->remoteId !== null) {
+			$listFilter = $this->localService->entityListFilter();
+			$listFilter->condition('cid', $this->collection->localId);
+			$listFilter->condition('ceid', $this->collection->remoteId . $id, FilterComparisonOperator::EQ);
+			$entities = $this->localService->entityList($listFilter);
+		}
 		// evaluate if object properties where retrieved
 		if (count($entities) > 0) {
 			return new EventEntity($this, $entities[0]);

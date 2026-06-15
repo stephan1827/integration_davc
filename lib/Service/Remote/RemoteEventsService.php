@@ -281,6 +281,9 @@ class RemoteEventsService {
 		$result = $this->dataStore->create($path, $data, 'application/vcalendar');
 
 		$ro = clone $so;
+		// persist the full resource path so the stored identifier matches what a
+		// subsequent pull from the remote server would report for this entity
+		$ro->remoteEntityId = $path;
 		$ro->remoteSignature = $result['etag'] ?? null;
 
 		return $ro;
