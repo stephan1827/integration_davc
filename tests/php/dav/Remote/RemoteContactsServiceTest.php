@@ -355,7 +355,8 @@ class RemoteContactsServiceTest extends TestCase {
 
 			$this->assertInstanceOf(Entity::class, $createdEntity);
 			$this->assertSame($entity->remoteCollectionId, $createdEntity->remoteCollectionId);
-			$this->assertSame($entity->remoteEntityId, $createdEntity->remoteEntityId);
+			// the created entity carries the full resource path as its remote id
+			$this->assertSame($resourcePath, $createdEntity->remoteEntityId);
 			$this->assertSame($payload, $createdEntity->data);
 			$this->assertIsString($createdEntity->remoteSignature);
 			$this->assertNotSame('', $createdEntity->remoteSignature);
