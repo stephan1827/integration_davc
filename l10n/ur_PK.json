@@ -1,6 +1,8 @@
 { "translations": {
     "Edit" : "تدوین کریں",
+    "Delete" : "حذف کریں",
     "Cancel" : "Cancel",
+    "Save" : "حفظ",
     "Connect" : "منسلک"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

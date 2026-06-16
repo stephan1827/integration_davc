@@ -1,10 +1,19 @@
 OC.L10N.register(
     "integration_davc",
     {
+    "Connected accounts" : "Повезани налози",
     "Edit" : "Измени",
+    "Delete" : "Обриши",
     "Cancel" : "Откажи",
+    "Save" : "Сачувај",
     "Contacts" : "Контакти",
+    "Calendars" : "Календари",
     "Events" : "Догађаји",
-    "Disconnect" : "Раскачи се"
+    "Disconnect" : "Раскачи се",
+    "Connect" : "Повежи се",
+    "Every hour" : "Сваки сат",
+    "never" : "никад",
+    "Synchronized" : "Синхронизовано",
+    "Synchronization failed" : "Синхронизација није успела"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

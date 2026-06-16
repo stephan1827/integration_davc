@@ -1,11 +1,13 @@
 OC.L10N.register(
     "integration_davc",
     {
+    "Connected accounts" : "已連結的帳號",
     "Edit template" : "編輯範本",
     "Add template" : "新增範本",
     "Edit" : "編輯",
     "Delete" : "刪除",
     "Cancel" : "取消",
+    "Save" : "儲存",
     "Contacts" : "聯絡人",
     "Calendars" : "行事曆",
     "Events" : "行程",
@@ -13,6 +15,8 @@ OC.L10N.register(
     "Account ID" : "帳號 ID",
     "Basic" : "基本",
     "Connect" : "連線",
-    "never" : "永不"
+    "Every hour" : "每小時",
+    "never" : "永不",
+    "Synchronization failed" : "同步失敗"
 },
 "nplurals=1; plural=0;");

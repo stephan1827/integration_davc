@@ -1,0 +1,9 @@
+{ "translations": {
+    "Edit" : "մշակել",
+    "Delete" : "հեռացնել",
+    "Cancel" : "Cancel",
+    "Save" : "Պահպանել",
+    "Connect" : "միացնել",
+    "never" : "երբեք"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

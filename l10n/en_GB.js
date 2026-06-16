@@ -1,0 +1,21 @@
+OC.L10N.register(
+    "integration_davc",
+    {
+    "Connected accounts" : "Connected accounts",
+    "Edit template" : "Edit template",
+    "Add template" : "Add template",
+    "Edit" : "Edit",
+    "Delete" : "Delete",
+    "Cancel" : "Cancel",
+    "Save" : "Save",
+    "Calendars" : "Calendars",
+    "Events" : "Events",
+    "Disconnect" : "Disconnect",
+    "Account ID" : "Account ID",
+    "Connect" : "Connect",
+    "Every hour" : "Every hour",
+    "never" : "never",
+    "Synchronized" : "Synchronised",
+    "Synchronization failed" : "Synchronization failed"
+},
+"nplurals=2; plural=(n != 1);");

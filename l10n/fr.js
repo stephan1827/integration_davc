@@ -1,0 +1,20 @@
+OC.L10N.register(
+    "integration_davc",
+    {
+    "Connected accounts" : "Comptes connectés",
+    "Edit" : "Modifier",
+    "Delete" : "Supprimer",
+    "Cancel" : "Annuler",
+    "Save" : "Enregistrer",
+    "Contacts" : "Contacts",
+    "Calendars" : "Agendas",
+    "Events" : "Évènements",
+    "Disconnect" : "Se déconnecter",
+    "Basic" : "Basique",
+    "Connect" : "Se connecter",
+    "Every hour" : "Toutes les heures",
+    "never" : "jamais",
+    "Synchronized" : "Synchronisation",
+    "Synchronization failed" : "Échec de synchronisation"
+},
+"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

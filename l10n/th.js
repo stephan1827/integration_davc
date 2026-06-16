@@ -2,9 +2,13 @@ OC.L10N.register(
     "integration_davc",
     {
     "Edit" : "แก้ไข",
+    "Delete" : "ลบ",
     "Cancel" : "Cancel",
+    "Save" : "บันทึก",
     "Contacts" : "รายชื่อผู้ติดต่อ",
+    "Calendars" : "ปฏิทิน",
     "Connect" : "เชื่อมต่อ",
-    "never" : "ไม่เคย"
+    "never" : "ไม่เคย",
+    "Synchronization failed" : "การซิงโครไนซ์ผิดพลาด"
 },
 "nplurals=1; plural=0;");

@@ -1,8 +1,16 @@
 OC.L10N.register(
     "integration_davc",
     {
+    "Connected accounts" : "Sasaistītie konti",
     "Edit" : "Labot",
+    "Delete" : "Izdzēst",
     "Cancel" : "Atcelt",
-    "Contacts" : "Kontakti"
+    "Save" : "Saglabāt",
+    "Contacts" : "Kontakti",
+    "Calendars" : "Kalendāri",
+    "Disconnect" : "Atvienot",
+    "Connect" : "Savienoties",
+    "Every hour" : "Katru stundu",
+    "never" : "nekad"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

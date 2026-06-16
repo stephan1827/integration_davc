@@ -1,5 +1,10 @@
 { "translations": {
     "Edit" : "შეცვლა",
-    "Cancel" : "Cancel"
+    "Delete" : "წაშლა",
+    "Cancel" : "Cancel",
+    "Save" : "შენახვა",
+    "Disconnect" : "კავშირის გაწყვეტა",
+    "Connect" : "დაკავშირება",
+    "never" : "არასდროს"
 },"pluralForm" :"nplurals=2; plural=(n!=1);"
 }

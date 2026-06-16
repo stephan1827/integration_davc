@@ -1,8 +1,19 @@
 OC.L10N.register(
     "integration_davc",
     {
+    "Connected accounts" : "Kapcsolt fiókok",
     "Edit" : "Szerkesztés",
+    "Delete" : "Törlés",
     "Cancel" : "Mégse",
-    "Contacts" : "Névjegyek"
+    "Save" : "Mentés",
+    "Contacts" : "Névjegyek",
+    "Calendars" : "Naptárak",
+    "Events" : "Események",
+    "Disconnect" : "Kapcsolat bontása",
+    "Connect" : "Kapcsolódás",
+    "Every hour" : "Óránként",
+    "never" : "soha",
+    "Synchronized" : "Szinkronizált",
+    "Synchronization failed" : "Szinkronizálás sikertelen"
 },
 "nplurals=2; plural=(n != 1);");

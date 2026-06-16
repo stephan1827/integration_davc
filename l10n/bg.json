@@ -1,0 +1,15 @@
+{ "translations": {
+    "Connected accounts" : "Свързани профили",
+    "Edit" : "Промяна",
+    "Delete" : "Изтриване",
+    "Cancel" : "Cancel",
+    "Save" : "Запиши",
+    "Contacts" : "Контакти",
+    "Calendars" : "Kалендари",
+    "Events" : "Събития",
+    "Disconnect" : "Прекъсване на връзката",
+    "Connect" : "Свързване",
+    "never" : "никога",
+    "Synchronization failed" : "Синхронизацията е неуспешна"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

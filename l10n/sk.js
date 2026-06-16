@@ -1,11 +1,19 @@
 OC.L10N.register(
     "integration_davc",
     {
+    "Connected accounts" : "Prepojené účty",
     "Edit" : "Upraviť",
+    "Delete" : "Odstrániť",
     "Cancel" : "Zrušiť",
+    "Save" : "Uložiť",
     "Contacts" : "Kontakty",
+    "Calendars" : "Kalendáre",
     "Events" : "Udalosti",
     "Disconnect" : "Odpojiť",
-    "Basic" : "Základné"
+    "Basic" : "Základné",
+    "Connect" : "Pripojiť",
+    "never" : "nikdy",
+    "Synchronized" : "Synchronizované",
+    "Synchronization failed" : "Synchronizácia zlyhala"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

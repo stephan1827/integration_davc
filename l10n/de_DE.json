@@ -1,0 +1,21 @@
+{ "translations": {
+    "Connected accounts" : "Verbundene Konten",
+    "Edit template" : "Vorlage bearbeiten",
+    "Add template" : "Vorlage hinzufügen",
+    "Edit" : "Bearbeiten",
+    "Delete" : "Löschen",
+    "Cancel" : "Abbrechen",
+    "Save" : "Speichern",
+    "Contacts" : "Kontakte",
+    "Calendars" : "Kalender",
+    "Events" : "Ereignisse",
+    "Disconnect" : "Trennen",
+    "Account ID" : "Konto-ID",
+    "Basic" : "Standard",
+    "Connect" : "Verbinden",
+    "Every hour" : "Jede Stunde",
+    "never" : "Niemals",
+    "Synchronized" : "Synchronisiert",
+    "Synchronization failed" : "Synchronisierung fehlgeschlagen"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

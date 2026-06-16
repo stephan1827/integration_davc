@@ -1,0 +1,9 @@
+{ "translations": {
+    "Edit" : "Dəyişiklik et",
+    "Delete" : "Sil",
+    "Cancel" : "Cancel",
+    "Save" : "Saxla",
+    "Connect" : "Qoşul",
+    "never" : "heç vaxt"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

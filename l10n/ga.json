@@ -1,0 +1,20 @@
+{ "translations": {
+    "Connected accounts" : "Cuntais nasctha",
+    "Edit template" : "Cuir an teimpléad in eagar",
+    "Add template" : "Cuir teimpléad leis",
+    "Edit" : "Cuir in eagar",
+    "Delete" : "Scrios",
+    "Cancel" : "Cealaigh",
+    "Save" : "Sábháil",
+    "Contacts" : "Teagmhálaithe",
+    "Calendars" : "Féilirí",
+    "Events" : "Imeachtaí",
+    "Disconnect" : "Dícheangail",
+    "Account ID" : "Aitheantas an Chuntais",
+    "Basic" : "Bunúsach",
+    "Connect" : "Ceangal",
+    "Every hour" : "Gach uair an chloig",
+    "never" : "riamh",
+    "Synchronization failed" : "Theip ar an sioncronú"
+},"pluralForm" :"nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);"
+}

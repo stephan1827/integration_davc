@@ -1,10 +1,20 @@
 { "translations": {
+    "Connected accounts" : "Prijungtos paskyros",
     "Edit template" : "Taisyti šabloną",
     "Add template" : "Pridėti šabloną",
     "Edit" : "Redaguoti",
+    "Delete" : "Ištrinti",
     "Cancel" : "Atsisakyti",
+    "Save" : "Išsaugoti",
     "Contacts" : "Kontaktai",
+    "Calendars" : "Kalendoriai",
     "Events" : "Įvykiai",
-    "Account ID" : "Paskyros ID"
+    "Disconnect" : "Atsijungti",
+    "Account ID" : "Paskyros ID",
+    "Basic" : "Pagrindinis",
+    "Connect" : "Prisijungti",
+    "Every hour" : "Kas valandą",
+    "never" : "niekada",
+    "Synchronization failed" : "Sinchronizacija nepavyko"
 },"pluralForm" :"nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);"
 }

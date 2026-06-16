@@ -1,5 +1,10 @@
 { "translations": {
     "Edit" : "Änneren",
-    "Cancel" : "Cancel"
+    "Delete" : "Läschen",
+    "Cancel" : "Cancel",
+    "Save" : "Späicheren",
+    "Calendars" : "Kalenneren",
+    "Connect" : "Verbannen",
+    "never" : "Ni"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

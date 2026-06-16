@@ -1,6 +1,8 @@
 { "translations": {
     "Edit" : "Redaktirläň",
+    "Delete" : "Pozmak",
     "Cancel" : "Cancel",
+    "Save" : "Saklamak",
     "never" : "hiç haçan"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

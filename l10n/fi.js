@@ -1,7 +1,19 @@
 OC.L10N.register(
     "integration_davc",
     {
+    "Connected accounts" : "Yhdistetyt tilit",
     "Edit" : "Muokkaa",
-    "Contacts" : "Yhteystiedot"
+    "Delete" : "Poista",
+    "Cancel" : "Peruuta",
+    "Save" : "Tallenna",
+    "Contacts" : "Yhteystiedot",
+    "Calendars" : "Kalenterit",
+    "Events" : "Tapahtumat",
+    "Disconnect" : "Katkaise yhteys",
+    "Connect" : "Yhdistä",
+    "Every hour" : "Tunneittain",
+    "never" : "ei koskaan",
+    "Synchronized" : "Synkronoitu",
+    "Synchronization failed" : "Synkronointi epäonnistui"
 },
 "nplurals=2; plural=(n != 1);");

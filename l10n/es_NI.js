@@ -1,6 +1,12 @@
 OC.L10N.register(
     "integration_davc",
     {
-    "Edit" : "Editar"
+    "Edit" : "Editar",
+    "Delete" : "Borrar",
+    "Cancel" : "Cancel",
+    "Save" : "Guardar",
+    "Disconnect" : "Desconectar",
+    "Connect" : "Conectar",
+    "never" : "nunca"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

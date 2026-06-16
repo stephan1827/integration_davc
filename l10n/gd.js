@@ -1,6 +1,10 @@
 OC.L10N.register(
     "integration_davc",
     {
-    "Edit" : "Deasaich"
+    "Edit" : "Deasaich",
+    "Delete" : "Sguab às",
+    "Cancel" : "Cancel",
+    "Save" : "Sàbhail",
+    "never" : "chan ann idir"
 },
 "nplurals=4; plural=(n==1 || n==11) ? 0 : (n==2 || n==12) ? 1 : (n > 2 && n < 20) ? 2 : 3;");

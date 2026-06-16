@@ -1,10 +1,20 @@
 OC.L10N.register(
     "integration_davc",
     {
+    "Connected accounts" : "Verbonden accounts",
     "Edit" : "Bewerken",
+    "Delete" : "Verwijder",
     "Cancel" : "Annuleer",
+    "Save" : "Opslaan",
     "Contacts" : "Contacten",
+    "Calendars" : "Agenda's",
     "Events" : "Evenementen",
-    "Basic" : "Basis"
+    "Disconnect" : "Verbinding verbreken",
+    "Basic" : "Basis",
+    "Connect" : "Verbinden",
+    "Every hour" : "Elk uur",
+    "never" : "nooit",
+    "Synchronized" : "Gesynchroniseerd",
+    "Synchronization failed" : "Synchronisatie mislukt"
 },
 "nplurals=2; plural=(n != 1);");
