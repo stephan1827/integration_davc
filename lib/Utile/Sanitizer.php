@@ -14,8 +14,6 @@ class Sanitizer {
 	/**
 	 * sanitize string for use in folder name
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param string $name - String to be sanitized
 	 * @param bool $lp - Stip leading special characters
 	 * @param bool $tp - Stip trailing special characters
@@ -48,8 +46,6 @@ class Sanitizer {
 
 	/**
 	 * sanitize string for use in user name
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param string $name - String to be sanitized
 	 *

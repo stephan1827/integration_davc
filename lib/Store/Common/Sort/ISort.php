@@ -12,25 +12,22 @@ namespace OCA\DAVC\Store\Common\Sort;
 interface ISort {
 
 	/**
-	 *
-	 * @since 1.0.0
+	 * List of attributes that can be used for sorting
 	 *
 	 * @return array<string,bool>
 	 */
 	public function attributes(): array;
 
 	/**
-	 *
-	 * @since 1.0.0
-	 *
+	 * add a sorting condition
+	 * 
 	 * @param string $attribute attribute name
 	 * @param bool $direction true for ascending, false for descending
 	 */
 	public function condition(string $property, bool $direction): void;
 
 	/**
-	 *
-	 * @since 1.0.0
+	 * retrieve sorting conditions
 	 *
 	 * @return array<string,array{attribute:string,direction:bool}>
 	 */

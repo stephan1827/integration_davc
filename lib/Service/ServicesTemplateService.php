@@ -29,8 +29,6 @@ class ServicesTemplateService {
 	/**
 	 * list all service templates with decoded connection settings
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @return array
 	 */
 	public function list(): array {
@@ -43,8 +41,6 @@ class ServicesTemplateService {
 
 	/**
 	 * create a new service template
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param string $domain service domain
 	 * @param array $connection connection settings
@@ -59,8 +55,6 @@ class ServicesTemplateService {
 	/**
 	 * modify an existing service template
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param string $id service template id
 	 * @param string $domain service domain
 	 * @param array $connection connection settings
@@ -74,8 +68,6 @@ class ServicesTemplateService {
 
 	/**
 	 * delete a service template
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param string $id service template id
 	 *

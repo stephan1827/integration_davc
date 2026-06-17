@@ -29,8 +29,6 @@ class RemoteFactory {
 
 	/**
 	 * Initialize remote data store client
-	 *
-	 * @since Release 1.0.0
 	 */
 	public function freshClient(ServiceEntity $service): RemoteClient {
 		$client = new RemoteClient($this->clientService);
@@ -80,8 +78,6 @@ class RemoteFactory {
 
 	/**
 	 * Appropriate Core Service for Connection
-	 *
-	 * @since Release 1.0.0
 	 */
 	public function coreService(RemoteClient $client): RemoteCoreService {
 		$service = new RemoteCoreService();
@@ -92,8 +88,6 @@ class RemoteFactory {
 
 	/**
 	 * Appropriate Contacts Service for Connection
-	 *
-	 * @since Release 1.0.0
 	 */
 	public function contactsService(RemoteClient $client): RemoteContactsService {
 		$service = new RemoteContactsService();
@@ -104,8 +98,6 @@ class RemoteFactory {
 
 	/**
 	 * Appropriate Events Service for Connection
-	 *
-	 * @since Release 1.0.0
 	 */
 	public function eventsService(RemoteClient $client): RemoteEventsService {
 		$service = new RemoteEventsService();

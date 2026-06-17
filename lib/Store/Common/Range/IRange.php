@@ -12,8 +12,7 @@ namespace OCA\DAVC\Store\Common\Range;
 interface IRange {
 
 	/**
-	 *
-	 * @since 1.0.0
+	 * range type
 	 */
 	public function type(): string;
 

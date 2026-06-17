@@ -40,8 +40,6 @@ class CoreService {
 	/**
 	 * locates connection point using users login details
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param string $uid user id
 	 * @param string $account_bauth_id account username
 	 * @param string $account_bauth_secret account secret
@@ -103,8 +101,6 @@ class CoreService {
 
 	/**
 	 * connects to account, verifies details, then create service
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param string $uid user id
 	 * @param array $configuration service connection data
@@ -229,8 +225,6 @@ class CoreService {
 	/**
 	 * Removes all users settings, etc for specific user
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param string $uid user id
 	 * @param int $sid service id
 	 *
@@ -265,8 +259,6 @@ class CoreService {
 
 	/**
 	 * retrieves remote collections for all modules
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param string $uid user id
 	 * @param int $sid service id
@@ -334,8 +326,6 @@ class CoreService {
 	/**
 	 * retrieves local collections for all modules
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param string $uid user id
 	 * @param int $sid service id
 	 *
@@ -366,8 +356,6 @@ class CoreService {
 
 	/**
 	 * Deposit collection correlations for all modules
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param string $uid user id
 	 * @param int $sid service id
@@ -495,8 +483,6 @@ class CoreService {
 
 	/**
 	 * publish user notification
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param string $uid nextcloud user id
 	 * @param string $subject notification type

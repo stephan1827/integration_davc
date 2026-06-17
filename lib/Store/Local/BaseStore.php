@@ -82,8 +82,6 @@ class BaseStore {
 	/**
 	 * retrieve collections from data store
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param IFilter $filter filter options
 	 * @param ISort $sort sort options
 	 *
@@ -119,8 +117,6 @@ class BaseStore {
 	/**
 	 * retrieve instance of collection filter
 	 *
-	 * @since 1.0.0
-	 *
 	 * @return CollectionFilter
 	 */
 	public function collectionListFilter(): IFilter {
@@ -129,9 +125,7 @@ class BaseStore {
 
 	/**
 	 * retrieve instance of collection sort
-	 *
-	 * @since 1.0.0
-	 *
+	 * 
 	 * @return CollectionSort
 	 */
 	public function collectionListSort(): ISort {
@@ -140,9 +134,7 @@ class BaseStore {
 
 	/**
 	 * retrieve collections for specific user from data store
-	 *
-	 * @since Release 1.0.0
-	 *
+	 * 
 	 * @param string $uid user id
 	 *
 	 * @return array<int, CollectionEntity>
@@ -157,9 +149,7 @@ class BaseStore {
 
 	/**
 	 * retrieve collections for specific user from data store
-	 *
-	 * @since Release 1.0.0
-	 *
+	 * 
 	 * @param int $sid service id
 	 *
 	 * @return array<int, CollectionEntity>
@@ -174,8 +164,6 @@ class BaseStore {
 
 	/**
 	 * retrieve collection from data store
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param int $id collection id
 	 *
@@ -197,8 +185,6 @@ class BaseStore {
 	/**
 	 * fresh instance of a collection entity
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @return CollectionEntity
 	 */
 	public function collectionFresh(): CollectionEntity {
@@ -207,8 +193,6 @@ class BaseStore {
 
 	/**
 	 * create a collection entry in the data store
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param CollectionEntity $entity
 	 *
@@ -242,8 +226,6 @@ class BaseStore {
 
 	/**
 	 * modify a collection entry in the data store
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param CollectionEntity $entity
 	 *
@@ -281,8 +263,6 @@ class BaseStore {
 	/**
 	 * delete a collection entry from the data store
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param CollectionEntity $entity
 	 *
 	 * @return CollectionEntity
@@ -306,8 +286,6 @@ class BaseStore {
 	/**
 	 * delete collections for a specific user from data store
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param int $id collection id
 	 *
 	 * @return mixed
@@ -328,8 +306,6 @@ class BaseStore {
 
 	/**
 	 * delete collections for a specific user from data store
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param string $id user id
 	 *
@@ -353,8 +329,6 @@ class BaseStore {
 	/**
 	 * delete collections for a specific user from data store
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param int $id service id
 	 *
 	 * @return mixed
@@ -376,8 +350,6 @@ class BaseStore {
 
 	/**
 	 * retrieve entities from data store
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param array $elements data fields
 	 * @param IFilter $filter filter options
@@ -419,8 +391,6 @@ class BaseStore {
 	/**
 	 * retrieve instance of entity filter
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @return IFilter
 	 */
 	public function entityListFilter(): IFilter {
@@ -430,8 +400,6 @@ class BaseStore {
 	/**
 	 * retrieve instance of entity sort
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @return ISort
 	 */
 	public function entityListSort(): ISort {
@@ -440,8 +408,6 @@ class BaseStore {
 
 	/**
 	 * retrieve instance of entity range
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param RangeType $type range type
 	 * @param RangeAnchorType $anchor range anchor type
@@ -463,8 +429,6 @@ class BaseStore {
 	/**
 	 * retrieve entities for specific user from data store
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param string $uid user id
 	 *
 	 * @return array of entities
@@ -480,8 +444,6 @@ class BaseStore {
 	/**
 	 * retrieve entities for specific user and collection from data store
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param int $cid collection id
 	 *
 	 * @return array of entities
@@ -496,8 +458,6 @@ class BaseStore {
 
 	/**
 	 * confirm entity exists in data store
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param int $id entity id
 	 *
@@ -524,8 +484,6 @@ class BaseStore {
 
 	/**
 	 * check if entity exists in data store
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param int $cid collection id
 	 * @param string $uuid entity uuid
@@ -555,8 +513,6 @@ class BaseStore {
 	/**
 	 * retrieve entity from data store
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param int $id entity id
 	 *
 	 * @return Entity|null
@@ -585,8 +541,6 @@ class BaseStore {
 
 	/**
 	 * retrieve entity from data store
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param int $cid collection id
 	 * @param string $uuid entity uuid
@@ -618,8 +572,6 @@ class BaseStore {
 
 	/**
 	 * retrieve entity from data store
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param int $cid collection id
 	 * @param string $ccid correlation collection id
@@ -654,8 +606,6 @@ class BaseStore {
 	/**
 	 * fresh instance of a entity
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @return Entity
 	 */
 	public function entityFresh(): Entity {
@@ -665,8 +615,6 @@ class BaseStore {
 
 	/**
 	 * create a entity entry in the data store
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param Entity $entity
 	 *
@@ -700,8 +648,6 @@ class BaseStore {
 
 	/**
 	 * modify a entity entry in the data store
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param Entity $entity
 	 *
@@ -739,8 +685,6 @@ class BaseStore {
 	/**
 	 * delete a entity from the data store
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param Entity $entity
 	 *
 	 * @return Entity
@@ -762,8 +706,6 @@ class BaseStore {
 	/**
 	 * delete entity by id
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param string $id entity id
 	 *
 	 * @return mixed
@@ -780,8 +722,6 @@ class BaseStore {
 
 	/**
 	 * delete entities for a specific user from data store
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param string $uid user id
 	 *
@@ -800,8 +740,6 @@ class BaseStore {
 	/**
 	 * delete entities for a specific service from data store
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param int $sid service id
 	 *
 	 * @return mixed
@@ -819,8 +757,6 @@ class BaseStore {
 	/**
 	 * delete entities for a specific collection from data store
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param int $cid collection id
 	 *
 	 * @return mixed
@@ -837,8 +773,6 @@ class BaseStore {
 
 	/**
 	 * chronicle a operation to an entity to the data store
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param string $uid user id
 	 * @param int $sid service id
@@ -873,8 +807,6 @@ class BaseStore {
 	/**
 	 * reminisce operations to entities in data store
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param int $cid collection id
 	 * @param int $encode weather to encode the result
 	 *
@@ -900,8 +832,6 @@ class BaseStore {
 
 	/**
 	 * reminisce operations to entities in data store
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param int $cid collection id
 	 * @param string $stamp time stamp
@@ -973,8 +903,6 @@ class BaseStore {
 	/**
 	 * delete chronicle entries for a specific user from data store
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param int $id user id
 	 *
 	 * @return mixed
@@ -991,8 +919,6 @@ class BaseStore {
 	/**
 	 * delete chronicle entries for a specific service from data store
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param int $id service id
 	 *
 	 * @return mixed
@@ -1008,8 +934,6 @@ class BaseStore {
 
 	/**
 	 * delete chronicle entries for a specific collection from data store
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param int $id collection id
 	 *
