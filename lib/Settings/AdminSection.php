@@ -18,51 +18,27 @@ use OCP\Settings\IIconSection;
  */
 class AdminSection implements IIconSection {
 
-	/** @var IL10N */
-	private $l;
-
-	/** @var IURLGenerator */
-	private $urlGenerator;
-
-	public function __construct(IURLGenerator $urlGenerator, IL10N $l) {
-		$this->l = $l;
-		$this->urlGenerator = $urlGenerator;
+	public function __construct(
+		private readonly IURLGenerator $urlGenerator,
+		private readonly IL10N $l,
+	) {
 	}
 
-	/**
-	 * returns the ID of the section. It is supposed to be a lower case string
-	 *
-	 * @returns string
-	 */
 	#[\Override]
 	public function getID(): string {
 		return 'integration-davc';
 	}
 
-	/**
-	 * returns the translated name as it should be displayed, e.g. 'LDAP / AD
-	 * integration'. Use the L10N service to translate it.
-	 *
-	 * @return string
-	 */
 	#[\Override]
 	public function getName(): string {
 		return $this->l->t('DAV Connector');
 	}
 
-	/**
-	 * @return int whether the form should be rather on the top or bottom of
-	 *             the settings navigation. The sections are arranged in ascending order of
-	 *             the priority values. It is required to return a value between 0 and 99.
-	 */
 	#[\Override]
 	public function getPriority(): int {
 		return 80;
 	}
 
-	/**
-	 * @return ?string The relative path to a an icon describing the section
-	 */
 	#[\Override]
 	public function getIcon(): ?string {
 		return $this->urlGenerator->imagePath('core', 'categories/integration.svg');

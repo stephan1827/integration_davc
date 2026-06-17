@@ -21,9 +21,9 @@ class RemoteFactory {
 	public static string $clientTransportAgent = 'NextcloudDAVC/1.0 (1.0; x64)';
 
 	public function __construct(
-		private IClientService $clientService,
-		private IConfig $config,
-		private ConfigurationService $configurationService,
+		private readonly IClientService $clientService,
+		private readonly IConfig $config,
+		private readonly ConfigurationService $configurationService,
 	) {
 	}
 
@@ -74,16 +74,6 @@ class RemoteFactory {
 		$path = $this->config->getSystemValue('datadirectory', \OC::$SERVERROOT . '/data') . '/davc-' . $serviceId . '.log';
 
 		return new FileLogger($path);
-	}
-
-	/**
-	 * Appropriate Core Service for Connection
-	 */
-	public function coreService(RemoteClient $client): RemoteCoreService {
-		$service = new RemoteCoreService();
-		$service->initialize($client);
-
-		return $service;
 	}
 
 	/**

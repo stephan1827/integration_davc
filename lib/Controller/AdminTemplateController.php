@@ -25,7 +25,7 @@ class AdminTemplateController extends Controller {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private ServicesTemplateService $templateService,
+		private readonly ServicesTemplateService $templateService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -37,7 +37,6 @@ class AdminTemplateController extends Controller {
 	 */
 	#[FrontpageRoute(verb: 'GET', url: '/admin/templates')]
 	public function list(): DataResponse {
-
 		return new DataResponse($this->templateService->list());
 	}
 
@@ -51,7 +50,6 @@ class AdminTemplateController extends Controller {
 	 */
 	#[FrontpageRoute(verb: 'POST', url: '/admin/templates/create')]
 	public function create(string $domain, array $connection = []): DataResponse {
-
 		$domain = trim($domain);
 		if (!Validator::fqdn($domain)) {
 			return new DataResponse('Invalid domain provided.', Http::STATUS_BAD_REQUEST);
@@ -73,7 +71,6 @@ class AdminTemplateController extends Controller {
 	 */
 	#[FrontpageRoute(verb: 'POST', url: '/admin/templates/modify')]
 	public function modify(string $id, string $domain, array $connection = []): DataResponse {
-
 		$domain = trim($domain);
 		if ($id === '') {
 			return new DataResponse('Invalid template id.', Http::STATUS_BAD_REQUEST);

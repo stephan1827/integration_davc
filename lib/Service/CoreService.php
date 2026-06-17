@@ -9,14 +9,11 @@ declare(strict_types=1);
 
 namespace OCA\DAVC\Service;
 
-use DateTime;
-use OCA\DAVC\AppInfo\Application;
 use OCA\DAVC\Constants;
 use OCA\DAVC\Service\Local\LocalFactory;
 use OCA\DAVC\Service\Remote\RemoteFactory;
 use OCA\DAVC\Store\Local\ServiceEntity;
 use OCP\BackgroundJob\IJobList;
-use OCP\Notification\IManager as INotificationManager;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -26,14 +23,13 @@ use OCA\DAVC\Tasks\HarmonizationLauncher;
 
 class CoreService {
 	public function __construct(
-		private LoggerInterface $logger,
-		private IJobList $TaskService,
-		private INotificationManager $notificationManager,
-		private ConfigurationService $ConfigurationService,
-		private ServicesService $ServicesService,
-		private ServicesTemplateService $ServicesTemplateService,
-		private RemoteFactory $remoteFactory,
-		private LocalFactory $localFactory,
+		private readonly LoggerInterface $logger,
+		private readonly IJobList $TaskService,
+		private readonly ConfigurationService $ConfigurationService,
+		private readonly ServicesService $ServicesService,
+		private readonly ServicesTemplateService $ServicesTemplateService,
+		private readonly RemoteFactory $remoteFactory,
+		private readonly LocalFactory $localFactory,
 	) {
 	}
 
@@ -481,26 +477,6 @@ class CoreService {
 				}
 			}
 		}
-	}
-
-	/**
-	 * publish user notification
-	 *
-	 * @param string $uid nextcloud user id
-	 * @param string $subject notification type
-	 * @param array $params notification parameters to pass
-	 */
-	public function publishNotice(string $uid, string $subject, array $params): void {
-		// construct notification object
-		$notification = $this->notificationManager->createNotification();
-		// assign attributes
-		$notification->setApp(Application::APP_ID)
-			->setUser($uid)
-			->setDateTime(new DateTime())
-			->setObject('eas', 'eas')
-			->setSubject($subject, $params);
-		// submit notification
-		$this->notificationManager->notify($notification);
 	}
 
 }

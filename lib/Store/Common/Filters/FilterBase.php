@@ -14,40 +14,21 @@ class FilterBase implements IFilter {
 	protected array $attributes = [];
 	protected array $conditions = [];
 
-	/**
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return array<string>
-	 */
 	#[\Override]
 	public function attributes(): array {
 		return $this->attributes;
 	}
 
-	/**
-	 *
-	 * @since 1.0.0
-	 */
 	#[\Override]
-	public function comparators(): FilterComparisonOperator {
-		return new FilterComparisonOperator;
+	public function comparators(): array {
+		return FilterComparisonOperator::cases();
 	}
 
-	/**
-	 *
-	 * @since 1.0.0
-	 */
 	#[\Override]
-	public function conjunctions(): FilterConjunctionOperator {
-		return new FilterConjunctionOperator;
+	public function conjunctions(): array {
+		return FilterConjunctionOperator::cases();
 	}
 
-	/**
-	 *
-	 * @since 1.0.0
-	 *
-	 */
 	#[\Override]
 	public function condition(string $attribute, mixed $value, FilterComparisonOperator $comparator = FilterComparisonOperator::EQ, FilterConjunctionOperator $conjunction = FilterConjunctionOperator::AND): void {
 		if (!isset($this->properties[$attribute])) {
@@ -60,12 +41,6 @@ class FilterBase implements IFilter {
 		}
 	}
 
-	/**
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return array<int, array{attribute:string, value:mixed, comparator:FilterComparisonOperator, conjunction:FilterConjunctionOperator}>
-	 */
 	#[\Override]
 	public function conditions(): array {
 		return $this->conditions;

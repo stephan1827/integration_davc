@@ -12,7 +12,6 @@ namespace OCA\DAVC\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
-use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
@@ -20,11 +19,6 @@ use OCP\Migration\SimpleMigrationStep;
  * @psalm-api
  */
 class Version0010Date20260501000001 extends SimpleMigrationStep {
-
-	public function __construct(
-		private IDBConnection $db,
-	) {
-	}
 
 	/**
 	 * @param IOutput $output

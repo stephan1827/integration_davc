@@ -27,9 +27,9 @@ class UserConfigurationController extends Controller {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private CoreService $CoreService,
-		private HarmonizationService $HarmonizationService,
-		private ServicesService $ServicesService,
+		private readonly CoreService $CoreService,
+		private readonly HarmonizationService $HarmonizationService,
+		private readonly ServicesService $ServicesService,
 		private ?string $userId,
 	) {
 		parent::__construct($appName, $request);

@@ -18,7 +18,6 @@ use Stringable;
 final class FileLogger implements LoggerInterface {
 	public function __construct(
 		private string $path,
-		private ?string $app = null,
 	) {
 	}
 

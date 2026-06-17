@@ -22,8 +22,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Harmonize extends Command {
 
 	public function __construct(
-		private IUserManager $userManager,
-		private HarmonizationService $HarmonizationService,
+		private readonly IUserManager $userManager,
+		private readonly HarmonizationService $HarmonizationService,
 	) {
 		parent::__construct();
 	}

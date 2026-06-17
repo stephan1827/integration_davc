@@ -19,7 +19,7 @@ use OCP\Migration\IRepairStep;
 class DefaultServiceTemplates implements IRepairStep {
 
 	public function __construct(
-		private ServicesTemplateStore $store,
+		private readonly ServicesTemplateStore $store,
 	) {
 	}
 
@@ -28,9 +28,6 @@ class DefaultServiceTemplates implements IRepairStep {
 		return 'Create or update default Dav Connector service templates';
 	}
 
-	/**
-	 * @return void
-	 */
 	#[\Override]
 	public function run(IOutput $output) {
 		// load the default service templates from file

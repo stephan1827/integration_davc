@@ -12,35 +12,33 @@ namespace OCA\DAVC\Store\Common\Filters;
 interface IFilter {
 
 	/**
-	 *
-	 * @since 1.0.0
+	 * List of attributes that are available for filtering
 	 *
 	 * @return array<string>
 	 */
 	public function attributes(): array;
 
 	/**
+	 * List of comparators that are available for filtering
 	 *
-	 * @since 1.0.0
+	 * @return list<FilterComparisonOperator>
 	 */
-	public function comparators(): FilterComparisonOperator;
+	public function comparators(): array;
 
 	/**
+	 * List of conjunctions that are available for filtering
 	 *
-	 * @since 1.0.0
+	 * @return list<FilterConjunctionOperator>
 	 */
-	public function conjunctions(): FilterConjunctionOperator;
+	public function conjunctions(): array;
 
 	/**
-	 *
-	 * @since 1.0.0
-	 *
+	 * Adds a condition to the filter
 	 */
-	public function condition(string $property, mixed $value, FilterComparisonOperator $comparator = FilterComparisonOperator::EQ, FilterConjunctionOperator $conjunction = FilterConjunctionOperator::AND): void;
+	public function condition(string $attribute, mixed $value, FilterComparisonOperator $comparator = FilterComparisonOperator::EQ, FilterConjunctionOperator $conjunction = FilterConjunctionOperator::AND): void;
 
 	/**
-	 *
-	 * @since 1.0.0
+	 * List of conditions that have been added to the filter
 	 *
 	 * @return array<int, array{attribute:string, value:mixed, comparator:FilterComparisonOperator, conjunction:FilterConjunctionOperator}>
 	 */

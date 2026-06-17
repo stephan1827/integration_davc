@@ -23,9 +23,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Disconnect extends Command {
 
 	public function __construct(
-		private IUserManager $userManager,
-		private CoreService $CoreService,
-		private ServicesService $servicesService,
+		private readonly IUserManager $userManager,
+		private readonly CoreService $CoreService,
+		private readonly ServicesService $servicesService,
 	) {
 		parent::__construct();
 	}
