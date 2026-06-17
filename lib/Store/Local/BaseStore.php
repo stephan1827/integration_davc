@@ -616,11 +616,11 @@ class BaseStore {
 	/**
 	 * create a entity entry in the data store
 	 *
-	 * @param Entity $entity
+	 * @param BaseEntity $entity
 	 *
-	 * @return Entity
+	 * @return BaseEntity
 	 */
-	public function entityCreate(Entity $entity): Entity {
+	public function entityCreate(BaseEntity $entity): BaseEntity {
 
 		// construct data store command
 		$cmd = $this->_Store->getQueryBuilder();
@@ -649,11 +649,11 @@ class BaseStore {
 	/**
 	 * modify a entity entry in the data store
 	 *
-	 * @param Entity $entity
+	 * @param BaseEntity $entity
 	 *
-	 * @return Entity
+	 * @return BaseEntity
 	 */
-	public function entityModify(Entity $entity): Entity {
+	public function entityModify(BaseEntity $entity): BaseEntity {
 
 		// construct data store command
 		$cmd = $this->_Store->getQueryBuilder();
@@ -685,11 +685,11 @@ class BaseStore {
 	/**
 	 * delete a entity from the data store
 	 *
-	 * @param Entity $entity
+	 * @param BaseEntity $entity
 	 *
-	 * @return Entity
+	 * @return BaseEntity
 	 */
-	public function entityDelete(Entity $entity): Entity {
+	public function entityDelete(BaseEntity $entity): BaseEntity {
 
 		// construct data store command
 		$cmd = $this->_Store->getQueryBuilder();
@@ -776,10 +776,10 @@ class BaseStore {
 	 *
 	 * @param string $uid user id
 	 * @param int $sid service id
-	 * @param string $cid collection id
-	 * @param string $eid entity id
+	 * @param int $cid collection id
+	 * @param int $eid entity id
 	 * @param string $euuid entity uuid
-	 * @param string $operation operation type (1 - Created, 2 - Modified, 3 - Deleted)
+	 * @param int $operation operation type (1 - Created, 2 - Modified, 3 - Deleted)
 	 *
 	 * @return string
 	 */
