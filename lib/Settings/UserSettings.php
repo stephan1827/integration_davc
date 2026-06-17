@@ -22,15 +22,11 @@ use OCP\Util;
 class UserSettings implements ISettings {
 
 	public function __construct(
-		private IInitialState $initialStateService,
-		private ConfigurationService $configurationService,
-		private string $userId,
+		private readonly IInitialState $initialStateService,
+		private readonly ConfigurationService $configurationService,
 	) {
 	}
 
-	/**
-	 * @return TemplateResponse
-	 */
 	#[\Override]
 	public function getForm(): TemplateResponse {
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-UserSettings');

@@ -15,12 +15,12 @@ use Psr\Log\LoggerInterface;
 
 class HarmonizationService {
 	public function __construct(
-		private LoggerInterface $logger,
-		private ConfigurationService $configurationService,
-		private ServicesService $servicesService,
-		private ContactsService $contactsService,
-		private EventsService $eventsService,
-		private RemoteFactory $remoteFactory,
+		private readonly LoggerInterface $logger,
+		private readonly ConfigurationService $configurationService,
+		private readonly ServicesService $servicesService,
+		private readonly ContactsService $contactsService,
+		private readonly EventsService $eventsService,
+		private readonly RemoteFactory $remoteFactory,
 	) {
 	}
 

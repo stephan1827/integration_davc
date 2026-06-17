@@ -23,8 +23,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Show extends Command {
 
 	public function __construct(
-		private IUserManager $userManager,
-		private ServicesService $servicesService,
+		private readonly IUserManager $userManager,
+		private readonly ServicesService $servicesService,
 	) {
 		parent::__construct();
 	}

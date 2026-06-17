@@ -22,14 +22,11 @@ use OCP\Util;
 class AdminSettings implements ISettings {
 
 	public function __construct(
-		private IInitialState $initialStateService,
-		private ConfigurationService $ConfigurationService,
+		private readonly IInitialState $initialStateService,
+		private readonly ConfigurationService $ConfigurationService,
 	) {
 	}
 
-	/**
-	 * @return TemplateResponse
-	 */
 	#[\Override]
 	public function getForm(): TemplateResponse {
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-AdminSettings');

@@ -31,6 +31,7 @@
 				<referencedClass name="Symfony\Component\Console\Command\Command" />
 				<referencedClass name="OCA\DAV\CalDAV\Integration\ExternalCalendar" />
 				<referencedClass name="OCA\DAV\CalDAV\Integration\ICalendarProvider" />
+				<referencedClass name="OCA\DAV\CardDAV\Integration\IAddressBookProvider" />
 				<referencedClass name="Sabre\CalDAV\ICalendar" />
 				<referencedClass name="Sabre\CalDAV\ICalendarObject" />
 				<referencedClass name="Sabre\CardDAV\IAddressBook" />

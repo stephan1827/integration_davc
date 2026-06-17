@@ -23,9 +23,9 @@ use Psr\Log\LoggerInterface;
 class UserDeletedListener implements IEventListener {
 
 	public function __construct(
-		private LoggerInterface $logger,
-		private ServicesService $servicesService,
-		private CoreService $coreService,
+		private readonly LoggerInterface $logger,
+		private readonly ServicesService $servicesService,
+		private readonly CoreService $coreService,
 	) {
 	}
 

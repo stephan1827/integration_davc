@@ -24,7 +24,7 @@ interface ISort {
 	 * @param string $attribute attribute name
 	 * @param bool $direction true for ascending, false for descending
 	 */
-	public function condition(string $property, bool $direction): void;
+	public function condition(string $attribute, bool $direction): void;
 
 	/**
 	 * retrieve sorting conditions

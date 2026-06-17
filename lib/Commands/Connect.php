@@ -27,8 +27,8 @@ use Symfony\Component\Console\Question\Question;
 class Connect extends Command {
 
 	public function __construct(
-		private IUserManager $userManager,
-		private CoreService $CoreService,
+		private readonly IUserManager $userManager,
+		private readonly CoreService $CoreService,
 	) {
 		parent::__construct();
 	}

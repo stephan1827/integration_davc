@@ -19,7 +19,6 @@ use OCA\DAVC\Service\ServicesService;
 use OCA\DAVC\Service\ServicesTemplateService;
 use OCA\DAVC\Store\Local\ServiceEntity;
 use OCP\BackgroundJob\IJobList;
-use OCP\Notification\IManager as INotificationManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -29,8 +28,6 @@ class CoreServiceTest extends TestCase {
 	private LoggerInterface&MockObject $logger;
 
 	private IJobList&MockObject $jobList;
-
-	private INotificationManager&MockObject $notificationManager;
 
 	private ConfigurationService&MockObject $configurationService;
 
@@ -49,7 +46,6 @@ class CoreServiceTest extends TestCase {
 
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->jobList = $this->createMock(IJobList::class);
-		$this->notificationManager = $this->createMock(INotificationManager::class);
 		$this->configurationService = $this->createMock(ConfigurationService::class);
 		$this->servicesService = $this->createMock(ServicesService::class);
 		$this->servicesTemplateService = $this->createMock(ServicesTemplateService::class);
@@ -59,7 +55,6 @@ class CoreServiceTest extends TestCase {
 		$this->service = new CoreService(
 			$this->logger,
 			$this->jobList,
-			$this->notificationManager,
 			$this->configurationService,
 			$this->servicesService,
 			$this->servicesTemplateService,
