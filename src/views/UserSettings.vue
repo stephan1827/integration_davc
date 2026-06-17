@@ -14,11 +14,9 @@ import { translatePlural as n, translate as t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { onMounted, reactive, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import AccountRemoveIcon from 'vue-material-design-icons/AccountMinus.vue'
 import AccountAddIcon from 'vue-material-design-icons/AccountPlus.vue'
-import CheckIcon from 'vue-material-design-icons/Check.vue'
 import SettingsConnectedService from '../components/SettingsConnectedService.vue'
 import SettingsEmptyState from '../components/SettingsEmptyState.vue'
 import SettingsFreshService from '../components/SettingsFreshService.vue'
@@ -38,6 +36,22 @@ const systemConfiguration = reactive<SystemConfiguration>(loadState('integration
 // Services
 const configuredServices = ref<Service[]>([])
 const selectedService = ref<Service | null>(null)
+
+// Whether an action (save/harmonize/disconnect) is currently in progress
+const busy = ref<boolean>(false)
+
+// Runs an action while preventing any other action from starting until it completes
+async function runExclusive(action: () => void | Promise<void>): Promise<void> {
+	if (busy.value) {
+		return
+	}
+	busy.value = true
+	try {
+		await action()
+	} finally {
+		busy.value = false
+	}
+}
 
 // Contacts
 const contactsRemoteSupported = ref<boolean>(false)
@@ -124,8 +138,8 @@ async function disconnectService(): Promise<void> {
 	}
 }
 
-function modifyService(): void {
-	localCollectionsDeposit()
+function modifyService(): Promise<void> {
+	return localCollectionsDeposit()
 }
 
 async function harmonizeService(): Promise<void> {
@@ -156,13 +170,25 @@ async function serviceList(): Promise<void> {
 	}
 }
 
-function serviceSelect(option: Service | null): void {
+async function serviceSelect(option: Service | null): Promise<void> {
 	if (!option) {
 		return
 	}
 	selectedService.value = option
-	remoteCollectionsFetch()
-	localCollectionsFetch()
+	// reset collections state
+	contactsRemoteSupported.value = false
+	contactsRemoteCollections.value = []
+	contactsLocalCollections.value = []
+	eventsRemoteSupported.value = false
+	eventsRemoteCollections.value = []
+	eventsLocalCollections.value = []
+
+	busy.value = true
+	try {
+		await Promise.all([remoteCollectionsFetch(), localCollectionsFetch()])
+	} finally {
+		busy.value = false
+	}
 }
 async function remoteCollectionsFetch(): Promise<void> {
 	const uri = generateUrl('/apps/integration_davc/remote/collections/fetch')
@@ -310,6 +336,7 @@ function changeEventCorrelation(rcid: string | null, e: boolean): void {
 		<SettingsConnectedService
 			v-if="selectedService !== null && Boolean(selectedService.connected)"
 			:service="selectedService"
+			:busy="busy"
 			:systemConfiguration="systemConfiguration"
 			:contactsRemoteSupported="contactsRemoteSupported"
 			:contactsRemoteCollections="contactsRemoteCollections"
@@ -320,9 +347,9 @@ function changeEventCorrelation(rcid: string | null, e: boolean): void {
 			:formatDate="formatDate"
 			:changeContactCorrelation="changeContactCorrelation"
 			:changeEventCorrelation="changeEventCorrelation"
-			@save="modifyService()"
-			@harmonize="harmonizeService()"
-			@disconnect="disconnectService()" />
+			@save="runExclusive(modifyService)"
+			@harmonize="runExclusive(harmonizeService)"
+			@disconnect="runExclusive(disconnectService)" />
 	</div>
 </template>
 

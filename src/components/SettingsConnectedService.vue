@@ -26,6 +26,7 @@ interface SystemConfiguration {
 
 const props = defineProps<{
 	service: Service
+	busy: boolean
 	systemConfiguration: SystemConfiguration
 	contactsRemoteSupported: boolean
 	contactsRemoteCollections: Collection[]
@@ -230,19 +231,19 @@ function establishedEventCorrelationHarmonized(ccid: string | null): number {
 			</div>
 		</div>
 		<div class="actions">
-			<NcButton @click="emit('save')">
+			<NcButton :disabled="busy" @click="emit('save')">
 				<template #icon>
 					<CheckIcon />
 				</template>
 				{{ t('integration_davc', 'Save') }}
 			</NcButton>
-			<NcButton @click="emit('harmonize')">
+			<NcButton :disabled="busy" @click="emit('harmonize')">
 				<template #icon>
 					<LinkIcon />
 				</template>
 				{{ t('integration_davc', 'Harmonize') }}
 			</NcButton>
-			<NcButton @click="emit('disconnect')">
+			<NcButton :disabled="busy" @click="emit('disconnect')">
 				<template #icon>
 					<CloseIcon />
 				</template>
