@@ -73,7 +73,7 @@ jobs:
 
     strategy:
       matrix:
-        php-versions: ['8.2', '${{ needs.matrix.outputs.php-max }}']
+        php-versions: ['8.3', '${{ needs.matrix.outputs.php-max }}']
         server-versions: ${{ fromJson(needs.matrix.outputs.server-max) }}
 
     name: Unit PHP ${{ matrix.php-versions }} Nextcloud ${{ matrix.server-versions }}

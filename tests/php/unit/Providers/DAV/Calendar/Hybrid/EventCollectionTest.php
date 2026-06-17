@@ -71,12 +71,12 @@ class EventCollectionTest extends TestCase {
 		$this->localService->expects($this->once())
 			->method('entityList')
 			->willReturnCallback(function (EventFilter $filter) use ($entity): array {
-				// the .ics extension is stripped before the uuid lookup
+				// the full resource name is used for the uuid lookup
 				$this->assertSame('entity-uuid', $this->conditionValue($filter, 'uuid'));
 				return [$entity];
 			});
 
-		$child = $this->sut->getChild('entity-uuid.ics');
+		$child = $this->sut->getChild('entity-uuid');
 
 		$this->assertInstanceOf(EventEntity::class, $child);
 		$this->assertSame('entity-uuid', $child->getName());
@@ -91,15 +91,15 @@ class EventCollectionTest extends TestCase {
 			->method('entityList')
 			->willReturnCallback(function (EventFilter $filter) use ($entity): array {
 				// uuid lookup yields nothing, ceid lookup resolves the entity by
-				// the reconstructed full resource path (extension preserved)
+				// the remote id prefixed with the collection remote id
 				if ($this->conditionValue($filter, 'uuid') === 'submitted-id') {
 					return [];
 				}
-				$this->assertSame('/remote/Calendar/submitted-id.ics', $this->conditionValue($filter, 'ceid'));
+				$this->assertSame('/remote/Calendar/submitted-id', $this->conditionValue($filter, 'ceid'));
 				return [$entity];
 			});
 
-		$child = $this->sut->getChild('submitted-id.ics');
+		$child = $this->sut->getChild('submitted-id');
 
 		$this->assertInstanceOf(EventEntity::class, $child);
 		$this->assertSame('entity-uuid', $child->getName());
@@ -123,7 +123,7 @@ class EventCollectionTest extends TestCase {
 				return [new Entity()];
 			});
 
-		$this->assertTrue($this->sut->childExists('entity-uuid.ics'));
+		$this->assertTrue($this->sut->childExists('entity-uuid'));
 	}
 
 	public function testChildExistsFallsBackToRemoteEntityId(): void {
@@ -133,11 +133,11 @@ class EventCollectionTest extends TestCase {
 				if ($this->conditionValue($filter, 'uuid') === 'submitted-id') {
 					return [];
 				}
-				$this->assertSame('/remote/Calendar/submitted-id.ics', $this->conditionValue($filter, 'ceid'));
+				$this->assertSame('/remote/Calendar/submitted-id', $this->conditionValue($filter, 'ceid'));
 				return [new Entity()];
 			});
 
-		$this->assertTrue($this->sut->childExists('submitted-id.ics'));
+		$this->assertTrue($this->sut->childExists('submitted-id'));
 	}
 
 	public function testChildExistsReturnsFalseWhenMissing(): void {
