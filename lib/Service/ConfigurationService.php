@@ -61,8 +61,6 @@ class ConfigurationService {
 	/**
 	 * Retrieves collection of system configuration parameters
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param string $uid nextcloud user id
 	 * @param array $keys collection of configuration parameter keys
 	 *
@@ -113,8 +111,6 @@ class ConfigurationService {
 	/**
 	 * Deposit collection of system configuration parameters
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param string $uid nextcloud user id
 	 * @param array $parameters collection of key/value pairs, of parameters
 	 *
@@ -131,8 +127,6 @@ class ConfigurationService {
 
 	/**
 	 * Destroy collection of system configuration parameters
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param string $uid nextcloud user id
 	 * @param array $keys collection of configuration parameter keys
@@ -154,8 +148,6 @@ class ConfigurationService {
 
 	/**
 	 * Retrieves single system configuration parameter
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param string $uid nextcloud user id
 	 * @param string $key configuration parameter key
@@ -184,8 +176,6 @@ class ConfigurationService {
 	/**
 	 * Deposit single system configuration parameter
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param string $uid nextcloud user id
 	 * @param string $key configuration parameter key
 	 * @param string $value configuration parameter value
@@ -208,8 +198,6 @@ class ConfigurationService {
 	/**
 	 * Destroy single user configuration parameter
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param string $uid nextcloud user id
 	 * @param string $key configuration parameter keys
 	 *
@@ -224,8 +212,6 @@ class ConfigurationService {
 
 	/**
 	 * Retrieves collection of system configuration parameters
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param array $keys collection of configuration parameter keys
 	 *
@@ -249,8 +235,6 @@ class ConfigurationService {
 	/**
 	 * Deposit collection of system configuration parameters
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param array $parameters collection of key/value pairs, of parameters
 	 *
 	 * @return void
@@ -271,8 +255,6 @@ class ConfigurationService {
 	/**
 	 * Destroy collection of system configuration parameters
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param array $keys collection of configuration parameter keys
 	 *
 	 * @return void
@@ -292,8 +274,6 @@ class ConfigurationService {
 
 	/**
 	 * Retrieves single system configuration parameter
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param string $key configuration parameter key
 	 *
@@ -320,8 +300,6 @@ class ConfigurationService {
 	/**
 	 * Deposit single system configuration parameter
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param string $key configuration parameter key
 	 * @param string $value configuration parameter value
 	 *
@@ -342,9 +320,7 @@ class ConfigurationService {
 
 	/**
 	 * Destroy single system configuration parameter
-	 *
-	 * @since Release 1.0.0
-	 *
+	 * 
 	 * @return void
 	 */
 	public function destroySystemValue(string $key): void {
@@ -358,8 +334,6 @@ class ConfigurationService {
 	 * Gets harmonization interval
 	 *
 	 * Interval, in seconds, between background harmonization runs.
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @return int harmonization interval in seconds (default 900)
 	 */
@@ -379,8 +353,6 @@ class ConfigurationService {
 	/**
 	 * Sets harmonization interval
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param int $interval harmonization interval in seconds
 	 *
 	 * @return void
@@ -395,8 +367,6 @@ class ConfigurationService {
 	/**
 	 * Gets administrator transport security policy: force certificate verification
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @return bool true if certificate verification is enforced for all connections
 	 */
 	public function getForceCertificateVerification(): bool {
@@ -406,8 +376,6 @@ class ConfigurationService {
 
 	/**
 	 * Sets administrator transport security policy: force certificate verification
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param bool $enabled
 	 *
@@ -422,8 +390,6 @@ class ConfigurationService {
 	/**
 	 * Gets administrator transport security policy: forbid insecure (http) connections
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @return bool true if insecure (http) connections are forbidden
 	 */
 	public function getForbidInsecureHttp(): bool {
@@ -433,8 +399,6 @@ class ConfigurationService {
 
 	/**
 	 * Sets administrator transport security policy: forbid insecure (http) connections
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param bool $enabled
 	 *
@@ -448,8 +412,6 @@ class ConfigurationService {
 
 	/**
 	 * retrieve contacts app status
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @return bool
 	 */
@@ -469,8 +431,6 @@ class ConfigurationService {
 	/**
 	 * retrieve calendar app status
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @return bool
 	 */
 	public function isCalendarAppAvailable(): bool {
@@ -489,8 +449,6 @@ class ConfigurationService {
 	/**
 	 * encrypt string
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @return string
 	 */
 	public function encrypt(string $value): string {
@@ -500,8 +458,6 @@ class ConfigurationService {
 
 	/**
 	 * decrypt string
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @return string
 	 */

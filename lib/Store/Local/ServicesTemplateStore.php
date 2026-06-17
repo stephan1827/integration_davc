@@ -41,8 +41,6 @@ class ServicesTemplateStore {
 
 	/**
 	 * retrieve service templates
-	 *
-	 * @since Release 1.0.0
 	 */
 	public function fetchById(string $id): array {
 		// construct data store command
@@ -64,8 +62,6 @@ class ServicesTemplateStore {
 	/**
 	 * retrieve all service templates from data store
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @return array
 	 */
 	public function list(): array {
@@ -83,8 +79,6 @@ class ServicesTemplateStore {
 
 	/**
 	 * retrieve service templates for specific domain from data store
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param string $domain configured service domain
 	 *
@@ -109,8 +103,6 @@ class ServicesTemplateStore {
 
 	/**
 	 * create service templates for a specific domain in the data store
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param string $id configured service template ID
 	 * @param string $domain configured service domain
@@ -138,8 +130,6 @@ class ServicesTemplateStore {
 	/**
 	 * modify service templates for a specific domain in the data store
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param string $id configured service template ID
 	 * @param string $domain configured service domain
 	 * @param array $data service template data
@@ -163,8 +153,6 @@ class ServicesTemplateStore {
 
 	/**
 	 * delete service template for a specific ID from the data store
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param string $id configured service template ID
 	 *

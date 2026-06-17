@@ -14,26 +14,22 @@ use DateTimeInterface;
 interface IRangeDate extends IRange {
 
 	/**
-	 *
-	 * @since 1.0.0
+	 * get start date of the range
 	 */
 	public function getStart(): DateTimeInterface;
 
 	/**
-	 *
-	 * @since 1.0.0
+	 * set start date of the range
 	 */
 	public function setStart(DateTimeInterface $value): void;
 
 	/**
-	 *
-	 * @since 1.0.0
+	 * get end date of the range
 	 */
 	public function getEnd(): DateTimeInterface;
 
 	/**
-	 *
-	 * @since 1.0.0
+	 * set end date of the range
 	 */
 	public function setEnd(DateTimeInterface $value): void;
 

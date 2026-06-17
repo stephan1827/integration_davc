@@ -93,8 +93,6 @@ class RemoteEventsService {
 
 	/**
 	 * retrieve properties for specific collection
-	 *
-	 * @since Release 1.0.0
 	 */
 	public function collectionFetch(string $identifier): ?Collection {
 		$data = $this->dataStore->propFind($identifier, 0, $this->collectionPropertiesDefault);

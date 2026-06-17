@@ -16,8 +16,6 @@ use OCP\Server;
 class LocalFactory {
 	/**
 	 * instance of the local contact service
-	 *
-	 * @since Release 1.0.0
 	 */
 	public function contactsService(): LocalContactsService {
 		$service = new LocalContactsService();
@@ -27,8 +25,6 @@ class LocalFactory {
 
 	/**
 	 * instance of the local event service
-	 *
-	 * @since Release 1.0.0
 	 */
 	public function eventsService(): LocalEventsService {
 		$service = new LocalEventsService();
@@ -39,8 +35,6 @@ class LocalFactory {
 	/**
 	 * instance of the local contact store
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @return ContactStore
 	 */
 	public function contactsStore(): ContactStore {
@@ -49,8 +43,6 @@ class LocalFactory {
 
 	/**
 	 * instance of the local event store
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @return EventStore
 	 */

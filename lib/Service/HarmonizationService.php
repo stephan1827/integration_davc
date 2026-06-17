@@ -27,8 +27,6 @@ class HarmonizationService {
 	/**
 	 * perform harmonization for all or specific services of a user
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param string $uid user id
 	 * @param int $sid service id
 	 *
@@ -52,8 +50,6 @@ class HarmonizationService {
 
 	/**
 	 * perform harmonization for all modules of a specific service
-	 *
-	 * @since Release 1.0.0
 	 */
 	public function performHarmonizationForService(ServiceEntity $service): void {
 

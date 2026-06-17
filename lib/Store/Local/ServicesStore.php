@@ -66,8 +66,6 @@ class ServicesStore {
 	/**
 	 * retrieve services for specific user from data store
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param IFilter $filter filter options
 	 * @param ISort $sort sort options
 	 *
@@ -110,8 +108,6 @@ class ServicesStore {
 	/**
 	 * retrieve entity from data store
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param int $id entity id
 	 *
 	 * @return ServiceEntity|null
@@ -140,8 +136,6 @@ class ServicesStore {
 
 	/**
 	 * create a entity entry in the data store
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param ServiceEntity $entity
 	 *
@@ -173,8 +167,6 @@ class ServicesStore {
 
 	/**
 	 * modify a entity entry in the data store
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param string $uid user id
 	 * @param ServiceEntity $entity
@@ -212,8 +204,6 @@ class ServicesStore {
 	/**
 	 * delete a entity from the data store
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param string $uid user id
 	 * @param ServiceEntity $entity
 	 *
@@ -235,8 +225,6 @@ class ServicesStore {
 
 	/**
 	 * delete services for a specific user from data store
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param string $uid user id
 	 *

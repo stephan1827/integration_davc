@@ -25,8 +25,6 @@ class UUID {
 	 *
 	 * Version 3 are named based. They require a namespace (another valid UUID) and a value (the name).
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param string $namespace another valid UUID
 	 * @param string $name random value
 	 *
@@ -75,8 +73,6 @@ class UUID {
 	/**
 	 * Generates version 4 UUID
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @return string a version 4 UUID
 	 */
 	public static function v4() {
@@ -105,8 +101,6 @@ class UUID {
 	 * Generates version 5 UUID
 	 *
 	 * Version 5 are named based. They require a namespace (another valid UUID) and a value (the name).
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param string $namespace another valid UUID
 	 * @param string $name random value
@@ -155,8 +149,6 @@ class UUID {
 
 	/**
 	 * Validates UUID
-	 *
-	 * @since Release 1.0.0
 	 *
 	 * @param string $uuid a valid or invalied uuid
 	 *

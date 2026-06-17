@@ -33,8 +33,6 @@ class EventStore extends BaseStore {
 	/**
 	 * retrieve entities from data store
 	 *
-	 * @since Release 1.0.0
-	 *
 	 * @param array $elements data fields
 	 * @param IFilter $filter filter options
 	 * @param IRange $range range options
