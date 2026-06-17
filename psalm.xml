@@ -29,6 +29,16 @@
                 <referencedClass name="OCP" />
 				<referencedClass name="Doctrine\DBAL\Types\Types" />
 				<referencedClass name="Symfony\Component\Console\Command\Command" />
+				<referencedClass name="OCA\DAV\CalDAV\Integration\ExternalCalendar" />
+				<referencedClass name="OCA\DAV\CalDAV\Integration\ICalendarProvider" />
+				<referencedClass name="Sabre\CalDAV\ICalendar" />
+				<referencedClass name="Sabre\CalDAV\ICalendarObject" />
+				<referencedClass name="Sabre\CardDAV\IAddressBook" />
+				<referencedClass name="Sabre\CardDAV\ICard" />
+				<referencedClass name="Sabre\VObject\Reader" />
+				<referencedClass name="Sabre\DAV\Xml\Service" />
+				<referencedClass name="Sabre\Xml\ParseException" />
+				<referencedClass name="GuzzleHttp\Psr7\UriResolver" />
 			</errorLevel>
 		</UndefinedClass>
 		<UndefinedDocblockClass>
@@ -36,7 +46,13 @@
 				<referencedClass name="Doctrine\DBAL\Driver\Statement" />
 				<referencedClass name="Doctrine\DBAL\Schema\Schema" />
 				<referencedClass name="Doctrine\DBAL\Schema\Table" />
+				<referencedClass name="Sabre\DAV\Xml\Response\MultiStatus" />
 			</errorLevel>
 		</UndefinedDocblockClass>
+		<InvalidThrow>
+			<errorLevel type="suppress">
+				<referencedClass name="Sabre\Xml\ParseException" />
+			</errorLevel>
+		</InvalidThrow>
 	</issueHandlers>
 </psalm>
