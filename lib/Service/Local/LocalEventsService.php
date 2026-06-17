@@ -61,7 +61,7 @@ class LocalEventsService {
 		return $co instanceof CollectionEntity ? $this->toCollectionModel($co) : null;
 	}
 
-	public function collectionDelta(int $id): string {
+	public function collectionDelta(int $id): int|float|string {
 		return $this->_Store->chronicleApex($id, true);
 	}
 

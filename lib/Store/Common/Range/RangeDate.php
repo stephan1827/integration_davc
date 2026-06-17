@@ -30,46 +30,26 @@ class RangeDate implements IRangeDate {
 
 	}
 
-	/**
-	 *
-	 * @since 1.0.0
-	 */
 	#[\Override]
 	public function type(): string {
 		return 'date';
 	}
 
-	/**
-	 *
-	 * @since 1.0.0
-	 */
 	#[\Override]
 	public function getStart(): DateTimeInterface {
 		return $this->start;
 	}
 
-	/**
-	 *
-	 * @since 1.0.0
-	 */
 	#[\Override]
 	public function setStart(DateTimeInterface $value): void {
 		$this->start = $value;
 	}
 
-	/**
-	 *
-	 * @since 1.0.0
-	 */
 	#[\Override]
 	public function getEnd(): DateTimeInterface {
 		return $this->end;
 	}
 
-	/**
-	 *
-	 * @since 1.0.0
-	 */
 	#[\Override]
 	public function setEnd(DateTimeInterface $value): void {
 		$this->end = $value;

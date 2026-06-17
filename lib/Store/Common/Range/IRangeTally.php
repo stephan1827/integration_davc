@@ -12,32 +12,27 @@ namespace OCA\DAVC\Store\Common\Range;
 interface IRangeTally extends IRange {
 
 	/**
-	 *
-	 * @since 1.0.0
+	 * range anchor type (relative or absolute)
 	 */
 	public function anchor(): RangeAnchorType;
 
 	/**
-	 *
-	 * @since 1.0.0
+	 * position within the range
 	 */
 	public function getPosition(): string|int;
 
 	/**
-	 *
-	 * @since 1.0.0
+	 * set the position within the range
 	 */
 	public function setPosition(string|int $value): void;
 
 	/**
-	 *
-	 * @since 1.0.0
+	 * get count within the range
 	 */
 	public function getCount(): int;
 
 	/**
-	 *
-	 * @since 1.0.0
+	 * set the count within the range
 	 */
 	public function setCount(int $value): void;
 
