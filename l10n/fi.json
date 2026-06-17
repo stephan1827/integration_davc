@@ -1,17 +1,31 @@
 { "translations": {
+    "DAV Connector" : "DAV-yhdistin",
     "Connected accounts" : "Yhdistetyt tilit",
+    "Connect Nextcloud to a DAV service" : "Yhdistä Nextcloud DAV-palveluun",
     "Edit" : "Muokkaa",
     "Delete" : "Poista",
+    "Service address" : "Palvelun osoite",
+    "Service port" : "Palvelun portti",
+    "Service path" : "Palvelun polku",
     "Cancel" : "Peruuta",
     "Save" : "Tallenna",
+    "Connection" : "Yhteys",
     "Contacts" : "Yhteystiedot",
     "Calendars" : "Kalenterit",
     "Events" : "Tapahtumat",
     "Disconnect" : "Katkaise yhteys",
+    "Add service" : "Lisää palvelu",
+    "Account description" : "Tilin kuvaus",
+    "OAuth" : "OAuth",
+    "http" : "http",
+    "https" : "https",
     "Connect" : "Yhdistä",
     "Every hour" : "Tunneittain",
+    "Synchronization interval" : "Synkronointiväli",
     "never" : "ei koskaan",
+    "New connection" : "Uusi yhteys",
     "Synchronized" : "Synkronoitu",
-    "Synchronization failed" : "Synkronointi epäonnistui"
+    "Synchronization failed" : "Synkronointi epäonnistui",
+    "Services" : "Palvelut"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
