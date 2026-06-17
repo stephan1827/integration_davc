@@ -30,6 +30,7 @@ class Application extends App implements IBootstrap {
 		parent::__construct(self::APP_ID, $urlParams);
 	}
 
+	#[\Override]
 	public function register(IRegistrationContext $context): void {
 
 		// register event handlers
@@ -38,6 +39,7 @@ class Application extends App implements IBootstrap {
 
 	}
 
+	#[\Override]
 	public function boot(IBootContext $context): void {
 
 	}

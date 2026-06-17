@@ -13,6 +13,9 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\Settings\IIconSection;
 
+/**
+ * @psalm-api
+ */
 class AdminSection implements IIconSection {
 
 	/** @var IL10N */
@@ -31,6 +34,7 @@ class AdminSection implements IIconSection {
 	 *
 	 * @returns string
 	 */
+	#[\Override]
 	public function getID(): string {
 		return 'integration-davc';
 	}
@@ -41,6 +45,7 @@ class AdminSection implements IIconSection {
 	 *
 	 * @return string
 	 */
+	#[\Override]
 	public function getName(): string {
 		return $this->l->t('DAV Connector');
 	}
@@ -50,6 +55,7 @@ class AdminSection implements IIconSection {
 	 *             the settings navigation. The sections are arranged in ascending order of
 	 *             the priority values. It is required to return a value between 0 and 99.
 	 */
+	#[\Override]
 	public function getPriority(): int {
 		return 80;
 	}
@@ -57,6 +63,7 @@ class AdminSection implements IIconSection {
 	/**
 	 * @return ?string The relative path to a an icon describing the section
 	 */
+	#[\Override]
 	public function getIcon(): ?string {
 		return $this->urlGenerator->imagePath('core', 'categories/integration.svg');
 	}

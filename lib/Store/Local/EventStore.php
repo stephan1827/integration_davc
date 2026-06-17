@@ -40,6 +40,7 @@ class EventStore extends BaseStore {
 	 *
 	 * @return array of entities
 	 */
+	#[\Override]
 	public function entityList(?IFilter $filter = null, ?ISort $sort = null, ?IRange $range = null, ?array $elements = null): array {
 		// evaluate if specific elements where requested
 		if (!is_array($elements)) {
@@ -104,10 +105,12 @@ class EventStore extends BaseStore {
 		}
 	}
 
+	#[\Override]
 	public function collectionListFilter(): CollectionFilter {
 		return new CollectionFilter();
 	}
 
+	#[\Override]
 	public function entityListFilter(): EventFilter {
 		return new EventFilter();
 	}

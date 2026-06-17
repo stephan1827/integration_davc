@@ -26,6 +26,7 @@ class BaseCollection extends \ArrayObject {
 		};
 	}
 
+	#[\Override]
 	public function append($value): void {
 		if (!$this->validate($value)) {
 			throw new \InvalidArgumentException(
@@ -35,6 +36,7 @@ class BaseCollection extends \ArrayObject {
 		parent::append($value);
 	}
 
+	#[\Override]
 	public function offsetSet($key, $value): void {
 		if (!$this->validate($value)) {
 			throw new \InvalidArgumentException(

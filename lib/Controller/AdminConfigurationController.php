@@ -15,6 +15,9 @@ use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
 
+/**
+ * @psalm-api
+ */
 class AdminConfigurationController extends Controller {
 
 	private ConfigurationService $ConfigurationService;

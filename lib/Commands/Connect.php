@@ -21,6 +21,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 
+/**
+ * @psalm-api
+ */
 class Connect extends Command {
 
 	public function __construct(

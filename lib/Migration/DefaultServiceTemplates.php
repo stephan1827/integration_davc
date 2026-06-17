@@ -13,6 +13,9 @@ use OCA\DAVC\Store\Local\ServicesTemplateStore;
 use OCP\Migration\IOutput;
 use OCP\Migration\IRepairStep;
 
+/**
+ * @psalm-api
+ */
 class DefaultServiceTemplates implements IRepairStep {
 
 	public function __construct(
@@ -20,6 +23,7 @@ class DefaultServiceTemplates implements IRepairStep {
 	) {
 	}
 
+	#[\Override]
 	public function getName(): string {
 		return 'Create or update default Dav Connector service templates';
 	}
@@ -27,6 +31,7 @@ class DefaultServiceTemplates implements IRepairStep {
 	/**
 	 * @return void
 	 */
+	#[\Override]
 	public function run(IOutput $output) {
 		// load the default service templates from file
 		$defaultTemplates = json_decode(file_get_contents(__DIR__ . '/Defaults/ServiceTemplates.json'), true);

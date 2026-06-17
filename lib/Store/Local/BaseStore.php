@@ -125,7 +125,7 @@ class BaseStore {
 
 	/**
 	 * retrieve instance of collection sort
-	 * 
+	 *
 	 * @return CollectionSort
 	 */
 	public function collectionListSort(): ISort {
@@ -134,7 +134,7 @@ class BaseStore {
 
 	/**
 	 * retrieve collections for specific user from data store
-	 * 
+	 *
 	 * @param string $uid user id
 	 *
 	 * @return array<int, CollectionEntity>
@@ -149,7 +149,7 @@ class BaseStore {
 
 	/**
 	 * retrieve collections for specific user from data store
-	 * 
+	 *
 	 * @param int $sid service id
 	 *
 	 * @return array<int, CollectionEntity>

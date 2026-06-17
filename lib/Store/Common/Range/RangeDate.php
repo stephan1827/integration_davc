@@ -34,6 +34,7 @@ class RangeDate implements IRangeDate {
 	 *
 	 * @since 1.0.0
 	 */
+	#[\Override]
 	public function type(): string {
 		return 'date';
 	}
@@ -42,6 +43,7 @@ class RangeDate implements IRangeDate {
 	 *
 	 * @since 1.0.0
 	 */
+	#[\Override]
 	public function getStart(): DateTimeInterface {
 		return $this->start;
 	}
@@ -50,6 +52,7 @@ class RangeDate implements IRangeDate {
 	 *
 	 * @since 1.0.0
 	 */
+	#[\Override]
 	public function setStart(DateTimeInterface $value): void {
 		$this->start = $value;
 	}
@@ -58,6 +61,7 @@ class RangeDate implements IRangeDate {
 	 *
 	 * @since 1.0.0
 	 */
+	#[\Override]
 	public function getEnd(): DateTimeInterface {
 		return $this->end;
 	}
@@ -66,6 +70,7 @@ class RangeDate implements IRangeDate {
 	 *
 	 * @since 1.0.0
 	 */
+	#[\Override]
 	public function setEnd(DateTimeInterface $value): void {
 		$this->end = $value;
 	}

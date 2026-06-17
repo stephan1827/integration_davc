@@ -17,6 +17,9 @@ use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
 
+/**
+ * @psalm-api
+ */
 class AdminTemplateController extends Controller {
 
 	public function __construct(

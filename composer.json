@@ -11,6 +11,7 @@
     },
     "require-dev": {
         "nextcloud/coding-standard": "^1.5.0",
+        "nextcloud/ocp": "^34.0",
         "phpunit/phpunit": "^11.5",
         "psalm/phar": "^6.16"
     },
@@ -31,9 +32,10 @@
         "lint": "find . -name \\*.php -not -path './vendor/*' -not -path './build/*' -print0 | xargs -0 -n1 php -l",
         "cs:check": "php-cs-fixer fix --dry-run --diff",
         "cs:fix": "php-cs-fixer fix",
-        "psalm": "psalm --no-cache --threads=$(nproc)",
+        "psalm": "php ./vendor/bin/psalm.phar --config=psalm.xml --no-cache --threads=$(nproc)",
         "psalm:dev": "@psalm",
-        "psalm:baseline": "psalm --threads=1 --update-baseline",
+        "psalm:baseline": "php ./vendor/bin/psalm.phar --config=psalm.xml --threads=1 --update-baseline",
+        "psalm:fix": "php ./vendor/bin/psalm.phar --config=psalm.xml --alter --no-cache --threads=1",
         "test:unit": "phpunit -c tests/php/phpunit.xml --testsuite 'Unit Tests'",
         "test:integration:db": "phpunit -c tests/php/phpunit.xml --testsuite 'Database Tests'",
         "test:integration:dav": "phpunit -c tests/php/phpunit.xml --testsuite 'Dav Tests'"

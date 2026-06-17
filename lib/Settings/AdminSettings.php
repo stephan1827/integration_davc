@@ -16,6 +16,9 @@ use OCP\AppFramework\Services\IInitialState;
 use OCP\Settings\ISettings;
 use OCP\Util;
 
+/**
+ * @psalm-api
+ */
 class AdminSettings implements ISettings {
 
 	public function __construct(
@@ -27,6 +30,7 @@ class AdminSettings implements ISettings {
 	/**
 	 * @return TemplateResponse
 	 */
+	#[\Override]
 	public function getForm(): TemplateResponse {
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-AdminSettings');
 
@@ -38,10 +42,12 @@ class AdminSettings implements ISettings {
 		return new TemplateResponse(Application::APP_ID, 'AdminSettings');
 	}
 
+	#[\Override]
 	public function getSection(): string {
 		return 'integration-davc';
 	}
 
+	#[\Override]
 	public function getPriority(): int {
 		return 10;
 	}
