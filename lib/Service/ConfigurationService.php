@@ -320,7 +320,7 @@ class ConfigurationService {
 
 	/**
 	 * Destroy single system configuration parameter
-	 * 
+	 *
 	 * @return void
 	 */
 	public function destroySystemValue(string $key): void {

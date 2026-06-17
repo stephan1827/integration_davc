@@ -13,6 +13,9 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\Settings\IIconSection;
 
+/**
+ * @psalm-api
+ */
 class UserSection implements IIconSection {
 
 	/** @var IL10N */
@@ -31,6 +34,7 @@ class UserSection implements IIconSection {
 	 *
 	 * @returns string
 	 */
+	#[\Override]
 	public function getID(): string {
 		return 'connected-accounts'; //or a generic id if feasible
 	}
@@ -41,6 +45,7 @@ class UserSection implements IIconSection {
 	 *
 	 * @return string
 	 */
+	#[\Override]
 	public function getName(): string {
 		return $this->l->t('Connected accounts');
 	}
@@ -50,6 +55,7 @@ class UserSection implements IIconSection {
 	 *             the settings navigation. The sections are arranged in ascending order of
 	 *             the priority values. It is required to return a value between 0 and 99.
 	 */
+	#[\Override]
 	public function getPriority(): int {
 		return 70;
 	}
@@ -57,6 +63,7 @@ class UserSection implements IIconSection {
 	/**
 	 * @return ?string The relative path to a an icon describing the section
 	 */
+	#[\Override]
 	public function getIcon(): ?string {
 		return $this->urlGenerator->imagePath('core', 'categories/integration.svg');
 	}

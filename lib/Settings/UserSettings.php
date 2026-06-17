@@ -16,6 +16,9 @@ use OCP\AppFramework\Services\IInitialState;
 use OCP\Settings\ISettings;
 use OCP\Util;
 
+/**
+ * @psalm-api
+ */
 class UserSettings implements ISettings {
 
 	public function __construct(
@@ -28,6 +31,7 @@ class UserSettings implements ISettings {
 	/**
 	 * @return TemplateResponse
 	 */
+	#[\Override]
 	public function getForm(): TemplateResponse {
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-UserSettings');
 
@@ -43,10 +47,12 @@ class UserSettings implements ISettings {
 		return new TemplateResponse(Application::APP_ID, 'UserSettings');
 	}
 
+	#[\Override]
 	public function getSection(): string {
 		return 'connected-accounts';
 	}
 
+	#[\Override]
 	public function getPriority(): int {
 		return 20;
 	}

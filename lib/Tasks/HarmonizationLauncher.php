@@ -33,6 +33,7 @@ class HarmonizationLauncher extends TimedJob {
 	/**
 	 * @param array{uid?: string, sid?: int|string} $argument
 	 */
+	#[\Override]
 	protected function run($argument): void {
 		if (!is_array($argument) || !isset($argument['uid'], $argument['sid'])) {
 			$this->logger->warning('HarmonizationLauncher invoked without uid/sid', [

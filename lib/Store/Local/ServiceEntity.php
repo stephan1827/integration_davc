@@ -107,6 +107,7 @@ class ServiceEntity extends Entity implements JsonSerializable {
 	protected ?string $contactsMode = null;
 	protected ?string $eventsMode = null;
 
+	#[\Override]
 	public function jsonSerialize(): array {
 		return [
 			'id' => $this->id,

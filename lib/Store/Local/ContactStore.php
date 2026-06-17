@@ -28,10 +28,12 @@ class ContactStore extends BaseStore {
 
 	}
 
+	#[\Override]
 	public function collectionListFilter(): CollectionFilter {
 		return new CollectionFilter();
 	}
 
+	#[\Override]
 	public function entityListFilter(): ContactFilter {
 		return new ContactFilter();
 	}

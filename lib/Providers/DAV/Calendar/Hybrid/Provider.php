@@ -19,6 +19,9 @@ use OCA\DAVC\Service\Remote\RemoteFactory;
 use OCA\DAVC\Store\Local\ServicesStore;
 use OCP\Calendar\ICalendarProvider as ICalendarProvider1;
 
+/**
+ * @psalm-api
+ */
 class Provider implements ICalendarProvider1, ICalendarProvider2 {
 	protected array $_CollectionCache = [];
 	protected LocalEventsService $localService;

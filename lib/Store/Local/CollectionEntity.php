@@ -64,6 +64,7 @@ class CollectionEntity extends Entity implements JsonSerializable {
 		$this->addType('permissions', Types::JSON);
 	}
 
+	#[\Override]
 	public function jsonSerialize(): array {
 		return [
 			'id' => $this->id,

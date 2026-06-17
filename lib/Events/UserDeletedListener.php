@@ -17,6 +17,9 @@ use OCP\EventDispatcher\IEventListener;
 use OCP\User\Events\UserDeletedEvent;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @psalm-api
+ */
 class UserDeletedListener implements IEventListener {
 
 	public function __construct(
@@ -26,6 +29,7 @@ class UserDeletedListener implements IEventListener {
 	) {
 	}
 
+	#[\Override]
 	public function handle(Event $event): void {
 
 		if ($event instanceof UserDeletedEvent) {

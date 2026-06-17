@@ -21,6 +21,7 @@ class RangeTallyAbsolute implements IRangeTally {
 	 *
 	 * @since 1.0.0
 	 */
+	#[\Override]
 	public function type(): string {
 		return 'tally';
 	}
@@ -29,6 +30,7 @@ class RangeTallyAbsolute implements IRangeTally {
 	 *
 	 * @since 1.0.0
 	 */
+	#[\Override]
 	public function anchor(): RangeAnchorType {
 		return RangeAnchorType::ABSOLUTE;
 	}
@@ -37,6 +39,7 @@ class RangeTallyAbsolute implements IRangeTally {
 	 *
 	 * @since 1.0.0
 	 */
+	#[\Override]
 	public function getPosition(): string|int {
 		return $this->position;
 	}
@@ -45,6 +48,7 @@ class RangeTallyAbsolute implements IRangeTally {
 	 *
 	 * @since 1.0.0
 	 */
+	#[\Override]
 	public function setPosition(string|int $value): void {
 		$this->position = $value;
 	}
@@ -53,6 +57,7 @@ class RangeTallyAbsolute implements IRangeTally {
 	 *
 	 * @since 1.0.0
 	 */
+	#[\Override]
 	public function getCount(): int {
 		return $this->count;
 	}
@@ -61,6 +66,7 @@ class RangeTallyAbsolute implements IRangeTally {
 	 *
 	 * @since 1.0.0
 	 */
+	#[\Override]
 	public function setCount(int $value): void {
 		$this->count = $value;
 	}

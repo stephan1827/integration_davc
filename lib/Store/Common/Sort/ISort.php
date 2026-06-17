@@ -20,7 +20,7 @@ interface ISort {
 
 	/**
 	 * add a sorting condition
-	 * 
+	 *
 	 * @param string $attribute attribute name
 	 * @param bool $direction true for ascending, false for descending
 	 */

@@ -18,6 +18,9 @@ use OCA\DAVC\Service\Local\LocalFactory;
 use OCA\DAVC\Service\Remote\RemoteFactory;
 use OCA\DAVC\Store\Local\ServicesStore;
 
+/**
+ * @psalm-api
+ */
 class Provider implements IAddressBookProvider {
 	protected array $_CollectionCache = [];
 	protected LocalContactsService $localService;

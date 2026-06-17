@@ -692,14 +692,17 @@ final class BufferedResponse implements IResponse {
 	) {
 	}
 
+	#[\Override]
 	public function getBody() {
 		return $this->body;
 	}
 
+	#[\Override]
 	public function getStatusCode(): int {
 		return $this->statusCode;
 	}
 
+	#[\Override]
 	public function getHeader(string $key): string {
 		$headers = $this->headers[$key] ?? [];
 
@@ -710,6 +713,7 @@ final class BufferedResponse implements IResponse {
 		return (string)$headers[0];
 	}
 
+	#[\Override]
 	public function getHeaders(): array {
 		return $this->headers;
 	}

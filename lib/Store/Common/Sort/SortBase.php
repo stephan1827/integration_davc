@@ -14,10 +14,12 @@ class SortBase implements ISort {
 	protected array $attributes = [];
 	protected array $conditions = [];
 
+	#[\Override]
 	public function attributes(): array {
 		return $this->attributes;
 	}
 
+	#[\Override]
 	public function condition(string $attribute, bool $direction): void {
 		if (isset($this->attributes[$attribute])) {
 			$this->conditions[$attribute] = [
@@ -27,6 +29,7 @@ class SortBase implements ISort {
 		}
 	}
 
+	#[\Override]
 	public function conditions(): array {
 		return $this->conditions;
 	}
