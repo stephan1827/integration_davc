@@ -44,7 +44,9 @@ class CoreService {
 	 * @param string $account_bauth_id account username
 	 * @param string $account_bauth_secret account secret
 	 *
-	 * @return object
+	 * @return (mixed|string)[]|null
+	 *
+	 * @psalm-return array{location_host: mixed|string, location_path: '.well-known/caldav'|mixed,...}|null
 	 */
 	public function locateAccount(array $configuration): ?array {
 		$dnsTarget = null;
@@ -362,7 +364,7 @@ class CoreService {
 	 * @param array $cc contacts collection(s) correlations
 	 * @param array $ec events collection(s) correlations
 	 *
-	 * @return array of collection correlation(s) and attributes
+	 * @return void of collection correlation(s) and attributes
 	 */
 	public function localCollectionsDeposit(string $uid, int $sid, array $cc, array $ec): void {
 
@@ -487,8 +489,6 @@ class CoreService {
 	 * @param string $uid nextcloud user id
 	 * @param string $subject notification type
 	 * @param array $params notification parameters to pass
-	 *
-	 * @return array of collection correlation(s) and attributes
 	 */
 	public function publishNotice(string $uid, string $subject, array $params): void {
 		// construct notification object

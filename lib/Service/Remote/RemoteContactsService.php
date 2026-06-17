@@ -60,7 +60,9 @@ class RemoteContactsService {
 	/**
 	 * list of collections in remote storage
 	 *
-	 * @return array<string,Collection>
+	 * @return Collection[]
+	 *
+	 * @psalm-return list<OCA\DAVC\Models\Contacts\Collection>
 	 */
 	public function collectionList(string $granularity = 'basic'): array {
 		// transceive

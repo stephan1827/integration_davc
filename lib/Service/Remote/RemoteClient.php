@@ -279,7 +279,9 @@ class RemoteClient {
 	}
 
 	/**
-	 * @return array{etag: string|null, statusCode: int, location: string|null, lastModified: string|null, response: IResponse}
+	 * @return (int|null|string)[]
+	 *
+	 * @psalm-return array{etag: null|string, status: int, location: null|string, lastModified: null|string}
 	 */
 	public function create(string $path, string $payload, string $contentType): array {
 		$url = $this->constructUrl($path);
@@ -296,7 +298,9 @@ class RemoteClient {
 	}
 
 	/**
-	 * @return array{etag: string|null, statusCode: int, location: string|null, lastModified: string|null, response: IResponse}
+	 * @return (int|null|string)[]
+	 *
+	 * @psalm-return array{etag: null|string, status: int, location: null|string, lastModified: null|string}
 	 */
 	public function update(string $path, string $payload, string $contentType, ?string $etag = null): array {
 		$url = $this->constructUrl($path);
