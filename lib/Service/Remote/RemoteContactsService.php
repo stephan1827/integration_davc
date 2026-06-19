@@ -341,10 +341,15 @@ class RemoteContactsService {
 
 		if (isset($so[RemoteClient::DAV_OWNER])) {
 			$owner = RemoteConvert::extractPrincipal($so[RemoteClient::DAV_OWNER]);
-			$permissions = RemoteConvert::extractPermissions($so[RemoteClient::DAV_ACL] ?? []);
+			$acl = $so[RemoteClient::DAV_ACL] ?? null;
 
-			if (isset($permissions[$owner])) {
-				$to->permissions = $permissions[$owner];
+			if (is_array($acl)) {
+				$permissions = RemoteConvert::extractPermissions($acl);
+				$to->permissions = $permissions[$owner] ?? [];
+			} elseif ($owner !== null && $owner === $this->dataStore->getPrincipalUrl()) {
+				// Server did not return ACL entries; infer owner-level permission from the
+				// {DAV:}all property when it matches the authenticated principal.
+				$to->permissions = ['{DAV:}all'];
 			} else {
 				$to->permissions = [];
 			}
