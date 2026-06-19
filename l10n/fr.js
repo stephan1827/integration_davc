@@ -15,6 +15,7 @@ OC.L10N.register(
     "Every hour" : "Toutes les heures",
     "never" : "jamais",
     "Synchronized" : "Synchronisation",
-    "Synchronization failed" : "Échec de synchronisation"
+    "Synchronization failed" : "Échec de synchronisation",
+    "Saved correlations" : "Corrélations sauvegardées"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
