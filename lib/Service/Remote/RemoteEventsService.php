@@ -278,7 +278,7 @@ class RemoteEventsService {
 		}
 		$data = $so->data;
 
-		$result = $this->dataStore->create($path, $data, 'application/vcalendar');
+		$result = $this->dataStore->create($path, $data, 'text/calendar; charset=utf-8');
 
 		$ro = clone $so;
 		// persist the full resource path so the stored identifier matches what a
@@ -301,7 +301,7 @@ class RemoteEventsService {
 		}
 		$data = $so->data;
 
-		$result = $this->dataStore->update($path, $data, 'application/vcalendar');
+		$result = $this->dataStore->update($path, $data, 'text/calendar; charset=utf-8');
 
 		$ro = clone $so;
 		$ro->remoteSignature = $result['etag'] ?? null;
