@@ -96,16 +96,11 @@ async function connectService(service: Service): Promise<void> {
 	}
 	try {
 		const response = await axios.post(uri, data)
-		if (response.data === 'success') {
-			showSuccess('Successfully connected to account')
-			if (selectedService.value) {
-				selectedService.value.connected = 1
-			}
-			serviceList()
-			remoteCollectionsFetch()
-			localCollectionsFetch()
-			selectedService.value = service
-		}
+		showSuccess(t('integration_davc', 'Successfully connected to account'))
+		selectedService.value = response.data
+		serviceList()
+		remoteCollectionsFetch()
+		localCollectionsFetch()
 	} catch (error: unknown) {
 		showError(t('integration_davc', 'Failed to authenticate with server')
 			+ ': ' + getErrorResponseText(error))
@@ -329,9 +324,10 @@ function changeEventCorrelation(rcid: string | null, e: boolean): void {
 		<SettingsFreshService
 			v-if="selectedService !== null && !Boolean(selectedService.connected)"
 			:service="selectedService"
+			:busy="busy"
 			:forceCertificateVerification="systemConfiguration.force_certificate_verification"
 			:forbidInsecureHttp="systemConfiguration.forbid_insecure_http"
-			@connect="connectService($event)" />
+			@connect="runExclusive(() => connectService($event))" />
 
 		<SettingsConnectedService
 			v-if="selectedService !== null && Boolean(selectedService.connected)"
