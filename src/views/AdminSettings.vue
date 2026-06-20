@@ -21,7 +21,7 @@ function showError(message: string) {
 	// Could use a simple notification or alert
 }
 
-import { NcButton, NcCheckboxRadioSwitch, NcSelect } from '@nextcloud/vue'
+import { NcButton, NcCheckboxRadioSwitch, NcLoadingIcon, NcSelect } from '@nextcloud/vue'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
 import AdminServiceTemplates from '../components/AdminServiceTemplates.vue'
 import DavIcon from '../icons/DavIcon.vue'
@@ -51,6 +51,7 @@ const state = reactive<AdminConfigurationState>(loadState('integration_davc', 'a
 const harmonizationInterval = ref<number>(Number(state.harmonization_interval) || 900)
 const forceCertificateVerification = ref<boolean>(Boolean(Number(state.force_certificate_verification)))
 const forbidInsecureHttp = ref<boolean>(Boolean(Number(state.forbid_insecure_http)))
+const saving = ref<boolean>(false)
 
 // Select options for synchronization interval
 const synchronizationIntervalOptions: SelectOption[] = [
@@ -65,6 +66,12 @@ const synchronizationIntervalOptions: SelectOption[] = [
 
 // Methods
 async function onSaveClick(): Promise<void> {
+	// prevent concurrent saves from rapid clicks
+	if (saving.value) {
+		return
+	}
+	saving.value = true
+
 	const req: SaveRequest = {
 		values: {
 			harmonization_interval: harmonizationInterval.value,
@@ -86,6 +93,8 @@ async function onSaveClick(): Promise<void> {
 
 		showError(t('integration_davc', 'Failed to save DAV admin configuration')
 			+ ': ' + errorMessage)
+	} finally {
+		saving.value = false
 	}
 }
 </script>
@@ -122,9 +131,10 @@ async function onSaveClick(): Promise<void> {
 			</div>
 			<br>
 			<div class="davc-actions">
-				<NcButton @click="onSaveClick()">
+				<NcButton :disabled="saving" @click="onSaveClick()">
 					<template #icon>
-						<CheckIcon />
+						<NcLoadingIcon v-if="saving" />
+						<CheckIcon v-else />
 					</template>
 					{{ t('integration_davc', 'Save') }}
 				</NcButton>
