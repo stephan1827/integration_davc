@@ -10,6 +10,7 @@ import { translate as t } from '@nextcloud/l10n'
 import { ref, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
@@ -18,6 +19,7 @@ const props = defineProps<{
 	service: Service
 	forceCertificateVerification: boolean
 	forbidInsecureHttp: boolean
+	busy?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -233,9 +235,10 @@ function prepareService(service: Service): Service {
 			</NcCheckboxRadioSwitch>
 		</div>
 		<div class="actions">
-			<NcButton @click="emit('connect', editableService)">
+			<NcButton :disabled="busy" @click="emit('connect', editableService)">
 				<template #icon>
-					<CheckIcon />
+					<NcLoadingIcon v-if="busy" />
+					<CheckIcon v-else />
 				</template>
 				{{ t('integration_davc', 'Connect') }}
 			</NcButton>

@@ -4,7 +4,7 @@
 /vendor/
 /vendor-bin/
 .vscode
-.idea
+.ideas
 *.cache
 *.log
 *.log.*
