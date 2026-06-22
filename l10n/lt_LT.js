@@ -13,6 +13,7 @@ OC.L10N.register(
     "Events" : "Įvykiai",
     "Disconnect" : "Atsijungti",
     "Account ID" : "Paskyros ID",
+    "Account token" : "Paskyros žymuo",
     "Basic" : "Pagrindinis",
     "Connect" : "Prisijungti",
     "Every hour" : "Kas valandą",

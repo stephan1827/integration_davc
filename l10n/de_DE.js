@@ -81,6 +81,7 @@ OC.L10N.register(
     "Forbid insecure (HTTP) connections" : "Unsichere Verbindungen (HTTP) verbieten",
     "never" : "Niemals",
     "New connection" : "Neue Verbindung",
+    "Successfully connected to account" : "Mit dem Konto verbunden",
     "Failed to authenticate with server" : "Anmeldung bei Server fehlgeschlagen",
     "Disconnected from account" : "Verbindung zu Konto getrennt:",
     "Failed to disconnect from account" : "Trennung vom Konto ist fehlgeschlagen",
