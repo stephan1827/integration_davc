@@ -2,6 +2,9 @@ OC.L10N.register(
     "integration_davc",
     {
     "Connected accounts" : "Підключені облікові записи",
+    "Connect Nextcloud to a DAV service" : "З'єднайте Nextcloud зі службою DAV",
+    "Edit template" : "Редагувати шаблон",
+    "Add template" : "Додати шаблон",
     "Edit" : "Редагувати",
     "Delete" : "Вилучити",
     "Cancel" : "Скасувати",
