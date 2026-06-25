@@ -277,7 +277,7 @@ class RemoteContactsService {
 		}
 		$data = $so->data;
 
-		$result = $this->dataStore->create($path, $data, 'application/vcard');
+		$result = $this->dataStore->create($path, $data, 'text/vcard; charset=utf-8');
 
 		$ro = clone $so;
 		// persist the full resource path so the stored identifier matches what a
@@ -300,7 +300,7 @@ class RemoteContactsService {
 		}
 		$data = $so->data;
 
-		$result = $this->dataStore->update($path, $data, 'application/vcard');
+		$result = $this->dataStore->update($path, $data, 'text/vcard; charset=utf-8');
 
 		$ro = clone $so;
 		$ro->remoteSignature = $result['etag'] ?? null;
