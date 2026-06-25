@@ -328,7 +328,7 @@ class RemoteClient {
 	}
 
 	public function discover(): array {
-		$url = $this->constructUrl($this->locationPath);
+		$url = $this->constructUrl($this->locationPath ?? '/.well-known/caldav');
 		$this->capabilities['endpoint'] = $url;
 
 		try {

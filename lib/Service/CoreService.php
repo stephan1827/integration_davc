@@ -91,7 +91,7 @@ class CoreService {
 		}
 
 		if (empty($configuration['location_path'])) {
-			$configuration['location_path'] = '.well-known/caldav';
+			$configuration['location_path'] = '/.well-known/caldav';
 		}
 
 		return $configuration;
@@ -114,7 +114,7 @@ class CoreService {
 			throw new \InvalidArgumentException('Invalid DAV host provided.');
 		}
 
-		if ($configuration['auth'] === Constants::AUTHENTICATION_TYPE_BASIC) {
+		if (($configuration['auth'] ?? null) === Constants::AUTHENTICATION_TYPE_BASIC) {
 			// validate id
 			if (!\OCA\DAVC\Utile\Validator::username($configuration['bauth_id'])) {
 				throw new \InvalidArgumentException('Invalid DAV username provided for basic authentication.');
@@ -123,7 +123,7 @@ class CoreService {
 			if (!\OCA\DAVC\Utile\Validator::password($configuration['bauth_secret'])) {
 				throw new \InvalidArgumentException('Invalid DAV password provided for basic authentication.');
 			}
-		} elseif ($configuration['auth'] === Constants::AUTHENTICATION_TYPE_TOKEN) {
+		} elseif (($configuration['auth'] ?? null) === Constants::AUTHENTICATION_TYPE_TOKEN) {
 			// validate id
 			if (!\OCA\DAVC\Utile\Validator::username($configuration['oauth_id'])) {
 				throw new \InvalidArgumentException('Invalid DAV identity provided for token authentication.');
@@ -162,7 +162,7 @@ class CoreService {
 		$service->setLocationProtocol($configuration['location_protocol'] ?? 'https');
 		$service->setLocationHost($configuration['location_host']);
 		$service->setLocationPort($configuration['location_port'] ?? 443);
-		$service->setLocationPath($configuration['location_path'] ?? null);
+		$service->setLocationPath($configuration['location_path'] ?? '/.well-known/caldav');
 		$service->setLocationSecurity((bool)($configuration['location_security'] ?? 1));
 		$service->setAuth($configuration['auth']);
 		if ($configuration['auth'] === Constants::AUTHENTICATION_TYPE_BASIC) {
