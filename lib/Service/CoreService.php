@@ -64,15 +64,41 @@ class CoreService {
 		}
 		// find dns service records
 		if (empty($configuration['location_host'])) {
-			$dns = dns_get_record('_caldavs._tcp.' . $identityDomain, DNS_SRV);
+			// attempt to locate service host and port using dns srv records
+			// example: _caldavs._tcp.example.com. IN SRV 0 5 443 dav.example.com.
+			$dnsService = '_caldavs._tcp.' . $identityDomain;
+			$dns = dns_get_record($dnsService, DNS_SRV);
 			if (empty($dns)) {
-				$dns = dns_get_record('_caldav._tcp.' . $identityDomain, DNS_SRV);
+				$dnsService = '_caldav._tcp.' . $identityDomain;
+				$dns = dns_get_record($dnsService, DNS_SRV);
+			}
+			if (empty($dns)) {
+				$dnsService = '_carddavs._tcp.' . $identityDomain;
+				$dns = dns_get_record($dnsService, DNS_SRV);
+			}
+			if (empty($dns)) {
+				$dnsService = '_carddav._tcp.' . $identityDomain;
+				$dns = dns_get_record($dnsService, DNS_SRV);
 			}
 			if (!empty($dns) && ($dns[0]['type'] ?? null) === 'SRV') {
 				$dnsTarget = $dns[0]['target'];
 				$dnsPort = $dns[0]['port'];
 				$configuration['location_host'] = $dnsTarget;
 				$configuration['location_port'] = $dnsPort;
+				// attempt to locate service path using dns txt records
+				// example: _caldavs._tcp.example.com. IN TXT "path=/dav/"
+				if (empty($configuration['location_path'])) {
+					$dnsTxt = dns_get_record($dnsService, DNS_TXT);
+					foreach (is_array($dnsTxt) ? $dnsTxt : [] as $record) {
+						if (($record['type'] ?? null) !== 'TXT') {
+							continue;
+						}
+						if (preg_match('/(?:^|\s)path=(\S+)/', $record['txt'] ?? '', $matches) === 1) {
+							$configuration['location_path'] = $matches[1];
+							break;
+						}
+					}
+				}
 			}
 		}
 		// find template for dns service target

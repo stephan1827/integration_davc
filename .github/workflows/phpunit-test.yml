@@ -349,7 +349,8 @@ jobs:
           listen-address=127.0.0.1
           bind-interfaces
           resolv-file=/etc/dnsmasq-upstream-resolv.conf
-          address=/${{ env.DAV_DOMAIN }}/127.0.0.1
+          local=/${{ env.DAV_DOMAIN }}/
+          host-record=${{ env.DAV_DOMAIN }},127.0.0.1
           srv-host=_caldav._tcp.${{ env.DAV_DOMAIN }},${{ env.DAV_HOST }},10080,0,0
           EOF
 
