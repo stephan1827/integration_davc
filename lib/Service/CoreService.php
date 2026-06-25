@@ -91,7 +91,7 @@ class CoreService {
 		}
 
 		if (empty($configuration['location_path'])) {
-			$configuration['location_path'] = '.well-known/caldav';
+			$configuration['location_path'] = '/.well-known/caldav';
 		}
 
 		return $configuration;
