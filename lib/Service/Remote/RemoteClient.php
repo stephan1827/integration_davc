@@ -405,7 +405,7 @@ class RemoteClient {
 		return $response;
 	}
 
-	private function constructUrl(string $path = '/'): string {
+	private function constructUrl(?string $path = '/'): string {
 		$host = sprintf(
 			'%s://%s:%d',
 			$this->locationProtocol,
@@ -413,7 +413,7 @@ class RemoteClient {
 			$this->locationPort,
 		);
 		$host = rtrim($host, '/') . '/';
-		if ($path === '') {
+		if ($path === null || $path === '') {
 			$path = '/';
 		}
 
