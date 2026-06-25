@@ -116,7 +116,9 @@ class EventCollection extends ExternalCalendar implements ICalendar, IProperties
 	public function getACL(): array {
 		$permissions = $this->collection->permissions;
 		if ($permissions === null || count($permissions) === 0) {
-			$permissions = ['{DAV:}read'];
+			// Remote server did not return ACL info (common with Fastmail/Cyrus IMAP);
+			// default to full access because these are the authenticated user's own calendars.
+			$permissions = ['{DAV:}all'];
 		}
 		return array_map(function ($permission) {
 			return [

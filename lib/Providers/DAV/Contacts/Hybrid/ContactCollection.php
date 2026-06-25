@@ -106,7 +106,9 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 	public function getACL(): array {
 		$permissions = $this->collection->permissions;
 		if ($permissions === null || count($permissions) === 0) {
-			$permissions = ['{DAV:}read'];
+			// Remote server did not return ACL info; default to full access because
+			// these are the authenticated user's own address books.
+			$permissions = ['{DAV:}all'];
 		}
 		return array_map(function ($permission) {
 			return [
