@@ -69,23 +69,25 @@ class ContactsService {
 			}
 			$collection->setHlockhd((int)getmypid());
 			$collection = $this->localStore->collectionModify($collection);
-			// execute harmonization loop
-			do {
-				// update lock heartbeat
+			try {
+				// execute harmonization loop
+				do {
+					// update lock heartbeat
+					$collection->setHlockhb(time());
+					$collection = $this->localStore->collectionModify($collection);
+					// harmonize collection
+					$statistics = $this->harmonizeCollection($collection);
+					// evaluate if anything was done and publish notice if needed
+					if ($statistics->total() > 0) {
+						//$this->CoreService->publishNotice($uid,'Contacts_harmonized', (array)$statistics);
+					}
+				} while ($statistics->total() > 0);
+			} finally {
+				// always release the lock, even when an exception aborts the loop
 				$collection->setHlockhb(time());
-				$collection = $this->localStore->collectionModify($collection);
-				// harmonize collection
-				$statistics = $this->harmonizeCollection($collection);
-				// evaluate if anything was done and publish notice if needed
-				if ($statistics->total() > 0) {
-					//$this->CoreService->publishNotice($uid,'Contacts_harmonized', (array)$statistics);
-				}
-			} while ($statistics->total() > 0);
-			// update harmonization time stamp
-			$collection->setHlockhb(time());
-			// unlock correlation after harmonization
-			$collection->setHlock(0);
-			$collection = $this->localStore->collectionModify($collection);
+				$collection->setHlock(0);
+				$this->localStore->collectionModify($collection);
+			}
 		}
 
 	}
