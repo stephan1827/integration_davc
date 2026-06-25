@@ -106,7 +106,7 @@ class ContactCollection implements IAddressBook, IProperties, IMultiGet, ISyncCo
 	public function getACL(): array {
 		$permissions = $this->collection->permissions;
 		if ($permissions === null || count($permissions) === 0) {
-			$permissions = ['{DAV:}read'];
+			$permissions = ['{DAV:}read', '{DAV:}write-properties'];
 		}
 		return array_map(function ($permission) {
 			return [

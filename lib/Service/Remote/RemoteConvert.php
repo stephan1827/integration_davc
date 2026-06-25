@@ -11,6 +11,17 @@ namespace OCA\DAVC\Service\Remote;
 
 class RemoteConvert {
 
+	public static function extractUrlPath(?string $url): ?string {
+		if ($url === null || $url === '') {
+			return null;
+		}
+		$parsed = parse_url($url);
+		if (isset($parsed['host'])) {
+			return $parsed['path'] ?? null;
+		}
+		return $url;
+	}
+
 	public static function extractPermissions(array $acl): array {
 		$permissions = [];
 		foreach ($acl as $entry) {
