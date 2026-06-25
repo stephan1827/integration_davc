@@ -438,6 +438,7 @@ class RemoteClient {
 			'headers' => $headers,
 			'timeout' => IClient::DEFAULT_REQUEST_TIMEOUT,
 			'verify' => $this->locationSecurity,
+			'allow_redirects' => ['strict' => true, 'max' => 5],
 		];
 
 		$options = array_merge($options, $additionalOptions);
