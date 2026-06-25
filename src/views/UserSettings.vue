@@ -12,7 +12,7 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { translatePlural as n, translate as t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
-import { onMounted, reactive, ref } from 'vue'
+import { nextTick, onMounted, reactive, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import AccountRemoveIcon from 'vue-material-design-icons/AccountMinus.vue'
@@ -64,8 +64,12 @@ const eventsRemoteCollections = ref<Collection[]>([])
 const eventsLocalCollections = ref<Collection[]>([])
 
 // Lifecycle
-onMounted(() => {
-	serviceList()
+onMounted(async () => {
+	await serviceList()
+	if (selectedService.value === null && configuredServices.value.length > 0) {
+		await nextTick()
+		await serviceSelect(configuredServices.value[0])
+	}
 })
 
 // Methods
