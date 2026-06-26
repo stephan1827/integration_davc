@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\DAVC\AppInfo;
 
 use OCA\DAVC\Events\UserDeletedListener;
+use OCA\DAVC\Search\ContactsSearchProvider;
 use OCA\DAVC\Search\EventsSearchProvider;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
@@ -34,8 +35,9 @@ class Application extends App implements IBootstrap {
 	#[\Override]
 	public function register(IRegistrationContext $context): void {
 
-		// register search provider so DAV Connector events appear in unified search
+		// register search providers so DAV Connector events and contacts appear in unified search
 		$context->registerSearchProvider(EventsSearchProvider::class);
+		$context->registerSearchProvider(ContactsSearchProvider::class);
 
 		// register event handlers
 		$dispatcher = $this->getContainer()->get(IEventDispatcher::class);

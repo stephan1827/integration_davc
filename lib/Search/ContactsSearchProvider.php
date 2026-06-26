@@ -9,8 +9,6 @@ declare(strict_types=1);
 
 namespace OCA\DAVC\Search;
 
-use DateTime;
-use DateTimeZone;
 use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -20,7 +18,7 @@ use OCP\Search\ISearchQuery;
 use OCP\Search\SearchResult;
 use OCP\Search\SearchResultEntry;
 
-class EventsSearchProvider implements IProvider {
+class ContactsSearchProvider implements IProvider {
 
 	public function __construct(
 		private readonly IDBConnection $db,
@@ -31,17 +29,17 @@ class EventsSearchProvider implements IProvider {
 
 	#[\Override]
 	public function getId(): string {
-		return 'davc-events';
+		return 'davc-contacts';
 	}
 
 	#[\Override]
 	public function getName(): string {
-		return $this->l10n->t('DAV Connector Events');
+		return $this->l10n->t('DAV Connector Contacts');
 	}
 
 	#[\Override]
 	public function getOrder(string $route, array $routeParameters): ?int {
-		return 31;
+		return 26;
 	}
 
 	#[\Override]
@@ -58,28 +56,16 @@ class EventsSearchProvider implements IProvider {
 
 		$qb = $this->db->getQueryBuilder();
 		$qb->select(
-				'e.uuid', 'e.label', 'e.description', 'e.startson', 'e.endson',
+				'e.uuid', 'e.data',
 				'c.uuid AS collection_uuid', 'c.label AS collection_label',
 			)
-			->from('davc_entities_calendars', 'e')
+			->from('davc_entities_contacts', 'e')
 			->innerJoin('e', 'davc_collections', 'c', $qb->expr()->eq('e.cid', 'c.id'))
 			->where($qb->expr()->eq('e.uid', $qb->createNamedParameter($user->getUID())))
-			->andWhere($qb->expr()->orX(
-				$qb->expr()->iLike('e.label', $qb->createNamedParameter($likeTerm)),
-				$qb->expr()->iLike('e.description', $qb->createNamedParameter($likeTerm)),
-			))
-			->orderBy('e.startson', 'ASC')
+			->andWhere($qb->expr()->iLike('e.data', $qb->createNamedParameter($likeTerm)))
+			->orderBy('e.id', 'ASC')
 			->setMaxResults($limit)
 			->setFirstResult($offset);
-
-		$since = $query->getFilter('since')?->get();
-		$until = $query->getFilter('until')?->get();
-		if ($since instanceof \DateTimeInterface) {
-			$qb->andWhere($qb->expr()->gte('e.endson', $qb->createNamedParameter($since->format('U'))));
-		}
-		if ($until instanceof \DateTimeInterface) {
-			$qb->andWhere($qb->expr()->lte('e.startson', $qb->createNamedParameter($until->format('U'))));
-		}
 
 		$result = $qb->executeQuery();
 		$entries = [];
@@ -96,28 +82,41 @@ class EventsSearchProvider implements IProvider {
 	}
 
 	private function rowToResult(array $row, string $uid): SearchResultEntry {
-		$title = $row['label'] ?? $this->l10n->t('Untitled event');
-		$subline = ($row['collection_label'] ?? '') . ' · ' . $this->formatDatetime((int)$row['startson']);
+		$vcard = $row['data'] ?? '';
 
-		$davUrl = $this->urlGenerator->linkTo('', 'remote.php')
-			. '/dav/calendars/' . urlencode($uid)
-			. '/app-generated--integration_davc--' . $row['collection_uuid']
-			. '/' . $row['uuid'];
+		$name = $this->extractVCardProperty($vcard, 'FN') ?? $this->l10n->t('Unnamed contact');
+		$email = $this->extractVCardProperty($vcard, 'EMAIL');
+		$phone = $this->extractVCardProperty($vcard, 'TEL');
+		$org = $this->extractVCardProperty($vcard, 'ORG');
 
-		$resourceUrl = $this->urlGenerator->getAbsoluteURL(
-			$this->urlGenerator->linkToRoute('calendar.view.index')
-			. 'edit/' . base64_encode($davUrl)
-		);
+		$sublineParts = array_filter([$org, $email ?? $phone]);
+		$subline = implode(' · ', $sublineParts);
+		if ($subline === '') {
+			$subline = $row['collection_label'] ?? '';
+		}
 
-		$entry = new SearchResultEntry('', $title, $subline, $resourceUrl, 'icon-calendar-dark', false);
-		$entry->addAttribute('createdAt', (string)$row['startson']);
+		$resourceUrl = $this->urlGenerator->linkToRoute('contacts.page.index');
 
-		return $entry;
+		return new SearchResultEntry('', $name, $subline, $resourceUrl, 'icon-contacts-dark', false);
 	}
 
-	private function formatDatetime(int $timestamp): string {
-		$dt = new DateTime('@' . $timestamp);
-		$dt->setTimezone(new DateTimeZone(date_default_timezone_get()));
-		return $this->l10n->l('datetime', $dt, ['width' => 'medium|short']);
+	private function extractVCardProperty(string $vcard, string $property): ?string {
+		$unfolded = preg_replace('/\r\n[ \t]/', '', $vcard);
+		if ($unfolded === null) {
+			return null;
+		}
+
+		foreach (explode("\n", $unfolded) as $line) {
+			$line = rtrim($line, "\r");
+			if (preg_match('/^' . preg_quote($property, '/') . '(?:;[^:]*)?:(.+)$/i', $line, $m)) {
+				$value = trim($m[1]);
+				if ($property === 'ORG') {
+					$value = explode(';', $value)[0];
+				}
+				return $value !== '' ? $value : null;
+			}
+		}
+
+		return null;
 	}
 }
