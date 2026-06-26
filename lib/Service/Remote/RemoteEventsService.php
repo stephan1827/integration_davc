@@ -349,7 +349,7 @@ class RemoteEventsService {
 			if (is_array($acl)) {
 				$permissions = RemoteConvert::extractPermissions($acl);
 				$to->permissions = $permissions[$owner] ?? [];
-			} elseif ($owner !== null && $owner === $this->dataStore->getPrincipalUrl()) {
+			} elseif ($owner !== null && RemoteConvert::extractUrlPath($owner) === $this->dataStore->getPrincipalUrl()) {
 				// Server did not return ACL entries; infer owner-level permission from the
 				// {DAV:}all property when it matches the authenticated principal.
 				$to->permissions = ['{DAV:}all'];
