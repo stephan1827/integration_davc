@@ -39,7 +39,9 @@ class CalendarImpl implements ICalendar {
 
 	#[\Override]
 	public function getUri(): string {
-		return $this->collection->getCcid() ?? $this->getKey();
+		// Must be a slash-free identifier: Nextcloud wraps this into
+		// app-generated--dav-wrapper--{uri} and DAV path parsing splits on '/'.
+		return 'davc_' . $this->collection->getId();
 	}
 
 	#[\Override]
